@@ -1,31 +1,48 @@
-import 'dotenv/config';
-import os from 'os';
-import { createServer } from 'node:http';
-import { ENV_VARS } from 'app-constants';
-import { winstonLogger } from 'middleware';
-import app from './app';
+import express, { Request, Response, NextFunction } from 'express';
+import cors from 'cors';
+import authRoutes from './routes/auth';
+import { PORT } from './app-constants/constants';
 
-const hostName = os.hostname();
-const port = ENV_VARS.port;
+const app = express();
 
-function bootstrap() {
-  /* DB Connection Logic */
-  // try {
-  //   await mongoose.connect(db_connection_string, { autoIndex: true });
-  //   console_log('Connected to DATABASE', `${db_name}@${db_url}`);
-  // } catch (err) {
-  //   console.log(chalk.red('⚠ Error connecting to the Database ⚠'));
-  //   console.log(err);
-  //   process.exit(1);
-  // }
+// CORS 설정
+app.use(cors({
+  origin: 'http://localhost:3001',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+}));
 
-  const server = createServer(app);
+// CORS 관련 로그 확인 (요청 Origin을 출력)
+app.use((req: Request, res: Response, next: NextFunction) => {
+  console.log('Request Origin:', req.headers.origin);
+  next();
+});
 
-  server.listen(port, () => {
-    winstonLogger.info(
-      `[ ⚡️ ${hostName} ⚡️ ] - Server running on port ${port}`
-    );
-  });
-}
+// 미들웨어 설정
+app.use(express.json());
 
-bootstrap();
+// 라우트 설정
+app.use('/api/auth', authRoutes);
+
+// 루트 라우트 추가
+app.get('/', (req: Request, res: Response) => {
+  res.send('Welcome to the Express Server!');
+});
+
+// 404 처리 라우트 (모든 정의되지 않은 경로에 대해)
+app.use((req: Request, res: Response) => {
+  res.status(404).json({ message: 'Route not found' });
+});
+
+// 예외 처리 미들웨어 (항상 마지막에 추가)
+app.use((err: Error, req: Request, res: Response) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
+// 서버 실행
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+export default app;

@@ -1,20 +1,27 @@
-'use client';
 import '@/styles/common/common.scss';
-import Header from '@/components/header';
-import { usePathname } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/auth/authOptions';
+import Header from '@/components/Header';
+import SessionWrapper from '@/components/SessionWrapper';
+import ContentWrapper from '@/components/ContentWrapper';
+import { ReactNode } from 'react';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const className =
-    pathname === '/' ? 'home' : `${pathname.slice(1).toLowerCase()}`.replace(/\//g, '-');
+interface LayoutProps {
+  children: ReactNode;
+}
+
+export default async function Layout({ children }: LayoutProps) {
+  const session = await getServerSession(authOptions);
 
   return (
     <html lang="en">
       <body>
-        <Header />
-        <div className={className}>
-          <div className="inner">{children}</div>
-        </div>
+        <SessionWrapper session={session}>
+          <Header />
+          <ContentWrapper>
+            {children}
+          </ContentWrapper>
+        </SessionWrapper>
       </body>
     </html>
   );

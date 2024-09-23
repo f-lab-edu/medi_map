@@ -4,10 +4,13 @@
     "baseUrl": "src",
     "rootDir": "src",
     "module": "commonjs",
-    "resolveJsonModule": false,
+    "resolveJsonModule": true,
     "outDir": "dist",
     "esModuleInterop": true,
-    "incremental": false
+    "incremental": false,
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "ts-node": {
     "require": ["tsconfig-paths/register"]
