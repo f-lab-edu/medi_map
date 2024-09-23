@@ -5,7 +5,8 @@ module.exports = {
     '@nish1896/eslint-config/react'
   ],
   rules: {
-    'prettier/prettier': ['error', { endOfLine: 'lf' }] 
+    'prettier/prettier': ['error', { endOfLine: 'lf' }] ,
+    'linebreak-style': ['error', 'unix'],
   },
   plugins: ['prettier'],
 };
