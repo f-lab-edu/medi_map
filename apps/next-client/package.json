@@ -19,7 +19,8 @@
     "@mui/material-nextjs": "^5.15.11",
     "next": "14.2.4",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "zustand": "^5.0.0-rc.2"
   },
   "devDependencies": {
     "@nish1896/eslint-config": "^2.0.4",
@@ -28,6 +29,8 @@
     "@types/react-dom": "^18.3.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.4",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.3.3",
     "typescript": "^5.3.3"
   }
 }
