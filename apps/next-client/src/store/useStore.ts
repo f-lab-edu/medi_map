@@ -1,13 +1,22 @@
 import { create } from 'zustand';
 
-interface StoreState {
-  message: string;
-  setMessage: (msg: string) => void;
+interface PokemonState {
+  pokemon: string[];
+  fetchPokemon: () => Promise<void>;
 }
 
-const useStore = create<StoreState>((set) => ({
-  message: 'TEST',  
-  setMessage: (newMessage: string) => set({ message: newMessage }),
+interface PokemonResult {
+  name: string;
+  url: string;
+}
+
+const useStore = create<PokemonState>((set) => ({
+  pokemon: [],
+  fetchPokemon: async () => {
+    const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=10');
+    const data = await response.json();
+    set({ pokemon: data.results.map((pokemon: PokemonResult) => pokemon.name) });
+  },
 }));
 
 export default useStore;
