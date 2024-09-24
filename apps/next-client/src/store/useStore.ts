@@ -1,7 +1,12 @@
 import { create } from 'zustand';
 
-const useStore = create((set) => ({
-  message: '하하하하하하',
+interface StoreState {
+  message: string;
+  setMessage: (msg: string) => void;
+}
+
+const useStore = create<StoreState>((set) => ({
+  message: 'TEST',  
   setMessage: (newMessage: string) => set({ message: newMessage }),
 }));
 
