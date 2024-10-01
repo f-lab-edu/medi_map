@@ -30,11 +30,11 @@ jobs:
       - name: Build express-server
         run: yarn workspace express-server build
 
-      - name: Build nestjs-server
-        run: yarn workspace nestjs-server build
+      # - name: Build nestjs-server
+      #   run: yarn workspace nestjs-server build
 
-      - name: Build react-client
-        run: yarn workspace react-client build
+      # - name: Build react-client
+      #   run: yarn workspace react-client build
 
       - name: Build next-client
         run: yarn workspace next-client build
