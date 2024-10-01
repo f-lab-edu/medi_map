@@ -1,0 +1,40 @@
+#header {
+  display: flex;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+  .inner {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 2rem 0;
+    gap: 10rem;
+  }
+
+  h1 {
+    a {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+  }
+
+  .right_cont {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    .menu_cont {
+      display: flex;
+      gap: 4rem;
+      li {
+        a{
+          font-size: 1.6rem;
+          font-weight: 500;
+        }
+      }
+    }
+    .auth_cont {
+      display: flex;
+      gap: 4rem;
+    }
+  }
+}

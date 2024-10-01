@@ -1,5 +1,6 @@
 'use client';
-import '@/assets/styles/global.css';
+import '@/styles/common/common.scss';
+import Header from '@/components/header';
 import { usePathname } from 'next/navigation';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -10,7 +11,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <div className={className}>{children}</div>
+        <Header />
+        <div className={className}>
+          <div className="inner">{children}</div>
+        </div>
       </body>
     </html>
   );
