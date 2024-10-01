@@ -20,7 +20,7 @@ export default function LoginPage() {
       <h1>로그인</h1>
       <p>SNS로 간편하게 로그인하고 더 많은 서비스로 즐겨보세요!</p>
 
-      <button className="login-button" onClick={() => signIn('google')}>
+      <button className="login_button" onClick={() => signIn('google')}>
         Google로 계속하기
       </button>
     </>
