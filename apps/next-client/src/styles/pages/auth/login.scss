@@ -14,11 +14,14 @@
     margin-bottom: 10rem;
   }
   button {
-    border: 1px solid rgb(0 0 0 / 10%);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     font-size: 1.7rem;
     border-radius: 1rem;
     padding: 1rem 3rem;
     display: flex;
     cursor: pointer;
+    margin: 0 auto;
+    width: 40%;
+    justify-content: center;
   }
 }

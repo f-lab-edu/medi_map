@@ -2,6 +2,7 @@
 import '@/styles/common/common.scss';
 import Header from '@/components/header';
 import { usePathname } from 'next/navigation';
+import { SessionProvider } from 'next-auth/react';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -11,10 +12,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <Header />
-        <div className={className}>
-          <div className="inner">{children}</div>
-        </div>
+        <SessionProvider>
+          <Header />
+          <div className={className}>
+            <div className="inner">{children}</div>
+          </div>
+        </SessionProvider>
       </body>
     </html>
   );
