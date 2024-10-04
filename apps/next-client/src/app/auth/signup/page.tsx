@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import '@/styles/pages/auth/signup.scss';
@@ -23,11 +23,17 @@ export default function SignupPage() {
       if (response.status === 201) {
         router.push('/auth/login');
       }
-    } catch (err) {
-      setError(err.response?.data?.message || '회원가입 중 오류가 발생했습니다.');
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        const errorMessage = err.response?.data?.message || '회원가입 중 오류가 발생했습니다.';
+        setError(errorMessage);
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('회원가입 중 오류가 발생했습니다.');
+      }
     }
   };
-  
 
   return (
     <>
@@ -66,8 +72,9 @@ export default function SignupPage() {
           회원가입
         </button>
       </form>
-
-      <Link href="/auth/login">이미 계정이 있으신가요? <span>로그인하기</span></Link>
+      <Link href="/auth/login">
+        이미 계정이 있으신가요? <span>로그인하기</span>
+      </Link>
     </>
   );
 }

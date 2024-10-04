@@ -8,7 +8,7 @@ import Image from 'next/image';
 import '@/styles/pages/auth/login.scss';
 
 export default function LoginPage() {
-  const { data: status } = useSession();
+  const { status, data: session } = useSession(); 
   const router = useRouter();
 
   useEffect(() => {

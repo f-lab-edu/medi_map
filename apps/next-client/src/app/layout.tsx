@@ -1,18 +1,23 @@
 import '@/styles/common/common.scss';
 import { getServerSession } from 'next-auth';
-import { authOptions } from './api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/auth/authOptions';
 import Header from '@/components/Header';
 import SessionWrapper from '@/components/SessionWrapper';
 import ContentWrapper from '@/components/ContentWrapper';
+import { ReactNode } from 'react';
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+interface LayoutProps {
+  children: ReactNode;
+}
+
+export default async function Layout({ children }: LayoutProps) {
   const session = await getServerSession(authOptions);
 
   return (
     <html lang="en">
       <body>
         <SessionWrapper session={session}>
-          <Header session={session} />
+          <Header />
           <ContentWrapper>
             {children}
           </ContentWrapper>
