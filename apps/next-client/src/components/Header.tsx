@@ -1,11 +1,14 @@
 'use client';
 
-import React from 'react';
-import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { signOut, useSession } from 'next-auth/react';
 
 export default function Header() {
   const { data: session } = useSession();
+
+  const handleLogout = () => {
+    signOut({ callbackUrl: '/auth/login' });
+  };
 
   return (
     <header id="header">
@@ -23,9 +26,7 @@ export default function Header() {
             {session ? (
               <>
                 <li>
-                  <button className="logout-button" onClick={() => signOut()}>
-                    로그아웃
-                  </button>
+                  <button onClick={handleLogout}>로그아웃</button>
                 </li>
                 <li><Link href="/mypage">마이페이지</Link></li>
               </>

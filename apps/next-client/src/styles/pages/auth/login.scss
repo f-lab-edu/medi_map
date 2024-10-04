@@ -1,27 +1,78 @@
-.auth-login {
+.auth_login {
   .inner {
-    padding: 0 10rem;
+    max-width: 60rem;
   }
   h1 {
     font-size: 5rem;
     font-weight: bold;
     text-align: center;
-    margin-top: 15rem;
+    margin-top: 10rem;
   }
   p {
     font-size: 1.6rem;
     text-align: center;
-    margin-bottom: 10rem;
+    margin-bottom: 5rem;
+    &.error {
+      color: rgb(255, 0, 98);
+      margin-bottom: 0;
+    }
   }
   button {
     border: 1px solid rgba(0, 0, 0, 0.1);
     font-size: 1.7rem;
-    border-radius: 1rem;
+    border-radius: 0.7rem;
     padding: 1rem 3rem;
     display: flex;
     cursor: pointer;
     margin: 0 auto;
-    width: 40%;
     justify-content: center;
+    width: 100%;
+    align-items: center;
+    gap: 0.5rem;
+    &.login_button {
+      color: #fff;
+      background: #0aafdd;
+    }
+    &.social_button {
+      img {
+        width: 2rem;
+      }
+    }
+  }
+  a {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 1.7rem;
+    border-radius: 0.7rem;
+    padding: 1rem 3rem;
+    display: flex;
+    cursor: pointer;
+    margin: 0 auto;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 5rem;
+  }
+  form {
+    margin-bottom: 1rem;
+    legend {
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      font-weight: 500;
+    }
+    input {
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      font-size: 1.8rem;
+      border-radius: 0.7rem;
+      padding: 1rem 2rem;
+      display: flex;
+      margin: 0 auto;
+      justify-content: center;
+      width: 100%;
+      margin-bottom: 3rem;
+      &::placeholder {
+        font-size: 1.6rem;
+        font-weight: 400;
+        color: #a6b1bf;
+      }
+    }
   }
 }

@@ -18,7 +18,6 @@ module.exports = {
     es6: true,
   },
   rules: {
-    '@typescript-eslint/no-unused-vars': 'off',
     'jsx-a11y/label-has-associated-control': [
       'error',
       {
@@ -36,13 +35,13 @@ module.exports = {
     'react/require-default-props': 'off',
     'import/no-extraneous-dependencies': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
+    '@next/next/no-html-link-for-pages': 'off',
   },
   settings: {
-    react: {
-      version: 'detect',
-    },
     'import/resolver': {
-      typescript: {},
+      typescript: {
+        project: 'apps/next-client/tsconfig.json', 
+      },
     },
   },
 };
