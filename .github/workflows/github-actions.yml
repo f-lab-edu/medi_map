@@ -30,11 +30,19 @@ jobs:
       - name: Build express-server
         run: yarn workspace express-server build
 
-      # - name: Build nestjs-server
-      #   run: yarn workspace nestjs-server build
-
-      # - name: Build react-client
-      #   run: yarn workspace react-client build
-
-      - name: Build next-client
-        run: yarn workspace next-client build
+      - name: Build next-client Docker Image
+        run: |
+          docker build \
+            --build-arg GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
+            --build-arg GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
+            --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
+            --build-arg NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} \
+            -t next-client .
+        
+      - name: Run next-client Docker Container
+        run: |
+          docker run -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
+                     -e GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
+                     -e NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
+                     -e NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} \
+                     -p 3000:3000 next-client
