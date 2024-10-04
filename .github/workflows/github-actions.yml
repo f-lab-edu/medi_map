@@ -37,10 +37,10 @@ jobs:
             --build-arg GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
             --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
             --build-arg NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} \
-            -f apps/next-client/Dockerfile \  
-            -t next-client \                 
-            apps/next-client                  
-
+            -f apps/next-client/Dockerfile \
+            -t next-client \
+            apps/next-client
+          
       - name: Run next-client Docker Container
         run: |
           docker run -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
