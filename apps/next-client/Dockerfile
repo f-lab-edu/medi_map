@@ -20,17 +20,10 @@ RUN yarn --frozen-lockfile
 # Copy the rest of the application code to the container
 COPY ./apps/next-client ./apps/next-client
 
-# Build arguments for environment variables
-ARG GOOGLE_CLIENT_ID
-ARG GOOGLE_CLIENT_SECRET
-ARG NEXTAUTH_SECRET
-ARG NEXTAUTH_URL
-
-# Set environment variables
-ENV GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
-ENV GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
-ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
-ENV NEXTAUTH_URL=$NEXTAUTH_URL
+# Next.js collects completely anonymous telemetry data about general usage.
+# Learn more here: https://nextjs.org/telemetry
+# Uncomment the following line in case you want to disable telemetry during the build.
+# ENV NEXT_TELEMETRY_DISABLED 1
 
 # Build the Next.js app
 RUN yarn workspace next-client build
