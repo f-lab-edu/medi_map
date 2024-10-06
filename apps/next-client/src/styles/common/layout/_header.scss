@@ -35,6 +35,9 @@
     .auth_cont {
       display: flex;
       gap: 4rem;
+      button {
+        cursor: pointer;
+      }
     }
   }
 }
