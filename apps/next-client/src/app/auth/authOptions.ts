@@ -1,27 +1,21 @@
-import { NextAuthOptions, User } from "next-auth";
+import axios from 'axios';
+import { ROUTES, API_URLS } from '@/constants/urls';
+import { NextAuthOptions, Session, User as NextAuthUser } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
+import { checkEnvVariables } from '@/config/env';
+import { CredError } from '@/error/CredError';
+import { UserDTO } from '@/dto/UserDTO';  
+import { ERROR_MESSAGES } from '@/constants/errors';
+import { handleError } from '@/util/handleError';
 
 declare module "next-auth" {
   interface Session {
-    user: {
-      id?: string;
-      name?: string | null;
-      email?: string | null;
-      image?: string | null;
-      accessToken?: string;
-    };
-  }
-
-  interface User {
-    id?: string;
-    accessToken?: string;
+    user: NextAuthUser;  
   }
 }
 
-if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.NEXTAUTH_SECRET) {
-  throw new Error("인증에 필요한 환경 변수가 설정되지 않았습니다.");
-}
+checkEnvVariables();
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -35,45 +29,46 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("유효하지 않은 자격 증명입니다.");
+      async authorize(credentials): Promise<NextAuthUser | null> { 
+        if (!credentials || !credentials.email || !credentials.password) {
+          throw new CredError(ERROR_MESSAGES.INVALID_CREDENTIAL);
         }
 
-        const response = await fetch("http://localhost:5000/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
+        try {
+          const { data: user } = await axios.post<UserDTO>(API_URLS.LOGIN, {
             email: credentials.email,
             password: credentials.password,
-          }),
-        });
-
-        const user = await response.json();
-
-        if (response.ok && user) {
-          return { ...user, id: user.id, accessToken: user.accessToken };
-        } else {
-          throw new Error(user.message || "로그인 실패");
+          });
+        
+          if (!user) {
+            throw new CredError(ERROR_MESSAGES.LOGIN_FAILED);
+          }
+        
+          return {
+            id: user.id.toString(),
+            email: user.email,
+          }
+        } catch (error) {
+          handleError(error); 
+          return null;
         }
+        
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: { token: Partial<NextAuthUser>, user?: NextAuthUser }) {
       if (user) {
-        const userWithAccessToken = user as User & { accessToken?: string };
-        token.id = userWithAccessToken.id;
-        token.email = userWithAccessToken.email;
-        token.accessToken = userWithAccessToken.accessToken;
+        token.id = user.id.toString();
+        token.email = user.email;
       }
       return token;
     },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-        session.user.email = token.email as string;
-        session.user.accessToken = token.accessToken as string;
+
+    async session({ session, token }: { session: Session, token: Partial<NextAuthUser> }) {
+      if (token.id && token.email) {
+        session.user.id = token.id;
+        session.user.email = token.email;
       }
       return session;
     },
@@ -83,6 +78,6 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   pages: {
-    signIn: "/auth/login",
+    signIn: ROUTES.AUTH.SIGN_IN,
   },
 };
