@@ -24,8 +24,8 @@ declare module "next-auth" {
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
     CredentialsProvider({
       name: "Credentials",
@@ -50,10 +50,10 @@ export const authOptions: NextAuthOptions = {
           if (response.status === 200 && user) {
             return { ...user, accessToken: user.accessToken};
           } else {
-            throw new Error(user.message || ERROR_MESSAGES.LOGIN_FAILED);
+            throw new Error(ERROR_MESSAGES.LOGIN_FAILED);
           }
         } catch (error: unknown) {
-          throw new Error(error.response?.data?.message || ERROR_MESSAGES.LOGIN_FAILED);
+          throw new Error(ERROR_MESSAGES.LOGIN_FAILED);
         }
       },
     }),
