@@ -1,74 +1,77 @@
-import axios from 'axios';
+import axios from "axios";
 import { ROUTES, API_URLS } from '@/constants/urls';
-import { NextAuthOptions, Session, User as NextAuthUser } from "next-auth";
+import { NextAuthOptions, User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials"; 
 import Credentials from "next-auth/providers/credentials";
-import { checkEnvVariables } from '@/config/env';
 import { CredError } from '@/error/CredError';
-import { UserDTO } from '@/dto/UserDTO';  
 import { ERROR_MESSAGES } from '@/constants/errors';
-import { handleError } from '@/util/handleError';
+import { LoginRequestDto } from '@/dto/LoginRequestDto';
+import { LoginResponseDto } from '@/dto/LoginResponseDto';
 
 declare module "next-auth" {
   interface Session {
-    user: NextAuthUser;  
+    user: User; 
+  }
+
+  interface User {
+    id: number;
+    email: string;
+    accessToken: string;
   }
 }
-
-checkEnvVariables();
 
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
-    Credentials({
+    CredentialsProvider({
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials): Promise<NextAuthUser | null> { 
+      async authorize(credentials) {
         if (!credentials || !credentials.email || !credentials.password) {
           throw new CredError(ERROR_MESSAGES.INVALID_CREDENTIAL);
         }
 
+        const loginData: LoginRequestDto = {
+          email: credentials.email,
+          password: credentials.password,
+        };
+
         try {
-          const { data: user } = await axios.post<UserDTO>(API_URLS.LOGIN, {
-            email: credentials.email,
-            password: credentials.password,
-          });
-        
-          if (!user) {
-            throw new CredError(ERROR_MESSAGES.LOGIN_FAILED);
+          const response = await axios.post(API_URLS.LOGIN, loginData);
+          const user: LoginResponseDto = response.data;
+
+          if (response.status === 200 && user) {
+            return { ...user, accessToken: user.accessToken};
+          } else {
+            throw new Error(user.message || ERROR_MESSAGES.LOGIN_FAILED);
           }
-        
-          return {
-            id: user.id.toString(),
-            email: user.email,
-          }
-        } catch (error) {
-          handleError(error); 
-          return null;
+        } catch (error: unknown) {
+          throw new Error(error.response?.data?.message || ERROR_MESSAGES.LOGIN_FAILED);
         }
-        
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }: { token: Partial<NextAuthUser>, user?: NextAuthUser }) {
+    async jwt({ token, user }) {
       if (user) {
-        token.id = user.id.toString();
+        token.id = user.id; 
         token.email = user.email;
+        token.accessToken = user.accessToken;
       }
       return token;
     },
-
-    async session({ session, token }: { session: Session, token: Partial<NextAuthUser> }) {
-      if (token.id && token.email) {
+    async session({ session, token }) {
+      if (session.user) {
         session.user.id = token.id;
         session.user.email = token.email;
+        session.user.accessToken = token.accessToken;
       }
       return session;
     },

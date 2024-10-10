@@ -1,46 +1,27 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { signIn, useSession } from 'next-auth/react';
+import { useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useAuthForm } from '@/hooks/useAuthForm';
+import { useAuthActions } from '@/hooks/useAuthActions';
 import { useRouter } from 'next/navigation';
+import { ROUTES } from '@/constants/urls';
 import Link from 'next/link';
-import Image from 'next/image';
 import '@/styles/pages/auth/login.scss';
 
 export default function LoginPage() {
-  const { status, data: session } = useSession(); 
+  const { status } = useSession();
   const router = useRouter();
+
+  const { email, setEmail, password, setPassword, error, setError } = useAuthForm();
+
+  const { handleLogin, handleGoogleLogin } = useAuthActions({ email, password, setError });
 
   useEffect(() => {
     if (status === 'authenticated') {
-      router.push('/');
+      router.push(ROUTES.HOME);
     }
   }, [status, router]);
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-
-  const handleLogin = async () => {
-    try {
-      const result = await signIn('credentials', {
-        redirect: false,
-        email,
-        password,
-      });
-      if (result?.error) {
-        setError(result.error);
-      } else {
-        router.push('/');
-      }
-    } catch (err) {
-      setError('로그인 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
-    }
-  };
-
-  const handleGoogleLogin = () => {
-    signIn('google', { callbackUrl: '/' });
-  };
 
   return (
     <>
@@ -76,11 +57,9 @@ export default function LoginPage() {
       <Link href="/auth/signup">회원가입</Link>
 
       <button className="social_button" onClick={handleGoogleLogin}>
-        <Image
+      <img
           src="https://img.icons8.com/color/200/google-logo.png"
-          alt="구글 이미지"
-          width={24}
-          height={24}
+          alt="구글로고 이미지"
         />
         Google로 계속하기
       </button>

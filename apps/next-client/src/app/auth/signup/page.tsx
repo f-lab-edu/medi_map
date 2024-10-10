@@ -1,39 +1,19 @@
 'use client';
 
-import { useState } from 'react';
-import axios, { AxiosError } from 'axios';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import '@/styles/pages/auth/signup.scss';
+import { useSignupForm } from '@/hooks/useSignupForm';
+import { useSignupActions } from '@/hooks/useSignupActions';
 
 export default function SignupPage() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const router = useRouter();
+  const { username, setUsername, email, setEmail, password, setPassword, error, setError } = useSignupForm();
 
-  const handleSignup = async () => {
-    try {
-      const response = await axios.post('http://localhost:5000/api/auth/signup', {
-        username,
-        email,
-        password,
-      });
-      if (response.status === 201) {
-        router.push('/auth/login');
-      }
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        const errorMessage = err.response?.data?.message || '회원가입 중 오류가 발생했습니다.';
-        setError(errorMessage);
-      } else if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('회원가입 중 오류가 발생했습니다.');
-      }
-    }
-  };
+  const { handleSignup } = useSignupActions({
+    username,
+    email,
+    password,
+    setError,
+  });
 
   return (
     <>
