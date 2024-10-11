@@ -2,7 +2,7 @@ import axios from "axios";
 import { ROUTES, API_URLS } from '@/constants/urls';
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { CredentialsProvider } from "next-auth/providers/credentials";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { JWT } from "next-auth/jwt";
 import { CredError } from '@/error/CredError';
 import { ERROR_MESSAGES } from '@/constants/errors';
