@@ -2,12 +2,13 @@
 
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
+import { ROUTES } from '@/constants/urls';
 
 export default function Header() {
   const { data: session } = useSession();
 
   const handleLogout = () => {
-    signOut({ callbackUrl: '/auth/login' });
+    signOut({ callbackUrl: ROUTES.AUTH.SIGN_IN });
   };
 
   return (

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export const useAuthForm = () => {
+export const useLoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');

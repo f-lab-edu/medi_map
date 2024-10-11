@@ -1,9 +1,16 @@
 import { useRouter } from 'next/navigation';
-import { loginWithCredentials, loginWithGoogle } from '@/services/authService';
+import { Dispatch, SetStateAction } from 'react';
+import { loginWithCredentials, loginWithGoogle } from '@/services/loginService';
 import { ERROR_MESSAGES } from '@/constants/errors';
 import { ROUTES } from '@/constants/urls';
 
-export const useAuthActions = ({ email, password, setError }) => {
+interface AuthActionsParams {
+  email: string;
+  password: string;
+  setError: Dispatch<SetStateAction<string>>;
+}
+
+export const useLoginActions = ({ email, password, setError }: AuthActionsParams) => {
   const router = useRouter();
 
   const handleLogin = async () => {

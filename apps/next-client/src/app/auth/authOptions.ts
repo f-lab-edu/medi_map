@@ -1,25 +1,13 @@
 import axios from "axios";
 import { ROUTES, API_URLS } from '@/constants/urls';
-import { NextAuthOptions, User } from "next-auth";
+import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import CredentialsProvider from "next-auth/providers/credentials"; 
-import Credentials from "next-auth/providers/credentials";
+import { CredentialsProvider } from "next-auth/providers/credentials";
+import { JWT } from "next-auth/jwt";
 import { CredError } from '@/error/CredError';
 import { ERROR_MESSAGES } from '@/constants/errors';
 import { LoginRequestDto } from '@/dto/LoginRequestDto';
 import { LoginResponseDto } from '@/dto/LoginResponseDto';
-
-declare module "next-auth" {
-  interface Session {
-    user: User; 
-  }
-
-  interface User {
-    id: number;
-    email: string;
-    accessToken: string;
-  }
-}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -48,7 +36,7 @@ export const authOptions: NextAuthOptions = {
           const user: LoginResponseDto = response.data;
 
           if (response.status === 200 && user) {
-            return { ...user, accessToken: user.accessToken};
+            return { id: user.email, email: user.email, accessToken: user.accessToken };
           } else {
             throw new Error(ERROR_MESSAGES.LOGIN_FAILED);
           }
@@ -61,7 +49,6 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id; 
         token.email = user.email;
         token.accessToken = user.accessToken;
       }
@@ -69,12 +56,11 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id;
         session.user.email = token.email;
         session.user.accessToken = token.accessToken;
       }
       return session;
-    },
+    }    
   },
   secret: process.env.NEXTAUTH_SECRET,
   session: {
