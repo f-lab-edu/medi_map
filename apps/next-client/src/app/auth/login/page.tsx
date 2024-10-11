@@ -2,20 +2,21 @@
 
 import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { useAuthForm } from '@/hooks/useAuthForm';
-import { useAuthActions } from '@/hooks/useAuthActions';
+import { useLoginForm } from '@/hooks/useLoginForm';
+import { useLoginActions } from '@/hooks/useLoginActions';
 import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/constants/urls';
 import Link from 'next/link';
+import Image from 'next/image';
 import '@/styles/pages/auth/login.scss';
 
 export default function LoginPage() {
   const { status } = useSession();
   const router = useRouter();
 
-  const { email, setEmail, password, setPassword, error, setError } = useAuthForm();
+  const { email, setEmail, password, setPassword, error, setError } = useLoginForm();
 
-  const { handleLogin, handleGoogleLogin } = useAuthActions({ email, password, setError });
+  const { handleLogin, handleGoogleLogin } = useLoginActions({ email, password, setError });
 
   useEffect(() => {
     if (status === 'authenticated') {
@@ -57,10 +58,12 @@ export default function LoginPage() {
       <Link href="/auth/signup">회원가입</Link>
 
       <button className="social_button" onClick={handleGoogleLogin}>
-      <img
-          src="https://img.icons8.com/color/200/google-logo.png"
-          alt="구글로고 이미지"
-        />
+      <Image
+        src="https://img.icons8.com/color/200/google-logo.png"
+        alt="구글로고 이미지"
+        width={24}
+        height={24}
+      />
         Google로 계속하기
       </button>
     </>
