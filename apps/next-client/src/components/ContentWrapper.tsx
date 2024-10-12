@@ -3,18 +3,15 @@
 import { usePathname } from 'next/navigation';
 import { ROUTES } from '@/constants/urls';
 
-const getClassNameFromPath = (pathname: string): string => {
+const getPageClass = (pathname: string): string => {
   if (pathname === ROUTES.HOME) return 'home';
-
-  return pathname
-    .slice(1)
-    .toLowerCase()
-    .replace(/\//g, '_');
+  const mainPath = pathname.split('/')[1] || ''; 
+  return mainPath.toLowerCase();
 };
 
 export default function ContentWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const className = getClassNameFromPath(pathname);
+  const className = getPageClass(pathname);
 
   return (
     <div className={className}>
