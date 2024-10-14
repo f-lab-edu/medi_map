@@ -1,10 +1,12 @@
-import pool from '../db';
+import pool from '@/db';
+import bcrypt from 'bcrypt';
 
 // 데이터베이스에서 사용자 생성
 export const createUser = async (username: string, email: string, password: string) => {
+  const hashedPassword = await bcrypt.hash(password, 10);
   const result = await pool.query(
     'INSERT INTO "Users" (username, email, password, "createdAt", "updatedAt") VALUES ($1, $2, $3, NOW(), NOW()) RETURNING *',
-    [username, email, password]
+    [username, email, hashedPassword]
   );
   return result.rows[0];
 };

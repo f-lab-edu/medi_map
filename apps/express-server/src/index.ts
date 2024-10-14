@@ -1,13 +1,17 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import authRoutes from './routes/auth';
-import { PORT } from './app-constants/constants';
+import authRoutes from '@/routes/auth';
+import { PORT } from '@/app-constants/constants';
+import { checkEnvVariables } from '@/config/env';
+import { ROUTES } from '@/constants/urls';
+
+checkEnvVariables();
 
 const app = express();
 
 // CORS 설정
 app.use(cors({
-  origin: 'http://localhost:3001',
+  origin: process.env.FRONTEND_URL,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 }));
@@ -22,10 +26,10 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use(express.json());
 
 // 라우트 설정
-app.use('/api/auth', authRoutes);
+app.use(ROUTES.API.AUTH, authRoutes);
 
 // 루트 라우트 추가
-app.get('/', (req: Request, res: Response) => {
+app.get(ROUTES.HOME, (req: Request, res: Response) => {
   res.send('Welcome to the Express Server!');
 });
 
@@ -35,9 +39,9 @@ app.use((req: Request, res: Response) => {
 });
 
 // 예외 처리 미들웨어 (항상 마지막에 추가)
-app.use((err: Error, req: Request, res: Response) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error('Error:', err.stack);
+  res.status(500).json({ message: 'Internal Server Error', error: err.message });
 });
 
 // 서버 실행

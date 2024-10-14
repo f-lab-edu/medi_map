@@ -2,13 +2,26 @@ import { Pool } from 'pg';
 import dotenv from 'dotenv';
 dotenv.config();
 
-// PostgreSQL 데이터베이스 연결 설정
+// PostgreSQL 연결 설정
 const pool = new Pool({
-  user: process.env.DB_USER as string,
-  host: process.env.DB_HOST as string,
-  database: process.env.DB_NAME as string,
-  password: process.env.DB_PASSWORD as string,
-  port: Number(process.env.DB_PORT),
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: Number(process.env.DB_PORT) || 5432,
 });
+
+const initializeDB = async () => {
+  try {
+    const client = await pool.connect();
+    console.log('Connected to PostgreSQL.');
+    client.release();
+  } catch (err) {
+    console.error('PostgreSQL connection error:', err);
+    process.exit(1);
+  }
+};
+
+initializeDB();
 
 export default pool;

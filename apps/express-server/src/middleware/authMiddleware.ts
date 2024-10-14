@@ -1,13 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '../app-constants/constants';
+import { JWT_SECRET } from '@/app-constants/constants';
 
 interface AuthenticatedRequest extends Request {
   user?: string | jwt.JwtPayload;
 }
 
 // JWT 토큰 검증 미들웨어
-export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const authMiddleware = (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 

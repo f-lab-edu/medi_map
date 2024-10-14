@@ -1,13 +1,13 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "src",
     "rootDir": "src",
     "module": "commonjs",
     "resolveJsonModule": true,
     "outDir": "dist",
     "esModuleInterop": true,
     "incremental": false,
+    "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"]
     }
