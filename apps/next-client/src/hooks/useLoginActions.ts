@@ -16,7 +16,7 @@ export const useLoginActions = ({ email, password, setError }: AuthActionsParams
   const handleLogin = async () => {
     try {
       if (!email || !password) {
-        setError(ERROR_MESSAGES.LOGIN_ERROR);
+        setError(ERROR_MESSAGES.LOGIN_FAILED);
         return;
       }
 
@@ -27,14 +27,13 @@ export const useLoginActions = ({ email, password, setError }: AuthActionsParams
         router.push(ROUTES.HOME);
       }
     } catch (err: unknown) {
-      setError(ERROR_MESSAGES.LOGIN_ERROR);
+      setError(ERROR_MESSAGES.LOGIN_FAILED);
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
       await loginWithGoogle();
-      router.push(ROUTES.HOME);
     } catch (err: unknown) {
       setError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
     }
