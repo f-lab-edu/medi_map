@@ -14,7 +14,6 @@ export const loginWithCredentials = async (email: string, password: string) => {
       throw new Error(ERROR_MESSAGES.LOGIN_ERROR);
     }
 
-    localStorage.setItem('accessToken', result.accessToken);
     return result;
   } catch (error: unknown) {
     handleLoginError(error);

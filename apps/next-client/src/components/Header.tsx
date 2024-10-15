@@ -8,7 +8,6 @@ export default function Header() {
   const { data: session } = useSession();
 
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
     signOut({ callbackUrl: ROUTES.AUTH.SIGN_IN });
   };
 
