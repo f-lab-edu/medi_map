@@ -20,7 +20,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if(!credentials.email || !credentials.password) {
+        if (!credentials || !credentials.email || !credentials.password) {
           throw new CredError('Invalid credentials');
         }
         const loginData: LoginRequestDto = {
@@ -52,12 +52,12 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      session.user = {
-        email: token.email,
-        accessToken: token.accessToken,
-      };
+      if (session.user) {
+        session.user.email = token.email;
+        session.user.accessToken = token.accessToken;
+      }
       return session;
-    },
+    }    
   },
   
   secret: process.env.NEXTAUTH_SECRET,
