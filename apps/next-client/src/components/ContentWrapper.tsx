@@ -5,8 +5,11 @@ import { ROUTES } from '@/constants/urls';
 
 const getPageClass = (pathname: string): string => {
   if (pathname === ROUTES.HOME) return 'home';
-  const mainPath = pathname.split('/')[1] || ''; 
-  return mainPath.toLowerCase();
+  
+  const paths = pathname.split('/').filter(Boolean); 
+  const className = paths.join('_').toLowerCase();
+  
+  return className;
 };
 
 export default function ContentWrapper({ children }: { children: React.ReactNode }) {

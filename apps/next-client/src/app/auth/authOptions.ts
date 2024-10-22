@@ -1,11 +1,9 @@
-import axios from "axios";
+import { NextAuthOptions } from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import axios from 'axios';
 import { ROUTES, API_URLS } from '@/constants/urls';
-import { NextAuthOptions } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { JWT } from "next-auth/jwt";
 import { CredError } from '@/error/CredError';
-import { ERROR_MESSAGES } from '@/constants/errors';
 import { LoginRequestDto } from '@/dto/LoginRequestDto';
 import { LoginResponseDto } from '@/dto/LoginResponseDto';
 
@@ -16,16 +14,15 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
     CredentialsProvider({
-      name: "Credentials",
+      name: 'Credentials',
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         if (!credentials || !credentials.email || !credentials.password) {
-          throw new CredError(ERROR_MESSAGES.INVALID_CREDENTIAL);
+          throw new CredError('Invalid credentials');
         }
-
         const loginData: LoginRequestDto = {
           email: credentials.email,
           password: credentials.password,
@@ -38,10 +35,10 @@ export const authOptions: NextAuthOptions = {
           if (response.status === 200 && user) {
             return { id: user.email, email: user.email, accessToken: user.accessToken };
           } else {
-            throw new Error(ERROR_MESSAGES.LOGIN_FAILED);
+            throw new CredError('Login failed'); 
           }
-        } catch (error: unknown) {
-          throw new Error(ERROR_MESSAGES.LOGIN_FAILED);
+        } catch {
+          throw new CredError('Login failed'); 
         }
       },
     }),
@@ -62,11 +59,9 @@ export const authOptions: NextAuthOptions = {
       return session;
     }    
   },
+  
   secret: process.env.NEXTAUTH_SECRET,
   session: {
-    strategy: "jwt",
-  },
-  pages: {
-    signIn: ROUTES.AUTH.SIGN_IN,
+    strategy: 'jwt',
   },
 };

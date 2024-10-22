@@ -15,7 +15,7 @@ export const loginWithCredentials = async (email: string, password: string) => {
     }
 
     return result;
-  } catch (error) {
+  } catch (error: unknown) {
     handleLoginError(error);
   }
 };
@@ -23,7 +23,7 @@ export const loginWithCredentials = async (email: string, password: string) => {
 export const loginWithGoogle = async () => {
   try {
     await signIn('google', { callbackUrl: ROUTES.HOME });
-  } catch (error) {
+  } catch (error: unknown) {
     handleLoginError(error);
   }
 };
