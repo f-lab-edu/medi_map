@@ -30,14 +30,14 @@ export const authOptions: NextAuthOptions = {
 
         try {
           const response = await axios.post(API_URLS.LOGIN, loginData);
-          const user: LoginResponseDto = response.data;
+          const data = response.data;
 
-          if (response.status === 200 && user) {
-            return { id: user.email, email: user.email, accessToken: user.accessToken };
+          if (response.status === 200 && data.user) {
+            return { id: data.user.id, email: data.user.email, accessToken: data.token };
           } else {
             throw new CredError('Login failed'); 
           }
-        } catch {
+        } catch(error: unknown) {
           throw new CredError('Login failed'); 
         }
       },
