@@ -11,7 +11,11 @@ export const loginWithCredentials = async (email: string, password: string) => {
       password,
     });
 
-    if (!result || result.error) {
+    if (!result) {
+      throw new LoginError(ERROR_MESSAGES.LOGIN_ERROR);
+    }
+
+    if (result.error) {
       throw new LoginError(result.error || ERROR_MESSAGES.LOGIN_ERROR);
     }
 
@@ -25,7 +29,11 @@ export const loginWithGoogle = async () => {
   try {
     const result = await signIn('google', { callbackUrl: ROUTES.HOME });
 
-    if (!result || result.error) {
+    if (!result) {
+      throw new LoginError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
+    }
+
+    if (result.error) {
       throw new LoginError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
     }
 
