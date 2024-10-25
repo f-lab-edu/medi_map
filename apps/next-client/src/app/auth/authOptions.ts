@@ -7,6 +7,7 @@ import { CredError } from '@/error/CredError';
 import { LoginRequestDto } from '@/dto/LoginRequestDto';
 import { LoginResponseDto } from '@/dto/LoginResponseDto';
 import { ERROR_MESSAGES } from '@/constants/errors';
+import { axiosInstance } from '@/services/axiosInstance';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -30,15 +31,15 @@ export const authOptions: NextAuthOptions = {
         };
 
         try {
-          const response = await axios.post(API_URLS.LOGIN, loginData);
-          const data = response.data;
+          const response = await axiosInstance.post('', loginData); 
+          const user: LoginResponseDto = response.data;
 
-          if (response.status === 200 && data.user) {
-            return { id: data.user.id, email: data.user.email, accessToken: data.token };
+          if (response.status === 200 && user) {
+            return { id: user.email, email: user.email, accessToken: user.token };
           } else {
             throw new CredError(ERROR_MESSAGES.LOGIN_FAILED); 
           }
-        } catch(error: unknown) {
+        } catch {
           throw new CredError(ERROR_MESSAGES.LOGIN_FAILED); 
         }
       },
