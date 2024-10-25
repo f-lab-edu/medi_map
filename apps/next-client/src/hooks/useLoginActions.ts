@@ -36,11 +36,7 @@ export const useLoginActions = ({ email, password, setError }: AuthActionsParams
         setError(result.error);
       }
     } catch (err: unknown) {
-      if (err instanceof LoginError) {
-        setError(err.message);
-      } else {
-        setError(ERROR_MESSAGES.LOGIN_FAILED); 
-      }
+      setError(err instanceof LoginError ? err.message : ERROR_MESSAGES.LOGIN_FAILED);
     }
   };
 
@@ -48,11 +44,7 @@ export const useLoginActions = ({ email, password, setError }: AuthActionsParams
     try {
       await loginWithGoogle();
     } catch (err: unknown) {
-      if (err instanceof LoginError) {
-        setError(err.message);
-      } else {
-        setError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
-      }
+      setError(err instanceof LoginError ? err.message : ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
     }
   };
 

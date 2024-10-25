@@ -20,16 +20,14 @@ export const useSignupActions = ({
   const router = useRouter();
 
   const handleSignup = async () => {
-    if (!username) {
-      setError('사용자명을 입력해 주세요.');
-      return;
-    }
-    if (!email) {
-      setError('이메일을 입력해 주세요.');
-      return;
-    }
-    if (!password) {
-      setError('비밀번호를 입력해 주세요.');
+    if (!username || !email || !password) {
+      setError(
+        !username
+          ? '사용자명을 입력해 주세요.'
+          : !email
+          ? '이메일을 입력해 주세요.'
+          : '비밀번호를 입력해 주세요.'
+      );
       return;
     }
 
@@ -42,11 +40,7 @@ export const useSignupActions = ({
         setError(response.message || ERROR_MESSAGES.SIGN_UP_ERROR);
       }
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError(ERROR_MESSAGES.SIGN_UP_ERROR);
-      }
+      setError(err instanceof Error ? err.message : ERROR_MESSAGES.SIGN_UP_ERROR);
     }
   };
 

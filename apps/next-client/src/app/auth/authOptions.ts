@@ -6,6 +6,7 @@ import { ROUTES, API_URLS } from '@/constants/urls';
 import { CredError } from '@/error/CredError';
 import { LoginRequestDto } from '@/dto/LoginRequestDto';
 import { LoginResponseDto } from '@/dto/LoginResponseDto';
+import { ERROR_MESSAGES } from '@/constants/errors';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -21,7 +22,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials || !credentials.email || !credentials.password) {
-          throw new CredError('Invalid credentials');
+          throw new CredError(ERROR_MESSAGES.INVALID_CREDENTIAL);
         }
         const loginData: LoginRequestDto = {
           email: credentials.email,
@@ -35,10 +36,10 @@ export const authOptions: NextAuthOptions = {
           if (response.status === 200 && data.user) {
             return { id: data.user.id, email: data.user.email, accessToken: data.token };
           } else {
-            throw new CredError('Login failed'); 
+            throw new CredError(ERROR_MESSAGES.LOGIN_FAILED); 
           }
         } catch(error: unknown) {
-          throw new CredError('Login failed'); 
+          throw new CredError(ERROR_MESSAGES.LOGIN_FAILED); 
         }
       },
     }),
