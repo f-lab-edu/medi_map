@@ -1,4 +1,7 @@
 export interface LoginResponseDto {
-  email: string;
-  accessToken: string;
+  success: boolean;
+  email?: string;
+  accessToken?: string;
+  message?: string;
+  status?: number;
 }

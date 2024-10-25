@@ -4,5 +4,6 @@ export const ERROR_MESSAGES = {
   INVALID_CREDENTIAL: "유효하지 않은 자격 증명입니다.",
   LOGIN_ERROR: "로그인 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.",
   GOOGLE_LOGIN_ERROR: "구글 로그인 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.",
-  SIGN_UP_ERROR: "회원가입 중 오류가 발생했습니다."
+  SIGN_UP_ERROR: "회원가입 중 오류가 발생했습니다.",
+  EMAIL_ALREADY_EXISTS: "이미 사용 중인 이메일입니다. 다른 이메일을 사용해 주세요." 
 };

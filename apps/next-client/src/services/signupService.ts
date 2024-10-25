@@ -15,20 +15,36 @@ export const signup = async ({ username, email, password }: SignupRequestDto): P
     return {
       success: true,
       userId: response.data?.userId,
+      status: response.status,
     };
   } catch (error) {
-    const errorMessage = handleSignupError(error);
-    return {
-      success: false,
-      message: errorMessage,
-    };
+    return handleSignupError(error);
   }
 };
 
-const handleSignupError = (error: unknown): string => {
+const handleSignupError = (error: unknown): SignupResponseDto => {
   if (axios.isAxiosError(error)) {
+
     const axiosError = error as AxiosError<{ message?: string }>;
-    return ERROR_MESSAGES.SIGN_UP_ERROR;
+
+    if (axiosError.response?.status === 409) {
+      return {
+        success: false,
+        message: ERROR_MESSAGES.EMAIL_ALREADY_EXISTS,
+        status: 409,
+      };
+    }
+
+    return {
+      success: false,
+      message: axiosError.response?.data?.message || ERROR_MESSAGES.SIGN_UP_ERROR,
+      status: axiosError.response?.status,
+    };
   }
-  return ERROR_MESSAGES.SIGN_UP_ERROR;
+  
+  return {
+    success: false,
+    message: ERROR_MESSAGES.SIGN_UP_ERROR,
+    status: undefined,
+  };
 };

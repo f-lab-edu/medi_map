@@ -35,16 +35,16 @@ export const useSignupActions = ({
     try {
       const response = await signup({ username, email, password });
 
-      if (response?.status === 201) {
+      if (response.success && response.status === 201) {
         router.push(ROUTES.AUTH.SIGN_IN);
       } else {
-        setError(ERROR_MESSAGES.LOGIN_ERROR);
+        setError(response.message || ERROR_MESSAGES.SIGN_UP_ERROR);
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError(ERROR_MESSAGES.LOGIN_ERROR);
+        setError(ERROR_MESSAGES.SIGN_UP_ERROR);
       }
     }
   };
