@@ -3,7 +3,6 @@ import { signup } from '@/services/signupService';
 import { ROUTES } from '@/constants/urls';
 import { Dispatch, SetStateAction } from 'react';
 import { ERROR_MESSAGES } from '@/constants/errors';
-import { SignupError } from '@/error/AuthError';
 
 interface SignupActionsParams {
   username: string;
@@ -42,9 +41,9 @@ export const useSignupActions = ({
       } else {
         setError(response.message || ERROR_MESSAGES.SIGN_UP_ERROR);
       }
-    } catch (error: unknown) {
-      if (error instanceof SignupError) {
-        setError(error.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
       } else {
         setError(ERROR_MESSAGES.SIGN_UP_ERROR);
       }
