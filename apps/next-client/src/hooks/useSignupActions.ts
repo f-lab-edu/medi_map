@@ -3,6 +3,7 @@ import { signup } from '@/services/signupService';
 import { ROUTES } from '@/constants/urls';
 import { Dispatch, SetStateAction } from 'react';
 import { ERROR_MESSAGES } from '@/constants/errors';
+import { SignupError } from '@/error/AuthError';
 
 interface SignupActionsParams {
   username: string;
@@ -32,6 +33,7 @@ export const useSignupActions = ({
       setError('비밀번호를 입력해 주세요.');
       return;
     }
+
     try {
       const response = await signup({ username, email, password });
 
@@ -40,9 +42,9 @@ export const useSignupActions = ({
       } else {
         setError(response.message || ERROR_MESSAGES.SIGN_UP_ERROR);
       }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
+    } catch (error: unknown) {
+      if (error instanceof SignupError) {
+        setError(error.message);
       } else {
         setError(ERROR_MESSAGES.SIGN_UP_ERROR);
       }
