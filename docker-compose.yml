@@ -13,3 +13,19 @@ services:
       - "5432:5432" 
     volumes:
       - ../postgres-data:/var/lib/postgresql/data 
+  express-server:
+    image: docker_username/express-server
+    build:
+      context: .
+      dockerfile: ./apps/express-server/Dockerfile
+    ports:
+      - '5000:5000'
+
+  next-client:
+    image: docker_username/next-client
+    build:
+      context: .
+      dockerfile: ./apps/next-client/Dockerfile
+    ports:
+      - '3002:3000'
+
