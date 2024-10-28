@@ -28,7 +28,7 @@ module.exports = {
     ],
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
-    'no-console': 'error',
+    'no-console': 'off',
     'react/jsx-props-no-spreading': 'off',
     'import/order': 'off',
     'react/function-component-definition': 'off',
