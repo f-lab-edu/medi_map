@@ -1,14 +1,29 @@
-import pool from '@/db';
+import { User } from '@/models';
 
+// 사용자 생성 함수
 export const createUser = async (username: string, email: string, password: string) => {
-  const result = await pool.query(
-    'INSERT INTO "Users" (username, email, password, "createdAt", "updatedAt") VALUES ($1, $2, $3, NOW(), NOW()) RETURNING *',
-    [username, email, password]
-  );
-  return result.rows[0];
+  try {
+    const user = await User.create({
+      username,
+      email,
+      password,
+    });
+    return user;
+  } catch (error) {
+    console.error('Error creating user:', error);
+    throw error;
+  }
 };
 
+// 이메일로 사용자 찾기 함수
 export const findUserByEmail = async (email: string) => {
-  const result = await pool.query('SELECT * FROM "Users" WHERE email = $1', [email]);
-  return result.rows[0];
+  try {
+    const user = await User.findOne({
+      where: { email },
+    });
+    return user;
+  } catch (error) {
+    console.error('Error finding user by email:', error);
+    throw error;
+  }
 };

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 'use strict';
 
 const fs = require('fs');
@@ -6,7 +7,7 @@ const Sequelize = require('sequelize');
 const process = require('process');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
+const config = require(__dirname + '/../config/config.js')[env];
 const db = {};
 
 let sequelize;
@@ -31,13 +32,9 @@ fs
     db[model.name] = model;
   });
 
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-});
-
+// 각 모델을 개별적으로 내보낼 수 있도록 설정
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+db.User = db.User || require('./user')(sequelize, Sequelize.DataTypes); // User 모델 추가
 
 module.exports = db;

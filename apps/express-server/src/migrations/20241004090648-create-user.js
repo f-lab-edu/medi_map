@@ -7,29 +7,35 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        field: 'id',
       },
       username: {
         type: Sequelize.STRING,
         allowNull: false,
+        field: 'username',
       },
       email: {
         type: Sequelize.STRING,
         allowNull: false,
+        field: 'email',
       },
       password: {
         type: Sequelize.STRING,
         allowNull: false,
+        field: 'password',
       },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
+        field: 'createdAt',
       },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
+        field: 'updatedAt',
       }
     });
   },
