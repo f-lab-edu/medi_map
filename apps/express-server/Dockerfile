@@ -3,24 +3,39 @@ FROM node:20-alpine3.18 AS phase1
 
 WORKDIR /app
 
-# Run yarn only if package.json changes
-# copied tsconfig as express-server's tsconfig extends rootDir's tsconfig
+# Copy necessary files
 COPY --chown=node:node turbo.json .
 COPY --chown=node:node tsconfig.json .
 COPY --chown=node:node package.json .
 
-# first create these directories, else the copying won't work.
+# Create the express-server directory and copy relevant files
 RUN mkdir -p apps/express-server
-
-# copying only the required packages
 COPY --chown=node:node ./apps/express-server/package.json apps/express-server
 COPY --chown=node:node ./apps/express-server apps/express-server
 
-# install node_modules
+# Environment variables for build arguments
+ARG JWT_SECRET
+ARG DB_USER
+ARG DB_HOST
+ARG DB_NAME
+ARG DB_PASSWORD
+ARG DB_PORT
+ARG FRONTEND_URL
+
+# Set environment variables for runtime
+ENV JWT_SECRET=$JWT_SECRET
+ENV DB_USER=$DB_USER
+ENV DB_HOST=$DB_HOST
+ENV DB_NAME=$DB_NAME
+ENV DB_PASSWORD=$DB_PASSWORD
+ENV DB_PORT=$DB_PORT
+ENV FRONTEND_URL=$FRONTEND_URL
+
+# Install dependencies
 RUN yarn
 
-# build express-server
+# Build express-server
 RUN yarn build
 
-# run server in dev env
+# Start the server
 CMD ["yarn", "workspace", "express-server", "start"]

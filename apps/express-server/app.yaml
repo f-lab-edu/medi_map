@@ -1,0 +1,23 @@
+runtime: custom
+env: flex
+
+manual_scaling:
+  instances: 1
+resources:
+  cpu: 1
+  memory_gb: 0.5
+  disk_size_gb: 10
+
+env_variables:
+  JWT_SECRET: 'b1fbf862fe5538e821c12ac9c45c9809f87e685e04ebe183ec061efd5a46820ea779b0d159732465ca36c97a62c4c7305e89df29b859cdabd5161b67548875fb'
+  DB_USER: 'postgres'
+  DB_HOST: '/cloudsql/medi-map-440316:asia-northeast3:postgres'
+  DB_NAME: 'postgres'
+  DB_PASSWORD: 'postgres'
+  DB_PORT: 5432
+  FRONTEND_URL: 'https://medi-map-440316.du.r.appspot.com'
+
+readiness_check:
+  app_start_timeout_sec: 600
+
+service: backend

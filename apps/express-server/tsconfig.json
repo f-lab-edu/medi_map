@@ -1,6 +1,7 @@
 {
-  "extends": "../../tsconfig.json",
+  // "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "target": "ES6",
     "rootDir": "src",
     "module": "commonjs",
     "resolveJsonModule": true,

@@ -1,0 +1,17 @@
+runtime: custom
+env: flex
+instance_class: F2
+
+automatic_scaling:
+  min_num_instances: 1
+  max_num_instances: 5
+
+env_variables:
+  NEXT_PUBLIC_LOCAL_BACKEND_URL: "https://backend-dot-medi-map-440316.du.r.appspot.com"
+  GOOGLE_CLIENT_ID: "206955231294-s5isn54ttrdmkp29c25lvb3g12rs1dtm.apps.googleusercontent.com"
+  GOOGLE_CLIENT_SECRET: "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"
+  NEXTAUTH_SECRET: "8b885ddb0a5da1f04784be72e27589c9fbfee22d20f4ef27f063d8ed7d8211bd"
+  NEXTAUTH_URL: "https://medi-map-440316.du.r.appspot.com"
+
+readiness_check:
+  app_start_timeout_sec: 600

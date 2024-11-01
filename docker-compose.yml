@@ -15,19 +15,23 @@ services:
       - ../postgres-data:/var/lib/postgresql/data 
 
   express-server:
-    image: docker_username/express-server
+    image: henny1105/express-server
     build:
       context: .
       dockerfile: ./apps/express-server/Dockerfile
     ports:
       - '5000:5000'
+    environment:
+      DB_HOST: crud-api          # PostgreSQL 서비스 이름
+      DB_PORT: 5432              # PostgreSQL 포트
+      DB_USER: postgres           # PostgreSQL 사용자
+      DB_PASSWORD: postgres       # PostgreSQL 비밀번호
+      DB_NAME: postgres           # 사용할 데이터베이스 이름
 
   next-client:
-    image: docker_username/next-client
+    image: henny1105/next-client
     build:
       context: .
       dockerfile: ./apps/next-client/Dockerfile
     ports:
-      - '3002:3000'
-
-
+      - '3000:3000'

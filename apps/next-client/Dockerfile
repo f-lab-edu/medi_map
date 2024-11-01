@@ -7,12 +7,27 @@ RUN apk add --no-cache libc6-compat
 # Set working directory in the container
 WORKDIR /app
 
+# Define build-time variables
+ARG GOOGLE_CLIENT_ID
+ARG GOOGLE_CLIENT_SECRET
+ARG NEXTAUTH_SECRET
+ARG NEXT_PUBLIC_LOCAL_BACKEND_URL
+ARG NEXTAUTH_URL
+
+# Set environment variables to be used in the container
+ENV GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
+ENV GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
+ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
+ENV NEXT_PUBLIC_LOCAL_BACKEND_URL=$NEXT_PUBLIC_LOCAL_BACKEND_URL
+ENV NEXTAUTH_URL=$NEXTAUTH_URL
+
 # first create these directories, else the copying won't work.
 RUN mkdir -p apps/next-client
 
+# Copy package.json and yarn.lock for dependency installation
 COPY --chown=node:node package.json .
 COPY --chown=node:node yarn.lock .
-COPY --chown=node:node ./apps/next-client/package.json  ./apps/next-client
+COPY --chown=node:node ./apps/next-client/package.json ./apps/next-client
 
 # Install dependencies
 RUN yarn --frozen-lockfile
@@ -20,8 +35,6 @@ RUN yarn --frozen-lockfile
 # Copy the rest of the application code to the container
 COPY ./apps/next-client ./apps/next-client
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
