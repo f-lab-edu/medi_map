@@ -1,4 +1,30 @@
 steps:
+  # 프론트엔드 빌드 및 배포
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', 'gcr.io/medi-map-440316/next-client',
+      '-f', 'apps/next-client/Dockerfile',
+      '.',
+      '--build-arg', 'GOOGLE_CLIENT_ID=206955231294-s5isn54ttrdmkp29c25lvb3g12rs1dtm.apps.googleusercontent.com',
+      '--build-arg', 'GOOGLE_CLIENT_SECRET=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',
+      '--build-arg', 'NEXTAUTH_URL=https://medi-map-440316.du.r.appspot.com/',
+      '--build-arg', 'NEXTAUTH_SECRET=8b885ddb0a5da1f04784be72e27589c9fbfee22d20f4ef27f063d8ed7d8211bd',
+      '--build-arg', 'NEXT_PUBLIC_LOCAL_BACKEND_URL=https://backend-dot-medi-map-440316.du.r.appspot.com'
+      
+    ]
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/medi-map-440316/next-client']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: [
+      'app', 'deploy',
+      'apps/next-client/app.yaml',
+      '--image-url=gcr.io/medi-map-440316/next-client'
+    ]
+
   # 백엔드 빌드 및 배포
   - name: 'gcr.io/cloud-builders/docker'
     args: [
@@ -27,4 +53,5 @@ steps:
     ]
 
 images:
+  - 'gcr.io/medi-map-440316/next-client'
   - 'gcr.io/medi-map-440316/express-server'
