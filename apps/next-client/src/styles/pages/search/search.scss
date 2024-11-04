@@ -1,0 +1,55 @@
+.medicine_search {
+  width: 80rem;
+  margin: 0 auto;
+  .title {
+    font-size: 4rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 10rem;
+  }
+  .search_box {
+    display: flex;
+    gap: 0.7rem;
+    height: 5rem;
+    margin: 0 auto;
+
+    input {
+      width: 100%;
+      padding: 0 1rem;
+      font-size: 1.7rem;
+      border-radius: 0.5rem;
+    }
+    button {
+      min-width: 10rem;
+      height: 100%;
+      border-radius: 0.5rem;
+      background: #0aafdd;
+      color: #fff;
+      font-size: 1.7rem;
+      cursor: pointer;
+    }
+  }
+  .medicine_results {
+    display: flex;
+    flex-direction: column;
+    margin-top: 7rem;
+    .medicine_desc {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      cursor: pointer;
+      border-bottom: 1px solid #ccc;
+      padding: 1rem 0;
+      img {
+        border-radius: 0.5rem;
+      }
+      .name {
+        font-weight: 500;
+      }
+      .company {
+        font-size: 1.3rem;
+        color: #888;
+      }
+    }
+  }
+}
