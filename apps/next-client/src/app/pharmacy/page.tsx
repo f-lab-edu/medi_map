@@ -47,12 +47,12 @@ function initializeMap(containerId: string, pharmacies: PharmacyDTO[], location:
       const markerPosition = new window.kakao.maps.LatLng(pharmacy.wgs84Lat, pharmacy.wgs84Lon);
       const marker = new window.kakao.maps.Marker({ map, position: markerPosition, title: pharmacy.dutyName });
 
-      const infowindow = new window.kakao.maps.InfoWindow({
+      const infoWindow = new window.kakao.maps.infoWindow({
         content: `<div class='info_name'>${pharmacy.dutyName}</div>`,
       });
 
-      window.kakao.maps.event.addListener(marker, 'mouseover', () => infowindow.open(map, marker));
-      window.kakao.maps.event.addListener(marker, 'mouseout', () => infowindow.close());
+      window.kakao.maps.event.addListener(marker, 'mouseover', () => infoWindow.open(map, marker));
+      window.kakao.maps.event.addListener(marker, 'mouseout', () => infoWindow.close());
     });
   });
 }
