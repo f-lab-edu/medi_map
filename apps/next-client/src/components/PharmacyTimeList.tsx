@@ -1,7 +1,6 @@
 import React from 'react';
 import { PharmacyDTO } from '@/dto/PharmacyDTO';
 
-// 요일별 영업 시간 데이터
 const pharmacy_hours = [
   { name: '월요일', start: 'dutyTime1s', close: 'dutyTime1c' },
   { name: '화요일', start: 'dutyTime2s', close: 'dutyTime2c' },
