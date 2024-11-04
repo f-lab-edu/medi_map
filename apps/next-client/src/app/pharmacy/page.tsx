@@ -12,7 +12,6 @@ export default function PharmacyPage() {
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
 
-  // 사용자 위치를 가져옴
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -22,7 +21,6 @@ export default function PharmacyPage() {
     }
   }, []);
 
-  // 커스텀 훅을 사용하여 약국 데이터 로드
   const { pharmacies, error: pharmacyError, loading } = usePharmacy(location);
 
   return (

@@ -18,20 +18,22 @@ export function usePharmacy(location: { lat: number; lng: number } | null) {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if (location) {
+    if (!location) return;
+
+    const loadPharmacies = async () => {
       setLoading(true);
-      fetchPharmacies(location.lat, location.lng)
-        .then((data) => {
-          setPharmacies(data);
-          setError(null);
-        })
-        .catch((error) => {
-          setError(error instanceof PharmacyDataError ? error.message : ERROR_MESSAGES.PHARMACY_DATA_ERROR);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
+      try {
+        const data = await fetchPharmacies(location.lat, location.lng);
+        setPharmacies(data);
+        setError(null);
+      } catch (error) {
+        setError(error instanceof PharmacyDataError ? error.message : ERROR_MESSAGES.PHARMACY_DATA_ERROR);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPharmacies();
   }, [location]);
 
   return { pharmacies, error, loading };
