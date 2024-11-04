@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
 }
 
 function buildPharmacyApiUrl(lat: string, lng: string): string {
-  const API_KEY = process.env.NEXT_PUBLIC_DATA_API_KEY;
+  const API_KEY = process.env.DATA_API_KEY;
   const baseUrl = 'http://apis.data.go.kr/B552657/ErmctInsttInfoInqireService/getParmacyListInfoInqire';
   return `${baseUrl}?serviceKey=${API_KEY}&WGS84_LAT=${lat}&WGS84_LON=${lng}&numOfRows=100&pageNo=1&_type=json`;
 }

@@ -4,29 +4,7 @@ import React, { useEffect, useState } from 'react';
 import '@/styles/pages/pharmacy/pharmacy.scss';
 import { PharmacyDataError, LocationError } from '@/error/PharmaciesError';
 import { ERROR_MESSAGES } from '@/constants/errors';
-
-interface Pharmacy {
-  dutyName: string;
-  dutyAddr: string;
-  dutyTel1: string;
-  dutyTime1s?: string;
-  dutyTime1c?: string;
-  dutyTime2s?: string;
-  dutyTime2c?: string;
-  dutyTime3s?: string;
-  dutyTime3c?: string;
-  dutyTime4s?: string;
-  dutyTime4c?: string;
-  dutyTime5s?: string;
-  dutyTime5c?: string;
-  dutyTime6s?: string;
-  dutyTime6c?: string;
-  dutyTime7s?: string;
-  dutyTime7c?: string;
-  wgs84Lat: number;
-  wgs84Lon: number;
-  [key: string]: string | number | undefined;
-}
+import { PharmacyDTO } from '@/dto/PharmacyDTO';
 
 const days = [
   { name: '월요일', start: 'dutyTime1s', close: 'dutyTime1c' },
@@ -38,25 +16,30 @@ const days = [
   { name: '일요일', start: 'dutyTime7s', close: 'dutyTime7c' },
 ];
 
+// 시간을 "HH:MM" 형식으로 포맷
 function formatTime(time: string | number): string {
   const timeStr = time.toString().padStart(4, '0');
   return `${timeStr.slice(0, 2)}:${timeStr.slice(2)}`;
 }
 
-async function fetchPharmacies(lat: number, lng: number): Promise<Pharmacy[]> {
-  const response = await fetch(`/api/pharmacies?lat=${lat}&lng=${lng}`);
+// 약국 데이터를 서버에서 불러오는 함수
+async function fetchPharmacies(lat: number, lng: number): Promise<PharmacyDTO[]> {
+  const response = await fetch(`/api/pharmacy?lat=${lat}&lng=${lng}`);
   if (!response.ok) throw new PharmacyDataError();
   const data = await response.json();
-  if (!Array.isArray(data?.item)) throw new PharmacyDataError(ERROR_MESSAGES.PHARMACY_DATA_ERROR);
+
+  if (!Array.isArray(data.item)) throw new PharmacyDataError(ERROR_MESSAGES.PHARMACY_DATA_ERROR);
   return data.item;
 }
 
+
+// Kakao 지도 API를 로드하는 함수
 function loadKakaoMapScript(callback: () => void) {
   if (document.querySelector(`script[src*="sdk.js"]`)) {
     callback();
     return;
   }
-  
+
   const script = document.createElement('script');
   script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false&libraries=services,clusterer`;
   script.async = true;
@@ -65,9 +48,15 @@ function loadKakaoMapScript(callback: () => void) {
   document.head.appendChild(script);
 }
 
-function initializeMap(containerId: string, pharmacies: Pharmacy[], location: { lat: number; lng: number }) {
+// 약국 데이터로 지도에 마커를 초기화하는 함수
+function initializeMap(containerId: string, pharmacies: PharmacyDTO[], location: { lat: number; lng: number }) {
   window.kakao.maps.load(() => {
     const container = document.getElementById(containerId);
+    if (!container) {
+      console.error(`Map container with id "${containerId}" not found`);
+      return;
+    }
+
     const options = { center: new window.kakao.maps.LatLng(location.lat, location.lng), level: 5 };
     const map = new window.kakao.maps.Map(container, options);
 
@@ -86,10 +75,11 @@ function initializeMap(containerId: string, pharmacies: Pharmacy[], location: { 
 }
 
 export default function PharmacyPage() {
-  const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
+  const [pharmacies, setPharmacies] = useState<PharmacyDTO[]>([]);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // 사용자 위치를 가져옴
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -99,6 +89,7 @@ export default function PharmacyPage() {
     }
   }, []);
 
+  // 위치 기반 약국 데이터를 가져옴
   useEffect(() => {
     if (location) {
       fetchPharmacies(location.lat, location.lng)
@@ -110,6 +101,7 @@ export default function PharmacyPage() {
     }
   }, [location]);
 
+  // Kakao 지도 초기화
   useEffect(() => {
     loadKakaoMapScript(() => {
       if (pharmacies.length > 0 && location) {
@@ -122,7 +114,7 @@ export default function PharmacyPage() {
     <div>
       <h2 className="title">약국 찾기</h2>
       <div id="map" style={{ width: '100%', height: '400px', marginBottom: '20px' }}></div>
-      
+
       {error ? (
         <p className="error_message">{error}</p>
       ) : pharmacies.length > 0 ? (
