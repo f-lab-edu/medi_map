@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { PharmacyDTO } from '@/dto/PharmacyDTO';
 import { loadKakaoMapScript } from '@/utils/kakaoMapLoader';
+import { initializeMap, addMarkers } from '@/utils/mapUtils';
 
 interface KakaoMapProps {
   pharmacies: PharmacyDTO[];
@@ -18,7 +19,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location }) => {
         await loadKakaoMapScript();
         if (location) {
           const filteredPharmacies = applyFilter(pharmacies, filter);
-          initializeMap('map', filteredPharmacies, location);
+          initializeMap('map', location, (map) => addMarkers(map, filteredPharmacies));
         }
       } catch (error) {
         console.error("Failed to load Kakao Map:", error);
@@ -51,62 +52,17 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location }) => {
 
   // 현재 시간 기준으로 약국이 영업 중인지 확인
   const isPharmacyOpenNow = (pharmacy: PharmacyDTO, currentTime: number): boolean => {
-    const openTime = parseInt(pharmacy.dutyTime1s || '0000', 10); // 개점 시간
-    const closeTime = parseInt(pharmacy.dutyTime1c || '2400', 10); // 폐점 시간
-
+    const openTime = parseInt(pharmacy.dutyTime1s || '0000', 10);
+    const closeTime = parseInt(pharmacy.dutyTime1c || '2400', 10);
     return closeTime < openTime 
-      ? currentTime >= openTime || currentTime < closeTime // 야간 영업 시간
-      : currentTime >= openTime && currentTime < closeTime; // 일반 영업 시간
+      ? currentTime >= openTime || currentTime < closeTime
+      : currentTime >= openTime && currentTime < closeTime;
   };
 
   // 약국이 심야 시간대에 영업하는지 확인
   const isNightPharmacy = (pharmacy: PharmacyDTO) => {
     const closeTime = parseInt(pharmacy.dutyTime1c || '2400', 10);
-    return closeTime >= 2400 || closeTime < 600; // 심야 영업 시간
-  };
-
-  // 약국 위치에 마커를 생성하는 함수
-  const createMarker = (map: kakao.maps.Map, pharmacy: PharmacyDTO) => {
-    const markerPosition = new kakao.maps.LatLng(pharmacy.wgs84Lat, pharmacy.wgs84Lon);
-    return new kakao.maps.Marker({ map, position: markerPosition, title: pharmacy.dutyName });
-  };
-
-  // 마커 위에 표시될 인포 윈도우 생성
-  const createInfoWindow = (pharmacy: PharmacyDTO) => {
-    return new kakao.maps.InfoWindow({
-      content: `<div class='info_name'>${pharmacy.dutyName}</div>`, // 약국 이름 표시
-    });
-  };
-
-  // 지도에 약국 마커와 인포 윈도우 추가
-  const addMarkers = (map: kakao.maps.Map, pharmacies: PharmacyDTO[]) => {
-    pharmacies.forEach((pharmacy) => {
-      const marker = createMarker(map, pharmacy);
-      const infoWindow = createInfoWindow(pharmacy);
-
-      kakao.maps.event.addListener(marker, 'mouseover', () => infoWindow.open(map, marker));
-      kakao.maps.event.addListener(marker, 'mouseout', () => infoWindow.close());
-    });
-  };
-
-  // 지도 초기화 함수
-  const initializeMap = (
-    containerId: string,
-    filteredPharmacies: PharmacyDTO[],
-    location: { lat: number; lng: number }
-  ) => {
-    kakao.maps.load(() => {
-      const container = document.getElementById(containerId);
-      if (!container) {
-        console.error(`Map container with id "${containerId}" not found`);
-        return;
-      }
-
-      const options = { center: new kakao.maps.LatLng(location.lat, location.lng), level: 5 };
-      const map = new kakao.maps.Map(container, options);
-
-      addMarkers(map, filteredPharmacies);
-    });
+    return closeTime >= 2400 || closeTime < 600;
   };
 
   return (
