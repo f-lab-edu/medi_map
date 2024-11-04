@@ -5,24 +5,8 @@ import '@/styles/pages/pharmacy/pharmacy.scss';
 import { PharmacyDataError, LocationError } from '@/error/PharmaciesError';
 import { ERROR_MESSAGES } from '@/constants/errors';
 import { PharmacyDTO } from '@/dto/PharmacyDTO';
+import PharmacyTimeList from '@/components/PharmacyTimeList';
 
-const days = [
-  { name: '월요일', start: 'dutyTime1s', close: 'dutyTime1c' },
-  { name: '화요일', start: 'dutyTime2s', close: 'dutyTime2c' },
-  { name: '수요일', start: 'dutyTime3s', close: 'dutyTime3c' },
-  { name: '목요일', start: 'dutyTime4s', close: 'dutyTime4c' },
-  { name: '금요일', start: 'dutyTime5s', close: 'dutyTime5c' },
-  { name: '토요일', start: 'dutyTime6s', close: 'dutyTime6c' },
-  { name: '일요일', start: 'dutyTime7s', close: 'dutyTime7c' },
-];
-
-// 시간을 "HH:MM" 형식으로 포맷
-function formatTime(time: string | number): string {
-  const timeStr = time.toString().padStart(4, '0');
-  return `${timeStr.slice(0, 2)}:${timeStr.slice(2)}`;
-}
-
-// 약국 데이터를 서버에서 불러오는 함수
 async function fetchPharmacies(lat: number, lng: number): Promise<PharmacyDTO[]> {
   const response = await fetch(`/api/pharmacy?lat=${lat}&lng=${lng}`);
   if (!response.ok) throw new PharmacyDataError();
@@ -31,7 +15,6 @@ async function fetchPharmacies(lat: number, lng: number): Promise<PharmacyDTO[]>
   if (!Array.isArray(data.item)) throw new PharmacyDataError(ERROR_MESSAGES.PHARMACY_DATA_ERROR);
   return data.item;
 }
-
 
 // Kakao 지도 API를 로드하는 함수
 function loadKakaoMapScript(callback: () => void) {
@@ -124,20 +107,7 @@ export default function PharmacyPage() {
               <h2>{pharmacy.dutyName.trim()}</h2>
               <p>주소: {pharmacy.dutyAddr}</p>
               <p>전화번호: {pharmacy.dutyTel1}</p>
-              <div>
-                <strong>영업 시간:</strong>
-                <ul>
-                  {days.map((day) => {
-                    const openTime = pharmacy[day.start];
-                    const closeTime = pharmacy[day.close];
-                    return openTime && closeTime ? (
-                      <li key={day.name}>
-                        {day.name}: {formatTime(openTime)} - {formatTime(closeTime)}
-                      </li>
-                    ) : null;
-                  })}
-                </ul>
-              </div>
+              <PharmacyTimeList pharmacy={pharmacy} />
             </li>
           ))}
         </ul>
