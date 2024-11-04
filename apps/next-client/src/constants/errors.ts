@@ -11,4 +11,6 @@ export const ERROR_MESSAGES = {
   REQUSET_ERROR: "잘못된 요청입니다. 위도와 경도가 필요합니다.",
   VALIDATION_ERROR: "위도와 경도가 필요합니다.",
   KAKAO_MAP_ERROR: "카카오 지도를 불러오는 중 오류가 발생했습니다.",
+  NETWORK_ERROR: "네트워크 연결에 문제가 있습니다. 잠시 후 다시 시도해 주세요.",
+  GENERIC_ERROR: "오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
 };
