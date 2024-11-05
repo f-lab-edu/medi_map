@@ -3,24 +3,21 @@ import { NextResponse } from 'next/server';
 import { XMLParser } from 'fast-xml-parser';
 import { SEARCH_ERROR_MESSAGES } from '@/constants/search_errors';
 import { ApiKeyMissingError, ApiRequestError, ApiResponseParsingError } from '@/error/SearchError';
-import { MedicineResultDto } from '@/dto/MedicineResultDto';
- 
+
 const MEDI_DATA_API_KEY = process.env.DATA_API_KEY;
 
-async function fetchMedicineInfo(name: string, pageNo: number, numOfRows: number): Promise<MedicineResultDto[]> {
+async function fetchMedicineInfoById(id: string) {
   if (!MEDI_DATA_API_KEY) {
     throw new ApiKeyMissingError(SEARCH_ERROR_MESSAGES.API_KEY_MISSING);
   }
 
   const url = `http://apis.data.go.kr/1471000/MdcinGrnIdntfcInfoService01/getMdcinGrnIdntfcInfoList01?ServiceKey=${MEDI_DATA_API_KEY}`;
   const parser = new XMLParser();
-  
+
   try {
     const response = await axios.get(url, {
       params: {
-        item_name: name,
-        pageNo,
-        numOfRows,
+        item_seq: id,
       },
       responseType: 'text',
     });
@@ -36,9 +33,8 @@ async function fetchMedicineInfo(name: string, pageNo: number, numOfRows: number
       throw new ApiResponseParsingError(SEARCH_ERROR_MESSAGES.API_RESPONSE_PARSING_ERROR);
     }
 
-    const items = jsonData?.response?.body?.items?.item || [];
-    
-    return Array.isArray(items) ? items as MedicineResultDto[] : [items] as MedicineResultDto[];
+    const item = jsonData?.response?.body?.items?.item || null;
+    return item;
   } catch (error) {
     if (error instanceof ApiKeyMissingError || error instanceof ApiRequestError || error instanceof ApiResponseParsingError) {
       throw error;
@@ -48,22 +44,21 @@ async function fetchMedicineInfo(name: string, pageNo: number, numOfRows: number
 }
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const name = searchParams.get('name') || '';
-  const pageNo = parseInt(searchParams.get('page') || '1', 10);
-  const numOfRows = parseInt(searchParams.get('limit') || '10', 10);
+  const { pathname } = new URL(request.url);
+  const id = pathname.split('/').pop();
 
-  if (!name) {
+  if (!id) {
     return NextResponse.json({ message: SEARCH_ERROR_MESSAGES.MISSING_SEARCH_TERM }, { status: 400 });
   }
 
   try {
-    const medicineInfo = await fetchMedicineInfo(name, pageNo, numOfRows);
+    const medicineInfo = await fetchMedicineInfoById(id);
 
-    return NextResponse.json({
-      results: medicineInfo,
-      total: medicineInfo.length,
-    });
+    if (medicineInfo) {
+      return NextResponse.json(medicineInfo);
+    } else {
+      return NextResponse.json({ message: SEARCH_ERROR_MESSAGES.NO_MEDICINE_FOUND }, { status: 404 });
+    }
   } catch (error) {
     if (error instanceof ApiKeyMissingError) {
       return NextResponse.json({ message: SEARCH_ERROR_MESSAGES.API_KEY_MISSING }, { status: 500 });

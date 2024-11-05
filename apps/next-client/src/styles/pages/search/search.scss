@@ -1,12 +1,12 @@
+.title {
+  font-size: 4rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 10rem;
+}
 .medicine_search {
   width: 80rem;
   margin: 0 auto;
-  .title {
-    font-size: 4rem;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 10rem;
-  }
   .search_box {
     display: flex;
     gap: 0.7rem;
@@ -34,22 +34,58 @@
     flex-direction: column;
     margin-top: 7rem;
     .medicine_desc {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      cursor: pointer;
-      border-bottom: 1px solid #ccc;
-      padding: 1rem 0;
+      a {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        cursor: pointer;
+        border-bottom: 1px solid #ccc;
+        padding: 1rem;
+        transition: all 0.3s;
+        &:hover {
+          background: #f5f5f5;
+        }
+      }
       img {
         border-radius: 0.5rem;
       }
       .name {
-        font-weight: 500;
+        font-weight: 600;
       }
-      .company {
+      .classification {
+        font-size: 1.4rem;
+      }
+      .type {
+        font-size: 1.4rem;
+      }
+      .manufacturer {
         font-size: 1.3rem;
         color: #888;
       }
     }
+  }
+}
+
+.medicine_search_result {
+  max-width: 128rem;
+  margin: 0 auto;
+  .medi_desc {
+    display: flex;
+  }
+  .name {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+  }
+  .back_btn {
+    background: #0aafdd;
+    border-radius: 0.5rem;
+    color: #fff;
+    padding: 1rem;
+    font-size: 1.8rem;
+    margin: 0 auto;
+    text-align: center;
+    width: 15rem;
+    display: block;
   }
 }
