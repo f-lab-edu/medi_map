@@ -7,6 +7,7 @@
 .medicine_search {
   width: 80rem;
   margin: 0 auto;
+
   .search_box {
     display: flex;
     gap: 0.7rem;
@@ -19,6 +20,7 @@
       font-size: 1.7rem;
       border-radius: 0.5rem;
     }
+
     button {
       min-width: 10rem;
       height: 100%;
@@ -69,8 +71,21 @@
 .medicine_search_result {
   max-width: 128rem;
   margin: 0 auto;
+
   .medi_desc {
     display: flex;
+    gap: 2rem;
+    margin-bottom: 10rem;
+
+    img {
+      height: 100%;
+      width: 40%;
+      border-radius: 1rem;
+      border: 1px solid #ccc;
+    }
+    .details {
+      width: 60%;
+    }
   }
   .name {
     font-size: 2.5rem;
@@ -87,5 +102,22 @@
     text-align: center;
     width: 15rem;
     display: block;
+  }
+  .medicine_table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+      padding: 1rem;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+      width: 25%;
+    }
   }
 }
