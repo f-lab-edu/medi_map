@@ -2,23 +2,30 @@ import axios from 'axios';
 import { NextResponse } from 'next/server';
 import { XMLParser } from 'fast-xml-parser';
 
-const API_KEY = process.env.DATA_API_KEY; 
+const MEDI_DATA_API_KEY = process.env.DATA_API_KEY;
 
 async function fetchMedicineInfo(name, pageNo, numOfRows) {
-  const url = `http://apis.data.go.kr/1471000/MdcinGrnIdntfcInfoService01/getMdcinGrnIdntfcInfoList01?ServiceKey=${API_KEY}`;
+  const url = `http://apis.data.go.kr/1471000/MdcinGrnIdntfcInfoService01/getMdcinGrnIdntfcInfoList01?ServiceKey=${MEDI_DATA_API_KEY}`;
   const parser = new XMLParser();
   
-  const response = await axios.get(url, {
-    params: {
-      item_name: name,
-      pageNo,
-      numOfRows,
-    },
-    responseType: 'text',
-  });
+  try {
+    const response = await axios.get(url, {
+      params: {
+        item_name: name,
+        pageNo,
+        numOfRows,
+      },
+      responseType: 'text',
+    });
 
-  const jsonData = parser.parse(response.data);
-  return jsonData?.response?.body?.items?.item || [];
+    const jsonData = parser.parse(response.data);
+
+    const items = jsonData?.response?.body?.items?.item || [];
+    return Array.isArray(items) ? items : [items];
+
+  } catch (error) {
+    throw new Error('fetchMedicineInfo 함수에서 오류 발생');
+  }
 }
 
 export async function GET(request) {

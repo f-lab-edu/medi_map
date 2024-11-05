@@ -7,7 +7,9 @@ import '@/styles/pages/search/search.scss';
 
 export default function SearchPage() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentSearchTerm, setCurrentSearchTerm] = useState('');
   const [results, setResults] = useState([]);
+  const [totalResults, setTotalResults] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [warning, setWarning] = useState(null); 
@@ -18,8 +20,9 @@ export default function SearchPage() {
   const observer = useRef();
 
   const fetchMedicineInfo = async (reset = false) => {
-    if (searchTerm.length < 2) {
+    if (currentSearchTerm.length < 2) {
       setWarning('2글자 이상 검색하세요.');
+      setLoading(false);
       return;
     }
 
@@ -30,19 +33,20 @@ export default function SearchPage() {
 
     try {
       const response = await axios.get('/api/medicine', {
-        params: { name: searchTerm, page, limit: 10 },
+        params: { name: currentSearchTerm, page, limit: 10 },
       });
 
       const newResults = Array.isArray(response.data.results) ? response.data.results : [];
-      const newTotal = response.data.total || 0; 
+      const newTotal = response.data.total || 0;
 
       if (reset) {
         setResults(newResults);
       } else {
         setResults((prevResults) => [...prevResults, ...newResults]);
       }
-      
-      setHasMore(newResults.length > 0); 
+
+      if (newTotal > 0) setTotalResults(newTotal);
+      setHasMore(newResults.length > 0);
     } catch (error) {
       setError('약물 정보를 불러오는 데 실패했습니다.');
     } finally {
@@ -51,10 +55,16 @@ export default function SearchPage() {
   };
 
   const handleSearch = () => {
+    if (searchTerm.trim().length < 2) {
+      setWarning('2글자 이상 검색하세요.');
+      return;
+    }
     setPage(1);
     setResults([]);
+    setHasMore(true);
     setSearchExecuted(false);
-    fetchMedicineInfo(true);
+    setWarning(null);
+    setCurrentSearchTerm(searchTerm.trim());
   };
 
   const handleKeyDown = (e) => {
@@ -75,10 +85,11 @@ export default function SearchPage() {
   }, [loading, hasMore]);
 
   useEffect(() => {
-    if (page > 1) {
-      fetchMedicineInfo();
+    if (currentSearchTerm) {
+      fetchMedicineInfo(page === 1);
     }
-  }, [page]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSearchTerm, page]);
 
   return (
     <div className="medicine_search">
@@ -95,7 +106,10 @@ export default function SearchPage() {
         <button onClick={handleSearch}>검색</button>
       </div>
 
-      {warning && <p className="warning_message">{warning}</p>}
+      {searchExecuted && totalResults > 0 && (
+        <p className="total_results_message">총 {totalResults}개의 검색결과가 있습니다.</p>
+      )}
+
       {loading && <p>로딩 중...</p>}
       {error && <p className="error_message">{error}</p>}
 
@@ -106,12 +120,14 @@ export default function SearchPage() {
       <ul className="medicine_results">
         {results.map((item, index) => (
           <li className="medicine_desc" key={index} ref={index === results.length - 1 ? lastElementRef : null}>
-            <Image
-              src={item.ITEM_IMAGE}
-              alt={item.ITEM_NAME}
-              width={100}
-              height={100}
-            />
+            {item.ITEM_IMAGE && (
+              <Image
+                src={item.ITEM_IMAGE}
+                alt={item.ITEM_NAME}
+                width={100}
+                height={50}
+              />
+            )}
             <h3 className='name'>{item.ITEM_NAME}</h3>
             <p className='type'>{item.CLASS_NAME}</p>
             <p className='company'>제조사: {item.ENTP_NAME}</p>
