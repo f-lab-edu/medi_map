@@ -120,4 +120,28 @@
       width: 25%;
     }
   }
+  .sub_title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+  }
+
+  .medi_table {
+    width: 100%;
+    // border: 1px solid #ccc;
+
+    td {
+      // border-bottom: 1px solid #ccc;
+      // border-right: 1px solid #ccc;
+    }
+  }
+
+  .medi_box {
+    margin-bottom: 2rem;
+  }
+
+  .medi_sub_title {
+    font-size: 1.8rem;
+    font-weight: bold;
+  }
 }

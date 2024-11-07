@@ -1,28 +1,30 @@
 "use client";
 
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 import Image from 'next/image';
 import { MedicineResultDto } from '@/dto/MedicineResultDto';
 import '@/styles/pages/search/search.scss';
 import { SEARCH_ERROR_MESSAGES } from '@/constants/search_errors';
+import DOMPurify from 'isomorphic-dompurify';
 
 export default function MedicineDetailPage() {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [medicine, setMedicine] = useState<MedicineResultDto | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (id) { 
-      axios.get(`/api/medicine/${id}`)
-        .then(response => {
+    if (id) {
+      axios
+        .get(`/api/medicine/${id}`)
+        .then((response) => {
           setMedicine(response.data);
           setLoading(false);
         })
-        .catch(error => {
+        .catch(() => {
           setError(SEARCH_ERROR_MESSAGES.NO_MEDICINE_FOUND);
           setLoading(false);
         });
@@ -104,6 +106,102 @@ export default function MedicineDetailPage() {
                 </tbody>
               </table>
             </div>
+          </div>
+          <div className="medi_desc_bottom">
+            {medicine.approvalInfo && (
+              <>
+                <p>저장방법: {medicine.approvalInfo.STORAGE_METHOD || ''}</p>
+                <p>유효기간: {medicine.approvalInfo.VALID_TERM || ''}</p>
+                <p>변경 이력: {medicine.approvalInfo.GBN_NAME || ''}</p>
+                <p>포장 정보: {medicine.approvalInfo.PACK_UNIT || ''}</p>
+                <p>{medicine.approvalInfo.MATERIAL_NAME || ''}</p>
+                
+                
+              </>
+            )}
+
+            {medicine.approvalInfo?.EE_DOC_DATA && (
+              <>
+                <h3 className="sub_title">{medicine.approvalInfo.EE_DOC_DATA?.DOC?.title || ''}</h3>
+                <ul>
+                  {(() => {
+                    const articles = medicine.approvalInfo.EE_DOC_DATA?.DOC?.SECTION?.ARTICLE;
+                    if (articles) {
+                      const articleArray = Array.isArray(articles) ? articles : [articles];
+                      return articleArray.map((article, index) => (
+                        <li key={index}>{article.title || ''}</li>
+                      ));
+                    } else {
+                      return <li>효능효과 데이터가 없습니다.</li>;
+                    }
+                  })()}
+                </ul>
+              </>
+            )}
+
+            {medicine.approvalInfo?.UD_DOC_DATA && (
+              <>
+                <h3 className="sub_title">{medicine.approvalInfo.UD_DOC_DATA?.DOC?.title || ''}</h3>
+                <ul>
+                  {(() => {
+                    const articles = medicine.approvalInfo.UD_DOC_DATA?.DOC?.SECTION?.ARTICLE;
+                    if (articles) {
+                      const articleArray = Array.isArray(articles) ? articles : [articles];
+                      return articleArray.map((article, index) => (
+                        <li key={index}>{article.title || ''}</li>
+                      ));
+                    } else {
+                      return <li>효능효과 데이터가 없습니다.</li>;
+                    }
+                  })()}
+                </ul>
+              </>
+            )}
+
+            {medicine.approvalInfo?.NB_DOC_DATA && (
+              <>
+                <h3 className="sub_title">{medicine.approvalInfo.NB_DOC_DATA?.DOC?.title || ''}</h3>
+                {(() => {
+                  const section = medicine.approvalInfo.NB_DOC_DATA?.DOC?.SECTION;
+                  if (section) {
+                    const articles = section.ARTICLE;
+                    const articleArray = Array.isArray(articles) ? articles : [articles];
+                    return articleArray.map((article, index) => (
+                      <div className='medi_box' key={index}>
+                        <h4 className='medi_sub_title'>{article.title || '사용상의주의사항 데이터가 없습니다.'}</h4>
+                        {(() => {
+                          const paragraphs = article.PARAGRAPH;
+                          if (paragraphs) {
+                            const paragraphArray = Array.isArray(paragraphs) ? paragraphs : [paragraphs];
+                            return paragraphArray.map((paragraph, pIndex) => {
+                              const content = paragraph.cdata || paragraph.text || '';
+                              const sanitizedHTML = DOMPurify.sanitize(content);
+
+                              let htmlContent = sanitizedHTML;
+
+                              if (paragraph.tagName === 'table' || htmlContent.trim().startsWith('<tbody>')) {
+                                htmlContent = `<table class='medi_table'>${paragraph.cdata}</table>`;
+                              }
+
+                              return (
+                                <p
+                                  key={pIndex}
+                                  dangerouslySetInnerHTML={{ __html: htmlContent }}
+                                />
+                              );
+                            });
+                          } else {
+                            return null;
+                          }
+                        })()}
+                      </div>
+                    ));
+                  } else {
+                    return <p>사용상의주의사항 데이터가 없습니다.</p>;
+                  }
+                })()}
+              </>
+            )}
           </div>
         </div>
       )}
