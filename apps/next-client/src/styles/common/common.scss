@@ -1,15 +1,16 @@
 // abstracts
-@import "./abstracts/mixins";
-@import "./abstracts/responsive";
+@import './abstracts/mixins';
+@import './abstracts/responsive';
 
 // base
-@import "./base/reset";
-@import "./base/font";
+@import './base/reset';
+@import './base/font';
+@import './base/color';
 
 // components
-@import "./components/buttons";
+@import './components/buttons';
 
 // layout
-@import "./layout/header";
-@import "./layout/footer";
-@import "./layout/grid";
+@import './layout/header';
+@import './layout/footer';
+@import './layout/grid';

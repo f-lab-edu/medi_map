@@ -31,7 +31,7 @@
     gap: 0.5rem;
     &.login_button {
       color: #fff;
-      background: #0aafdd;
+      background: var(--btn-color);
     }
     &.social_button {
       img {

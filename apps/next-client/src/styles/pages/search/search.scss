@@ -25,7 +25,7 @@
       min-width: 10rem;
       height: 100%;
       border-radius: 0.5rem;
-      background: #0aafdd;
+      background: var(--btn-color);
       color: #fff;
       font-size: 1.7rem;
       cursor: pointer;
@@ -68,9 +68,13 @@
   }
 }
 
-.medicine_search_result {
+.medi_search_result {
   max-width: 128rem;
   margin: 0 auto;
+
+  .medi_bottom_result {
+    margin-bottom: 10rem;
+  }
 
   .medi_desc {
     display: flex;
@@ -93,7 +97,7 @@
     margin-bottom: 2rem;
   }
   .back_btn {
-    background: #0aafdd;
+    background: var(--btn-color);
     border-radius: 0.5rem;
     color: #fff;
     padding: 1rem;
@@ -102,6 +106,9 @@
     text-align: center;
     width: 15rem;
     display: block;
+  }
+  .medi_info_list {
+    margin-bottom: 2rem;
   }
   .medicine_table {
     width: 100%;
@@ -115,7 +122,7 @@
     }
 
     th {
-      background-color: #f2f2f2;
+      background-color: var(--color--gray);
       font-weight: bold;
       width: 25%;
     }
@@ -123,16 +130,37 @@
   .sub_title {
     font-size: 2rem;
     font-weight: bold;
-    margin-bottom: 2rem;
+    // margin-bottom: 2rem;
   }
 
   .medi_table {
     width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+    padding: 1rem 0;
+    margin: 2rem 0;
     // border: 1px solid #ccc;
 
+    tbody {
+      border-left: 1px solid #ccc;
+    }
+
+    tr:first-child {
+      td {
+        border-top: 1px solid #ccc;
+        background: #efefef;
+      }
+      p {
+        font-weight: bold;
+      }
+    }
+
     td {
-      // border-bottom: 1px solid #ccc;
-      // border-right: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+      border-right: 1px solid #ccc;
+      p {
+        padding: 0.5rem 1rem;
+      }
     }
   }
 
@@ -141,7 +169,8 @@
   }
 
   .medi_sub_title {
-    font-size: 1.8rem;
+    font-size: 1.7rem;
     font-weight: bold;
+    margin-bottom: 1rem;
   }
 }
