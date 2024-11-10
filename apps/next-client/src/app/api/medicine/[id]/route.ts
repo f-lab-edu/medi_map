@@ -38,7 +38,7 @@ async function fetchMedInfoById(id: string) {
     });
 
     // 응답 상태 확인 (공통 함수 사용)
-    validateApiResponse(response, 'Info API Error');
+    validateApiResponse(response, 'Medicine Info API Error');
 
     // XML 데이터를 JSON으로 파싱하여 반환
     const jsonData = parseXmlResponse(response.data);
@@ -59,7 +59,7 @@ async function fetchMediAppInfoById(id: string) {
   try {
     const response = await axios.get(approvalUrl, { responseType: 'text' });
 
-    validateApiResponse(response, 'Approval API Error');
+    validateApiResponse(response, SEARCH_ERROR_MESSAGES.API_REQUEST_ERROR);
 
     // XML 데이터를 JSON으로 파싱하여 반환
     const jsonData = parseXmlResponse(response.data);
@@ -112,7 +112,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ message: SEARCH_ERROR_MESSAGES.API_RESPONSE_PARSING_ERROR }, { status: 500 });
     }
 
-    // 기타 API 요청 에러 처리
+    // API 요청 실패 에러
     return NextResponse.json({ message: SEARCH_ERROR_MESSAGES.API_REQUEST_ERROR }, { status: 502 });
   }
 }
