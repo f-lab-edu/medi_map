@@ -3,7 +3,7 @@ name: publish-docker-images
 on:
   push:
     branches:
-      - 'main'
+      - 'feature/docker-test'
 
 jobs:
   docker:
@@ -16,23 +16,40 @@ jobs:
         id: date
         run: echo "date=$(date +'%Y_%m_%d_%H_%M')" >> $GITHUB_ENV
 
-      - name: Build express-server Image
-        run: docker build -f ./apps/express-server/Dockerfile -t ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:${{ env.date }} .
-
-      - name: Build next-client Image
-        run: docker build -f ./apps/next-client/Dockerfile -t ${{ secrets.DOCKER_HUB_USERNAME }}/next-client:${{ env.date }} .
-
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Verify Docker login
-        run: docker info
+      - name: Build and Tag express-server Image
+        run: |
+          docker build -f ./apps/express-server/Dockerfile -t ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:${{ env.date }} \
+            --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} \
+            --build-arg DB_USER=${{ secrets.DB_USER }} \
+            --build-arg DB_HOST=${{ secrets.DB_HOST }} \
+            --build-arg DB_NAME=${{ secrets.DB_NAME }} \
+            --build-arg DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            --build-arg DB_PORT=${{ secrets.DB_PORT }} \
+            --build-arg FRONTEND_URL=${{ secrets.FRONTEND_URL }} .
+          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:${{ env.date }} ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:latest
 
-      - name: Push express-server Image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:${{ env.date }}
+      - name: Build and Tag next-client Image
+        run: |
+          docker build -f ./apps/next-client/Dockerfile -t ${{ secrets.DOCKER_HUB_USERNAME }}/next-client:${{ env.date }} \
+            --build-arg GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
+            --build-arg GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
+            --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
+            --build-arg NEXT_PUBLIC_LOCAL_BACKEND_URL=${{ secrets.NEXT_PUBLIC_LOCAL_BACKEND_URL }} \
+            --build-arg NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} .
+          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/next-client:${{ env.date }} ${{ secrets.DOCKER_HUB_USERNAME }}/next-client:latest
 
-      - name: Push next-client Image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/next-client:${{ env.date }}
+      - name: Push express-server Images to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:${{ env.date }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:latest
+
+      - name: Push next-client Images to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/next-client:${{ env.date }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/next-client:latest

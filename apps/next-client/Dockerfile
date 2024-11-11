@@ -1,10 +1,11 @@
+# Base Image
 FROM node:20-alpine3.18 AS base
 
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine 
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine
 # to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 
-# Set working directory in the container
+# Set working directory
 WORKDIR /app
 
 # Define build-time variables
@@ -21,22 +22,24 @@ ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
 ENV NEXT_PUBLIC_LOCAL_BACKEND_URL=$NEXT_PUBLIC_LOCAL_BACKEND_URL
 ENV NEXTAUTH_URL=$NEXTAUTH_URL
 
-# first create these directories, else the copying won't work.
+# Create the next-client directory and copy necessary files
 RUN mkdir -p apps/next-client
 
-# Copy package.json and yarn.lock for dependency installation
-COPY --chown=node:node package.json .
-COPY --chown=node:node yarn.lock .
-COPY --chown=node:node ./apps/next-client/package.json ./apps/next-client
+# Root package.json과 yarn.lock을 복사
+COPY package.json yarn.lock /app/
 
-# Install dependencies
+# next-client package.json을 복사
+COPY ./apps/next-client/package.json /app/apps/next-client/
+
+# 나머지 next-client 파일 복사
+COPY ./apps/next-client /app/apps/next-client/
+
+# Install dependencies for next-client
+WORKDIR /app/apps/next-client
 RUN yarn --frozen-lockfile
 
-# Copy the rest of the application code to the container
-COPY ./apps/next-client ./apps/next-client
-
-# Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED 1
+# Copy the rest of the next-client application code into the container
+COPY --chown=node:node ./apps/next-client ./apps/next-client/
 
 # Build the Next.js app
 RUN yarn workspace next-client build
@@ -44,4 +47,5 @@ RUN yarn workspace next-client build
 # Expose the port Next.js app runs on (default is 3000)
 EXPOSE 3000
 
-CMD [ "yarn", "workspace", "next-client", "start" ]
+# Start the app
+CMD ["yarn", "workspace", "next-client", "start"]
