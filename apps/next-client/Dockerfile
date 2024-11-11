@@ -25,13 +25,13 @@ ENV NEXTAUTH_URL=$NEXTAUTH_URL
 # Create the next-client directory and copy necessary files
 RUN mkdir -p apps/next-client
 
-# Root package.json과 yarn.lock을 복사
+# Copy root package.json and yarn.lock
 COPY package.json yarn.lock /app/
 
-# next-client package.json을 복사
+# Copy next-client package.json
 COPY ./apps/next-client/package.json /app/apps/next-client/
 
-# 나머지 next-client 파일 복사
+# Copy the rest of the next-client files
 COPY ./apps/next-client /app/apps/next-client/
 
 # Install dependencies for next-client
