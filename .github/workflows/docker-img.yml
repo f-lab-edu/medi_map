@@ -38,7 +38,7 @@ jobs:
         with:
           context: .
           file: ./apps/express-server/Dockerfile
-          push: false
+          push: false 
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:${{ env.date }}
           cache-from: type=gha,scope=express-server
           cache-to: type=gha,mode=max,scope=express-server
@@ -50,6 +50,10 @@ jobs:
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_PORT=${{ secrets.DB_PORT }}
             FRONTEND_URL=${{ secrets.FRONTEND_URL }}
+
+      - name: Verify express-server Image
+        run: |
+          docker images
 
       - name: Push express-server Image to Docker Hub
         run: |
@@ -79,6 +83,10 @@ jobs:
             NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
             NEXT_PUBLIC_LOCAL_BACKEND_URL=${{ secrets.NEXT_PUBLIC_LOCAL_BACKEND_URL }}
             NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+
+      - name: Verify next-client Image
+        run: |
+          docker images
 
       - name: Push next-client Image to Docker Hub
         run: |
