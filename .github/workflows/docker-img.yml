@@ -8,39 +8,37 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Check out code
+      # 1. 코드 체크아웃
+      - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2. Docker Buildx 설정
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
+      # 3. 현재 날짜 가져오기
       - name: Get current date
         id: date
-        run: echo "date=$(date +'%Y_%m_%d_%H_%M')" >> $GITHUB_ENV
+        run: echo "DATE=$(date +'%Y_%m_%d_%H_%M')" >> $GITHUB_ENV
 
+      # 4. DockerHub 로그인
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Cache Docker layers for express-server
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-express-server-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-express-server-
-
-      - name: Build express-server Image
+      # 5. express-server 이미지 빌드 및 푸시
+      - name: Build and Push express-server Image
         uses: docker/build-push-action@v2
         with:
           context: .
           file: ./apps/express-server/Dockerfile
-          push: false 
+          push: true
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:${{ env.date }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:${{ env.DATE }}
             ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:latest
           cache-from: type=gha,scope=express-server
           cache-to: type=gha,mode=max,scope=express-server
@@ -53,30 +51,16 @@ jobs:
             DB_PORT=${{ secrets.DB_PORT }}
             FRONTEND_URL=${{ secrets.FRONTEND_URL }}
 
-      - name: Verify express-server Image
-        run: |
-          docker images
-
-      - name: Push express-server Image to Docker Hub
-        run: |
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:${{ env.date }}
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:latest
-
-      - name: Cache Docker layers for next-client
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-next-client-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-next-client-
-
-      - name: Build next-client Image
+      # 6. next-client 이미지 빌드 및 푸시
+      - name: Build and Push next-client Image
         uses: docker/build-push-action@v2
         with:
           context: .
           file: ./apps/next-client/Dockerfile
-          push: false
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/next-client:${{ env.date }}
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/next-client:${{ env.DATE }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/next-client:latest
           cache-from: type=gha,scope=next-client
           cache-to: type=gha,mode=max,scope=next-client
           build-args: |
@@ -85,12 +69,3 @@ jobs:
             NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
             NEXT_PUBLIC_LOCAL_BACKEND_URL=${{ secrets.NEXT_PUBLIC_LOCAL_BACKEND_URL }}
             NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
-
-      - name: Verify next-client Image
-        run: |
-          docker images
-
-      - name: Push next-client Image to Docker Hub
-        run: |
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/next-client:${{ env.date }}
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/next-client:latest
