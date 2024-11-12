@@ -36,7 +36,7 @@ jobs:
       - name: Build and Push express-server Image
         uses: docker/build-push-action@v2
         with:
-          context: ./apps/express-server
+          context: .
           file: ./apps/express-server/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:${{ env.date }}
@@ -62,7 +62,7 @@ jobs:
       - name: Build and Push next-client Image
         uses: docker/build-push-action@v2
         with:
-          context: ./apps/next-client
+          context: .
           file: ./apps/next-client/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/next-client:${{ env.date }}
