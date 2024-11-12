@@ -33,12 +33,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-express-server-
 
-      - name: Build and Push express-server Image
+      - name: Build express-server Image
         uses: docker/build-push-action@v2
         with:
           context: .
           file: ./apps/express-server/Dockerfile
-          push: true
+          push: false
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:${{ env.date }}
           cache-from: type=gha,scope=express-server
           cache-to: type=gha,mode=max,scope=express-server
@@ -51,6 +51,11 @@ jobs:
             DB_PORT=${{ secrets.DB_PORT }}
             FRONTEND_URL=${{ secrets.FRONTEND_URL }}
 
+      - name: Push express-server Image to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:${{ env.date }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:latest
+
       - name: Cache Docker layers for next-client
         uses: actions/cache@v2
         with:
@@ -59,12 +64,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-next-client-
 
-      - name: Build and Push next-client Image
+      - name: Build next-client Image
         uses: docker/build-push-action@v2
         with:
           context: .
           file: ./apps/next-client/Dockerfile
-          push: true
+          push: false
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/next-client:${{ env.date }}
           cache-from: type=gha,scope=next-client
           cache-to: type=gha,mode=max,scope=next-client
@@ -75,12 +80,7 @@ jobs:
             NEXT_PUBLIC_LOCAL_BACKEND_URL=${{ secrets.NEXT_PUBLIC_LOCAL_BACKEND_URL }}
             NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
 
-      - name: Push express-server Images to Docker Hub
-        run: |
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:${{ env.date }}
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:latest
-
-      - name: Push next-client Images to Docker Hub
+      - name: Push next-client Image to Docker Hub
         run: |
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/next-client:${{ env.date }}
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/next-client:latest
