@@ -39,7 +39,9 @@ jobs:
           context: .
           file: ./apps/express-server/Dockerfile
           push: false 
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:${{ env.date }}
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:${{ env.date }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:latest
           cache-from: type=gha,scope=express-server
           cache-to: type=gha,mode=max,scope=express-server
           build-args: |
