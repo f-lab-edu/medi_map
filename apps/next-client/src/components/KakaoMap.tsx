@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import { PharmacyDTO } from '@/dto/PharmacyDTO';
 import { loadKakaoMapScript } from '@/utils/kakaoMapLoader';
@@ -7,9 +9,10 @@ import { applyFilter, FilterType } from '@/utils/mapFilterUtils';
 interface KakaoMapProps {
   pharmacies: PharmacyDTO[];
   location: { lat: number; lng: number } | null;
+  onSearch: (lat: number, lng: number) => Promise<void>;
 }
 
-const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location }) => {
+const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location, onSearch }) => {
   const [filter, setFilter] = useState<FilterType>('ALL');
 
   useEffect(() => {

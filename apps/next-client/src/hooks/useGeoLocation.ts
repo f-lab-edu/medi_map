@@ -13,8 +13,6 @@ export default function useGeoLocation() {
         (position) => setLocation({ lat: position.coords.latitude, lng: position.coords.longitude }),
         () => setLocationError(new LocationError())
       );
-    } else {
-      setLocationError(new LocationError('Geolocation is not supported by this browser.'));
     }
   }, []);
 

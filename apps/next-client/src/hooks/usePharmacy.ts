@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from 'react';
 import { PharmacyDataError, LocationError } from '@/error/PharmaciesError';
 import { ERROR_MESSAGES } from '@/constants/errors';
