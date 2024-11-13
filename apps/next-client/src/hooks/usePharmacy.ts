@@ -57,5 +57,5 @@ export function usePharmacy(
     loadPharmacies();
   }, [location, fetchPharmacy]);
 
-  return { pharmacies, error, loading };
+  return { pharmacies, error, loading, setPharmacies };
 }

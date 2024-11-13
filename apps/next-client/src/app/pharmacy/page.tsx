@@ -2,14 +2,24 @@
 
 import React from 'react';
 import '@/styles/pages/pharmacy/pharmacy.scss';
-import { useGeoLocation } from '@/hooks/useGeoLocation';
+import useGeoLocation from '@/hooks/useGeoLocation';
 import { usePharmacy } from '@/hooks/usePharmacy';
 import PharmacyTimeList from '@/components/PharmacyTimeList';
 import KakaoMap from '@/components/KakaoMap';
 
 export default function PharmacyPage() {
   const { location, locationError } = useGeoLocation();
-  const { pharmacies, loading, error: pharmacyError } = usePharmacy(location);
+  const { pharmacies, setPharmacies, loading, error: pharmacyError } = usePharmacy(location);
+
+  const handleSearch = async (lat: number, lng: number) => {
+    try {
+      const response = await fetch(`/api/pharmacies?lat=${lat}&lng=${lng}`);
+      const data = await response.json();
+      setPharmacies(data);
+    } catch (error) {
+      console.error('Error fetching pharmacies:', error);
+    }
+  };
 
   const renderContent = () => {
     if (locationError) return <p className="error_message">{locationError.message}</p>;
@@ -34,7 +44,7 @@ export default function PharmacyPage() {
   return (
     <div className='pharmacy_cont'>
       <h2 className="title">약국 찾기</h2>
-      <KakaoMap pharmacies={pharmacies} location={location} />
+      <KakaoMap pharmacies={pharmacies} location={location} onSearch={handleSearch} />
       {renderContent()}
     </div>
   );
