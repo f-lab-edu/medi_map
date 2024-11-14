@@ -2,9 +2,7 @@ name: Deploy Application
 
 on:
   workflow_run:
-    workflows: ["docker-img"]
-    types:
-      - completed
+    workflows: ["publish-docker-images"]
 
 jobs:
   deploy:
