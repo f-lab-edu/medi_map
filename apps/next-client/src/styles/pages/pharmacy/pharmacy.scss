@@ -16,6 +16,16 @@
 
   .map_search {
     background: greenyellow;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    z-index: 10;
+    gap: 1rem;
+    padding: 2rem;
+    cursor: pointer;
+    border-radius: 1rem;
+    font-size: 1.8rem;
+    font-weight: bold;
   }
 
   .load_info_list {
@@ -34,6 +44,155 @@
       border: 1px solid #ccc;
       padding: 0.5rem 1rem;
       cursor: pointer;
+    }
+  }
+}
+
+.pharmacies_box {
+  display: flex;
+  height: 100vh;
+  position: fixed;
+  z-index: 998;
+  padding-top: 80px;
+  letter-spacing: -0.5px;
+  top: 0;
+  display: flex;
+
+  .pharmacies_desc {
+    margin: 20px 0 20px 20px;
+    width: 426px;
+    border-radius: 8px;
+    box-shadow: 0 10px 6px #18114e1a;
+    background: #fff;
+    padding: 3rem;
+    overflow: hidden;
+    overflow-y: scroll;
+
+    .pharm_modal_wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 15px;
+      letter-spacing: -0.5px;
+    }
+
+    .pharm_name_wrap {
+      .pharm_name {
+        font-size: 20px;
+        font-weight: 700;
+        color: #000;
+      }
+    }
+
+    > li {
+      border-bottom: 1px solid #ccc;
+      padding: 2.5rem 0;
+    }
+
+    h2 {
+      font-size: 1.7rem;
+      font-weight: 600;
+    }
+
+    .address {
+      font-size: 1.4rem;
+      color: #222;
+    }
+
+    .phone_number {
+      border: 1px solid #aaa;
+      display: inline-block;
+      border-radius: 1.5rem;
+      padding: 0 1rem;
+      font-weight: 500;
+    }
+
+    .open > span {
+      color: #389e0d;
+
+      &::before {
+        display: inline-block;
+        content: '';
+        width: 4px;
+        height: 4px;
+        background-color: #389e0d;
+        border-radius: 100%;
+        margin: 0 7px 3px 0;
+      }
+    }
+
+    h3 {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .pharm_info {
+      .address {
+        display: flex;
+
+        .sub {
+          font-size: 16px;
+          color: #444;
+          letter-spacing: -0.5px;
+        }
+      }
+
+      .number {
+        .title {
+          font-size: 16px;
+          font-weight: 600;
+          color: #444;
+          margin-right: 10px;
+          letter-spacing: -0.5px;
+        }
+
+        .sub {
+          font-size: 16px;
+          color: #444;
+          letter-spacing: -0.5px;
+        }
+      }
+    }
+
+    .time_table {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .time_table_title {
+        font-size: 16px;
+        font-weight: 700;
+        text-align: left;
+        color: #000;
+      }
+
+      .time_table_wrap {
+        border: 1px solid #f0f0f0;
+        width: 100%;
+        border-bottom: 0px;
+        border-right: 0px;
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+
+          tr {
+            border-bottom: 1px solid #f0f0f0;
+
+            td {
+              padding: 8px 16px;
+              border-right: 1px solid #f0f0f0;
+            }
+          }
+
+          .day {
+            text-align: center;
+            background: #00000005;
+            width: 100px;
+            border-right: 1px solid #f0f0f0;
+          }
+        }
+      }
     }
   }
 }

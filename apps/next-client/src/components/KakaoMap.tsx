@@ -1,3 +1,5 @@
+// components/KakaoMap.tsx
+
 "use client";
 
 import React, { useEffect, useState, useRef } from 'react';
@@ -15,7 +17,9 @@ interface KakaoMapProps {
 const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location, onSearch }) => {
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [filter, setFilter] = useState<FilterType>('ALL');
+  const [markers, setMarkers] = useState<kakao.maps.Marker[]>([]);
 
+  // 지도 초기화: 컴포넌트 마운트 시 한 번만 실행
   useEffect(() => {
     const initialize = async () => {
       try {
@@ -23,8 +27,12 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location, onSearch }) =
         if (location) {
           initializeMap('map', location, (map) => {
             mapRef.current = map;
-            const filteredPharmacies = applyFilter(pharmacies, filter);
-            addMarkers(map, filteredPharmacies);
+            // 초기 마커 추가
+            if (pharmacies.length > 0) {
+              const filteredPharmacies = applyFilter(pharmacies, filter);
+              const newMarkers = addMarkers(map, filteredPharmacies);
+              setMarkers(newMarkers);
+            }
           });
         }
       } catch (error) {
@@ -32,7 +40,16 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location, onSearch }) =
       }
     };
     initialize();
-  }, [pharmacies, location, filter]);
+  }, [location]); // location 변경 시에만 실행
+
+  // 약국 데이터나 필터 변경 시 마커 업데이트
+  useEffect(() => {
+    if (mapRef.current) {
+      const filteredPharmacies = applyFilter(pharmacies, filter);
+      const newMarkers = addMarkers(mapRef.current, filteredPharmacies, markers);
+      setMarkers(newMarkers);
+    }
+  }, [pharmacies, filter]);
 
   const handleSearchInCurrentMap = () => {
     if (mapRef.current) {
@@ -49,7 +66,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location, onSearch }) =
 
   return (
     <div className='map_cont'>
-      <div id="map" style={{ width: '100%', height: '600px', marginBottom: '20px' }}></div>
+      <div id="map" style={{ width: '100%', height: 'calc(100vh - 75px)', marginBottom: '20px' }}></div>
       <button className='map_search' onClick={handleSearchInCurrentMap}>현재 지도에서 검색</button>
       <ul className="load_info_list">
         <li onClick={() => handleFilterChange('ALL')}>전체</li>

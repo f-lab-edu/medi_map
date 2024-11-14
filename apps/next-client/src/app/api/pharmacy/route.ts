@@ -1,3 +1,5 @@
+// src/app/api/pharmacy/route.ts
+
 import { NextResponse } from 'next/server';
 import { PharmacyDataError } from '@/error/PharmaciesError';
 import { ERROR_MESSAGES } from '@/constants/errors';
@@ -24,7 +26,7 @@ export async function GET(request: Request) {
 }
 
 async function fetchAllPharmacies(lat: string, lng: string) {
-  const pharmacies = [];
+  const pharmacies: PharmacyDTO[] = [];
   let pageNo = 1;
   const numOfRows = 1000;
   let totalCount = Infinity;
@@ -55,7 +57,6 @@ function buildPharmacyApiUrl(lat: string, lng: string, pageNo: number, numOfRows
   return `${baseUrl}?serviceKey=${API_KEY}&WGS84_LAT=${lat}&WGS84_LON=${lng}&numOfRows=${numOfRows}&pageNo=${pageNo}&_type=json`;
 }
 
-// 두 좌표 간 거리 계산 함수 (단위: 미터)
 function getDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   function deg2rad(deg: number): number {
     return deg * (Math.PI / 180);
@@ -75,7 +76,6 @@ function getDistance(lat1: number, lon1: number, lat2: number, lon2: number): nu
   return R * c;
 }
 
-// 반경 내에 있는지 확인하는 함수
 function isWithinRadius(pharmacy: PharmacyDTO, centerLat: number, centerLng: number, radius: number): boolean {
   const pharmacyLat = pharmacy.wgs84Lat;
   const pharmacyLng = pharmacy.wgs84Lon;
