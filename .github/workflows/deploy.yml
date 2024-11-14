@@ -3,6 +3,9 @@ name: Deploy Application
 on:
   workflow_run:
     workflows: ["publish-docker-images"]
+    types:
+      - completed
+  workflow_dispatch:  # 수동 실행을 위한 설정 추가
 
 jobs:
   deploy:
