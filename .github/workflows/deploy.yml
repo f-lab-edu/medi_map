@@ -1,0 +1,53 @@
+name: Deploy Application
+
+on:
+  workflow_run:
+    workflows: ["publish-docker-images"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. GCP에 로그인
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      # 2. Google Cloud SDK 구성
+      - name: Configure Google Cloud SDK
+        run: |
+          gcloud --quiet config set project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud --quiet auth configure-docker us-central1-docker.pkg.dev
+
+      # 3. 애플리케이션 배포 명령어 실행
+      - name: Deploy to GCP
+        run: |
+          gcloud run deploy express-server \
+            --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/project/express-server:latest \
+            --platform managed \
+            --region us-central1 \
+            --allow-unauthenticated
+
+          gcloud run deploy next-client \
+            --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/project/next-client:latest \
+            --platform managed \
+            --region us-central1 \
+            --allow-unauthenticated
+
+      # 4. PR에 댓글 남기기
+      - name: Comment on PR
+        uses: actions/github-script@v6
+        if: ${{ github.event.workflow_run.event == 'pull_request' }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.workflow_run.pull_requests[0].number,
+              body: "PR 확인 완료! 배포가 잘 마무리 되었습니다.😎"
+            })
