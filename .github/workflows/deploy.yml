@@ -21,22 +21,12 @@ jobs:
       - name: Configure Google Cloud SDK
         run: |
           gcloud --quiet config set project ${{ secrets.GCP_PROJECT_ID }}
-          gcloud --quiet auth configure-docker us-central1-docker.pkg.dev
 
-      # 3. 애플리케이션 배포 명령어 실행
-      - name: Deploy to GCP
+      # 3. App Engine에 애플리케이션 배포
+      - name: Deploy to App Engine
         run: |
-          gcloud run deploy express-server \
-            --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/project/express-server:latest \
-            --platform managed \
-            --region us-central1 \
-            --allow-unauthenticated
-
-          gcloud run deploy next-client \
-            --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/project/next-client:latest \
-            --platform managed \
-            --region us-central1 \
-            --allow-unauthenticated
+          gcloud app deploy apps/express-server/app.yaml --image-url=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/project/express-server:latest
+          gcloud app deploy apps/next-client/app.yaml --image-url=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/project/next-client:latest
 
       # 4. PR에 댓글 남기기
       - name: Comment on PR
