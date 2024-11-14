@@ -18,17 +18,17 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      # 3. 현재 날짜 가져오기
-      - name: Get current date
-        id: date
-        run: echo "DATE=$(date +'%Y_%m_%d_%H_%M')" >> $GITHUB_ENV
-
-      # 4. DockerHub 로그인
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
+      # 3. GCP에 로그인
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v1
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      # 4. Google Cloud SDK 구성
+      - name: Configure Google Cloud SDK
+        run: |
+          gcloud --quiet config set project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud --quiet auth configure-docker us-central1-docker.pkg.dev
 
       # 5. express-server 이미지 빌드 및 푸시
       - name: Build and Push express-server Image
@@ -38,8 +38,7 @@ jobs:
           file: ./apps/express-server/Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:${{ env.DATE }}
-            ${{ secrets.DOCKER_HUB_USERNAME }}/express-server:latest
+            us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/project/express-server:latest
           cache-from: type=gha,scope=express-server
           cache-to: type=gha,mode=max,scope=express-server
           build-args: |
@@ -59,8 +58,7 @@ jobs:
           file: ./apps/next-client/Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/next-client:${{ env.DATE }}
-            ${{ secrets.DOCKER_HUB_USERNAME }}/next-client:latest
+            us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/project/next-client:latest
           cache-from: type=gha,scope=next-client
           cache-to: type=gha,mode=max,scope=next-client
           build-args: |
