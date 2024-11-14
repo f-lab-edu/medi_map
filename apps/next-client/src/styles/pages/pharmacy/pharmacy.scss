@@ -1,3 +1,9 @@
+.pharmacy {
+  .inner {
+    max-width: 100%;
+    padding: 0;
+  }
+}
 .info_name {
   width: 100%;
   display: block;
@@ -7,6 +13,11 @@
 }
 .map_cont {
   position: relative;
+
+  .map_search {
+    background: greenyellow;
+  }
+
   .load_info_list {
     position: absolute;
     top: 0;

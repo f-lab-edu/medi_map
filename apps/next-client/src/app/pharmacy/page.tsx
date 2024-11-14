@@ -1,6 +1,4 @@
-"use client";
-
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import '@/styles/pages/pharmacy/pharmacy.scss';
 import useGeoLocation from '@/hooks/useGeoLocation';
 import { usePharmacy } from '@/hooks/usePharmacy';
@@ -9,17 +7,27 @@ import KakaoMap from '@/components/KakaoMap';
 
 export default function PharmacyPage() {
   const { location, locationError } = useGeoLocation();
-  const { pharmacies, setPharmacies, loading, error: pharmacyError } = usePharmacy(location);
+  const { pharmacies, setPharmacies, loading, error: pharmacyError, setLoading, setError } = usePharmacy();
 
-  const handleSearch = async (lat: number, lng: number) => {
+  const handleSearch = useCallback(async (lat: number, lng: number) => {
     try {
-      const response = await fetch(`/api/pharmacies?lat=${lat}&lng=${lng}`);
+      setLoading(true);
+      const response = await fetch(`/api/pharmacy?lat=${lat}&lng=${lng}`);
       const data = await response.json();
       setPharmacies(data);
     } catch (error) {
       console.error('Error fetching pharmacies:', error);
+      setError('약국 데이터를 가져오는 중 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [setLoading, setPharmacies, setError]);
+
+  useEffect(() => {
+    if (location) {
+      handleSearch(location.lat, location.lng);
+    }
+  }, [location, handleSearch]);
 
   const renderContent = () => {
     if (locationError) return <p className="error_message">{locationError.message}</p>;
@@ -30,7 +38,7 @@ export default function PharmacyPage() {
     return (
       <ul className="pharmacies_desc">
         {pharmacies.map((pharmacy) => (
-          <li key={pharmacy.id}> 
+          <li key={pharmacy.hpid}>
             <h2>{pharmacy.dutyName.trim()}</h2>
             <p>주소: {pharmacy.dutyAddr}</p>
             <p>전화번호: {pharmacy.dutyTel1}</p>
