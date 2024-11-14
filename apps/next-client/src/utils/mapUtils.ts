@@ -2,6 +2,7 @@ import { PharmacyDTO } from '@/dto/PharmacyDTO';
 
 declare global {
   interface Window {
+    kakao: typeof kakao;
     markers: kakao.maps.Marker[];
   }
 }
@@ -12,15 +13,20 @@ export const initializeMap = (
   location: { lat: number; lng: number },
   onLoad: (map: kakao.maps.Map) => void
 ) => {
-  kakao.maps.load(() => {
+  if (!window.kakao || !window.kakao.maps) {
+    console.error("Kakao Maps API is not loaded");
+    return;
+  }
+
+  window.kakao.maps.load(() => {
     const container = document.getElementById(containerId);
     if (!container) {
       console.error(`Map container with id "${containerId}" not found`);
       return;
     }
 
-    const options = { center: new kakao.maps.LatLng(location.lat, location.lng), level: 4 };
-    const map = new kakao.maps.Map(container, options);
+    const options = { center: new window.kakao.maps.LatLng(location.lat, location.lng), level: 4 };
+    const map = new window.kakao.maps.Map(container, options);
 
     onLoad(map);
   });
@@ -35,16 +41,16 @@ export const addMarkers = (map: kakao.maps.Map, pharmacies: PharmacyDTO[]) => {
   window.markers = [];
 
   pharmacies.forEach((pharmacy) => {
-    const markerPosition = new kakao.maps.LatLng(pharmacy.wgs84Lat, pharmacy.wgs84Lon);
-    const marker = new kakao.maps.Marker({ map, position: markerPosition, title: pharmacy.dutyName });
-  
-    const infoWindow = new kakao.maps.InfoWindow({
+    const markerPosition = new window.kakao.maps.LatLng(pharmacy.wgs84Lat, pharmacy.wgs84Lon);
+    const marker = new window.kakao.maps.Marker({ map, position: markerPosition, title: pharmacy.dutyName });
+
+    const infoWindow = new window.kakao.maps.InfoWindow({
       content: `<div class='info_name'>${pharmacy.dutyName}</div>`,
     });
-  
-    kakao.maps.event.addListener(marker, 'mouseover', () => infoWindow.open(map, marker));
-    kakao.maps.event.addListener(marker, 'mouseout', () => infoWindow.close());
-  
+
+    window.kakao.maps.event.addListener(marker, 'mouseover', () => infoWindow.open(map, marker));
+    window.kakao.maps.event.addListener(marker, 'mouseout', () => infoWindow.close());
+
     window.markers.push(marker);
   });
 };
