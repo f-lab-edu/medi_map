@@ -1,24 +1,20 @@
 import React from 'react';
 import { PharmacyDTO } from '@/dto/PharmacyDTO';
-import { getWeeklyOperatingHours } from '@/utils/pharmacyUtils';
+import { getTodayOperatingHours, isPharmacyOpenNowToday } from '@/utils/pharmacyUtils';
 
 interface PharmacyTimeListProps {
   pharmacy: PharmacyDTO;
 }
 
 const PharmacyTimeList: React.FC<PharmacyTimeListProps> = ({ pharmacy }) => {
-  const weeklyHours = getWeeklyOperatingHours(pharmacy);
+  const { openTime, closeTime } = getTodayOperatingHours(pharmacy);
+  const isOpen = isPharmacyOpenNowToday(pharmacy);
 
   return (
-    <div>
-      <strong>영업 시간:</strong>
-      <ul>
-        {weeklyHours.map((day) => (
-          <li key={day.day}>
-            {day.day}: {day.openTime && day.closeTime ? `${day.openTime} - ${day.closeTime}` : '휴무'}
-          </li>
-        ))}
-      </ul>
+    <div className="pharmacy_time_list">
+      <p>
+        {isOpen ? "영업중" : "미영업"} {openTime} ~ {closeTime}
+      </p>
     </div>
   );
 };

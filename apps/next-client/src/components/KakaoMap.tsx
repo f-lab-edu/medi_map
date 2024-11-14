@@ -14,10 +14,11 @@ interface KakaoMapProps {
 
 const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location, onSearch }) => {
   const mapRef = useRef<kakao.maps.Map | null>(null);
+  const markersRef = useRef<kakao.maps.Marker[]>([]);
   const [filter, setFilter] = useState<FilterType>('ALL');
-  const [markers, setMarkers] = useState<kakao.maps.Marker[]>([]);
   const [mapLoaded, setMapLoaded] = useState(false);
 
+  // Kakao 지도 스크립트 로드
   useEffect(() => {
     const initialize = async () => {
       try {
@@ -27,34 +28,41 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location, onSearch }) =
         console.error("Failed to load Kakao Map script:", error);
       }
     };
-
     initialize();
   }, []);
 
+  // 지도 초기화 및 위치 설정
   useEffect(() => {
     if (mapLoaded && location && mapRef.current === null) {
       initializeMap('map', location, (map) => {
         mapRef.current = map;
-        // 초기 마커 추가
-        if (pharmacies.length > 0) {
-          const filteredPharmacies = applyFilter(pharmacies, filter);
-          const newMarkers = addMarkers(map, filteredPharmacies);
-          setMarkers(newMarkers);
-        }
+        updateMarkers(pharmacies);  // 초기 마커 설정
       });
     }
-  }, [mapLoaded, location, filter, pharmacies]);
+  }, [mapLoaded, location]);
 
+  // 약국 데이터나 필터 변경 시 마커 업데이트
   useEffect(() => {
     if (mapRef.current) {
-      markers.forEach(marker => marker.setMap(null));
-  
-      const filteredPharmacies = applyFilter(pharmacies, filter);
-      const newMarkers = addMarkers(mapRef.current, filteredPharmacies);
-      setMarkers(newMarkers);
+      updateMarkers(pharmacies);
     }
-  }, [pharmacies, filter, markers]);
+  }, [pharmacies, filter]);
 
+  // 마커를 업데이트하는 함수
+  const updateMarkers = (pharmacies: PharmacyDTO[]) => {
+    // 기존 마커 제거
+    if (Array.isArray(markersRef.current)) {
+      markersRef.current.forEach(marker => marker.setMap(null));
+    }
+    markersRef.current = [];
+
+    // 필터된 약국 목록으로 새로운 마커 추가
+    const filteredPharmacies = applyFilter(pharmacies, filter);
+    const newMarkers = addMarkers(mapRef.current!, filteredPharmacies);
+    markersRef.current = newMarkers;  // 새 마커 목록을 저장
+  };
+
+  // 현재 지도 위치 기준으로 약국 검색
   const handleSearchInCurrentMap = () => {
     if (mapRef.current) {
       const center = mapRef.current.getCenter();
