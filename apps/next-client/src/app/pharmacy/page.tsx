@@ -4,10 +4,10 @@ import React, { useEffect, useState, useCallback } from 'react';
 import '@/styles/pages/pharmacy/pharmacy.scss';
 import useGeoLocation from '@/hooks/useGeoLocation';
 import { usePharmacy } from '@/hooks/usePharmacy';
-import PharmacyTimeList from '@/components/PharmacyTimeList';
-import KakaoMap from '@/components/KakaoMap';
+import PharmacyTimeList from '@/components/pharmacy/PharmacyTimeList';
+import KakaoMap from '@/components/pharmacy/KakaoMap';
+import PharmacyDetails from '@/components/pharmacy/PharmacyDetails';
 import { PharmacyDTO } from '@/dto/PharmacyDTO';
-import { getWeeklyOperatingHours, getTodayOperatingHours, isPharmacyOpenNowToday } from '@/utils/pharmacyUtils';
 import { ERROR_MESSAGES } from '@/constants/errors';
 
 export default function PharmacyPage() {
@@ -15,101 +15,74 @@ export default function PharmacyPage() {
   const { pharmacies, setPharmacies, loading, error: pharmacyError, setLoading, setError } = usePharmacy();
   const [selectedPharmacy, setSelectedPharmacy] = useState<PharmacyDTO | null>(null);
 
+  // 약국 검색 함수
   const handleSearch = useCallback(async (lat: number, lng: number) => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await fetch(`/api/pharmacy?lat=${lat}&lng=${lng}`);
       const data = await response.json();
       setPharmacies(data);
-    } catch (error) {
+    } catch {
       setError(ERROR_MESSAGES.PHARMACY_DATA_ERROR);
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   }, [setLoading, setPharmacies, setError]);
 
+  // 약국 클릭 핸들러
   const handlePharmacyClick = (pharmacy: PharmacyDTO) => {
     setSelectedPharmacy(pharmacy);
   };
 
+  // 위치 정보가 변경될 때 검색 실행
   useEffect(() => {
     if (location) {
       handleSearch(location.lat, location.lng);
     }
   }, [location, handleSearch]);
 
+  // UI 렌더링 로직
   const renderContent = () => {
-    if (locationError) return <p className="error_message">{locationError.message}</p>;
-    if (pharmacyError) return <p className="error_message">{pharmacyError}</p>;
-    if (loading) return <p>로딩중...</p>;
-    if (pharmacies.length === 0) return <p>주변에 약국이 없습니다.</p>;
-
-    return (
-      <div className='pharmacies_box'>
-        <ul className="pharmacies_desc">
-          {pharmacies.map((pharmacy) => (
-            <li key={pharmacy.hpid} onClick={() => handlePharmacyClick(pharmacy)}>
-              <h2>{pharmacy.dutyName.trim()}</h2>
-              <p className='address'>{pharmacy.dutyAddr}</p>
-              <PharmacyTimeList pharmacy={pharmacy} />
-              <p className='phone_number'>{pharmacy.dutyTel1}</p>
-            </li>
-          ))}
-        </ul>
-        {selectedPharmacy && (
-          <div className="pharmacies_desc">
-            <h3>약국 상세</h3>
-            <button onClick={() => setSelectedPharmacy(null)}>닫기</button>
-            <div className="pharm_modal_wrap">
-              <div className="pharm_name_wrap">
-                <p className="pharm_name">{selectedPharmacy.dutyName.trim()}</p>
-              </div>
-              <div className="pharm_info">
-                <div className={`open ${isPharmacyOpenNowToday(selectedPharmacy) ? 'status-open' : 'status-closed'}`}>
-                  <span className={isPharmacyOpenNowToday(selectedPharmacy) ? 'text-open' : 'text-closed'}>
-                    {isPharmacyOpenNowToday(selectedPharmacy) ? "영업중" : "미영업"}
-                  </span>
-                  <div className="no_dot">
-                    <span className="time">
-                      {getTodayOperatingHours(selectedPharmacy).openTime} ~ {getTodayOperatingHours(selectedPharmacy).closeTime}
-                    </span>
-                  </div>
-                </div>
-                <div className="address">
-                  <span className="sub">{selectedPharmacy.dutyAddr}</span>
-                </div>
-                <div className="number">
-                  <div className="phone">
-                    <span className="title">전화번호</span>
-                    <span className="sub">{selectedPharmacy.dutyTel1}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="time_table">
-                <p className="time_table_title">평일 운영시간</p>
-                <div className="time_table_wrap">
-                  <table>
-                    <tbody>
-                      {getWeeklyOperatingHours(selectedPharmacy).map((day) => (
-                        <tr key={day.day}>
-                          <td className="day">{day.day}</td>
-                          <td>{day.openTime || '휴무'} - {day.closeTime || '휴무'}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+    switch (true) {
+      case !!locationError:
+        return <p className="error_message">{locationError.message}</p>;
+      case !!pharmacyError:
+        return <p className="error_message">{pharmacyError}</p>;
+      case loading:
+        return <p>로딩중...</p>;
+      case pharmacies.length === 0:
+        return <p>주변에 약국이 없습니다.</p>;
+      default:
+        return (
+          <div className="pharmacies_box">
+            <ul className="pharmacies_desc">
+              {pharmacies.map((pharmacy) => (
+                <li key={pharmacy.hpid} onClick={() => handlePharmacyClick(pharmacy)}>
+                  <h2>{pharmacy.dutyName.trim()}</h2>
+                  <p className="address">{pharmacy.dutyAddr}</p>
+                  <PharmacyTimeList pharmacy={pharmacy} />
+                  <p className="phone_number">{pharmacy.dutyTel1}</p>
+                </li>
+              ))}
+            </ul>
+            {selectedPharmacy && (
+              <PharmacyDetails
+                pharmacy={selectedPharmacy}
+                onClose={() => setSelectedPharmacy(null)}
+              />
+            )}
           </div>
-        )}
-      </div>
-    );
+        );
+    }
   };
 
   return (
-    <div className='pharmacy_cont'>
-      <KakaoMap pharmacies={pharmacies} location={location} onSearch={handleSearch} />
+    <div className="pharmacy_cont">
+      <KakaoMap
+        pharmacies={pharmacies}
+        location={location}
+        onSearch={handleSearch}
+        onPharmacyClick={handlePharmacyClick}
+      />
       {renderContent()}
     </div>
   );

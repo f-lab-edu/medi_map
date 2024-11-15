@@ -5,14 +5,16 @@ import { PharmacyDTO } from '@/dto/PharmacyDTO';
 import { loadKakaoMapScript } from '@/utils/kakaoMapLoader';
 import { initializeMap, addMarkers } from '@/utils/mapUtils';
 import { applyFilter, FilterType } from '@/utils/mapFilterUtils';
+import { ERROR_MESSAGES } from '@/constants/errors';
 
 interface KakaoMapProps {
   pharmacies: PharmacyDTO[];
   location: { lat: number; lng: number } | null;
   onSearch: (lat: number, lng: number) => Promise<void>;
+  onPharmacyClick: (pharmacy: PharmacyDTO) => void;
 }
 
-const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location, onSearch }) => {
+const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location, onSearch, onPharmacyClick }) => {
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const markersRef = useRef<kakao.maps.Marker[]>([]);
   const [filter, setFilter] = useState<FilterType>('ALL');
@@ -25,7 +27,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location, onSearch }) =
         await loadKakaoMapScript();
         setMapLoaded(true);
       } catch (error) {
-        console.error("Failed to load Kakao Map script:", error);
+        console.error(ERROR_MESSAGES.KAKAO_MAP_ERROR, error);
       }
     };
     initialize();
@@ -58,7 +60,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location, onSearch }) =
 
     // 필터된 약국 목록으로 새로운 마커 추가
     const filteredPharmacies = applyFilter(pharmacies, filter);
-    const newMarkers = addMarkers(mapRef.current!, filteredPharmacies);
+    const newMarkers = addMarkers(mapRef.current!, filteredPharmacies, onPharmacyClick); // 클릭 이벤트 전달
     markersRef.current = newMarkers;  // 새 마커 목록을 저장
   };
 

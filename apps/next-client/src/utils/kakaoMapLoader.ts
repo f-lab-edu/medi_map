@@ -6,7 +6,7 @@ export function loadKakaoMapScript(): Promise<void> {
       if (window.kakao && window.kakao.maps) {
         window.kakao.maps.load(() => resolve());
       } else {
-        reject(new Error("Kakao Maps API not available."));
+        reject(new Error(ERROR_MESSAGES.KAKAO_MAP_ERROR));
       }
       return;
     }
