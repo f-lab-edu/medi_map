@@ -67,6 +67,14 @@
     padding: 3rem;
     overflow: hidden;
     overflow-y: scroll;
+    position: relative;
+
+    button {
+      position: absolute;
+      right: 2rem;
+      top: 2.5rem;
+      cursor: pointer;
+    }
 
     .pharm_modal_wrap {
       display: flex;
@@ -74,6 +82,14 @@
       gap: 12px;
       font-size: 15px;
       letter-spacing: -0.5px;
+      margin-top: 4rem;
+
+      .pharm_info {
+        .open {
+          display: flex;
+          gap: 1rem;
+        }
+      }
     }
 
     .pharm_name_wrap {
@@ -131,9 +147,10 @@
         display: flex;
 
         .sub {
-          font-size: 16px;
+          font-size: 1.5rem;
           color: #444;
           letter-spacing: -0.5px;
+          margin-bottom: 1rem;
         }
       }
 
@@ -158,6 +175,7 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
+      margin-top: 2rem;
 
       .time_table_title {
         font-size: 16px;
@@ -194,5 +212,38 @@
         }
       }
     }
+  }
+}
+
+.pharmacy_time_list {
+  margin-bottom: 1.4rem;
+  p {
+    font-size: 1.4rem;
+  }
+
+  span {
+    margin-right: 0.5rem;
+
+    &::before {
+      display: inline-block;
+      content: '';
+      width: 4px;
+      height: 4px;
+      background-color: #389e0d;
+      border-radius: 100%;
+      margin: 0 7px 3px 0;
+    }
+
+    &.status_closed {
+      &::before {
+        background-color: #888;
+      }
+    }
+  }
+  .status_open {
+    color: #389e0d;
+  }
+  .status_closed {
+    color: #888;
   }
 }

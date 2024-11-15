@@ -7,7 +7,8 @@ import { usePharmacy } from '@/hooks/usePharmacy';
 import PharmacyTimeList from '@/components/PharmacyTimeList';
 import KakaoMap from '@/components/KakaoMap';
 import { PharmacyDTO } from '@/dto/PharmacyDTO';
-import { getWeeklyOperatingHours, formatTime, getTodayOperatingHours, isPharmacyOpenNowToday } from '@/utils/pharmacyUtils';
+import { getWeeklyOperatingHours, getTodayOperatingHours, isPharmacyOpenNowToday } from '@/utils/pharmacyUtils';
+import { ERROR_MESSAGES } from '@/constants/errors';
 
 export default function PharmacyPage() {
   const { location, locationError } = useGeoLocation();
@@ -21,7 +22,7 @@ export default function PharmacyPage() {
       const data = await response.json();
       setPharmacies(data);
     } catch (error) {
-      setError('약국 데이터를 가져오는 중 오류가 발생했습니다.');
+      setError(ERROR_MESSAGES.PHARMACY_DATA_ERROR);
     } finally {
       setLoading(false);
     }
@@ -35,7 +36,7 @@ export default function PharmacyPage() {
     if (location) {
       handleSearch(location.lat, location.lng);
     }
-  }, [location]);
+  }, [location, handleSearch]);
 
   const renderContent = () => {
     if (locationError) return <p className="error_message">{locationError.message}</p>;
@@ -64,8 +65,10 @@ export default function PharmacyPage() {
                 <p className="pharm_name">{selectedPharmacy.dutyName.trim()}</p>
               </div>
               <div className="pharm_info">
-                <div className="open">
-                  <span>{isPharmacyOpenNowToday(selectedPharmacy) ? "영업중" : "미영업"}</span>
+                <div className={`open ${isPharmacyOpenNowToday(selectedPharmacy) ? 'status-open' : 'status-closed'}`}>
+                  <span className={isPharmacyOpenNowToday(selectedPharmacy) ? 'text-open' : 'text-closed'}>
+                    {isPharmacyOpenNowToday(selectedPharmacy) ? "영업중" : "미영업"}
+                  </span>
                   <div className="no_dot">
                     <span className="time">
                       {getTodayOperatingHours(selectedPharmacy).openTime} ~ {getTodayOperatingHours(selectedPharmacy).closeTime}

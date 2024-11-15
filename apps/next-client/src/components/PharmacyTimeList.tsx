@@ -11,9 +11,12 @@ const PharmacyTimeList: React.FC<PharmacyTimeListProps> = ({ pharmacy }) => {
   const isOpen = isPharmacyOpenNowToday(pharmacy);
 
   return (
-    <div className="pharmacy_time_list">
+    <div className={`pharmacy_time_list ${isOpen ? 'open' : 'closed'}`}>
       <p>
-        {isOpen ? "영업중" : "미영업"} {openTime} ~ {closeTime}
+        <span className={isOpen ? 'status_open' : 'status_closed'}>
+          {isOpen ? "영업중" : "미영업"}
+        </span>
+        {openTime} ~ {closeTime}
       </p>
     </div>
   );
