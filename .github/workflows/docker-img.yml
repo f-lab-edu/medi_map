@@ -3,7 +3,7 @@ name: publish-docker-images
 on:
   push:
     branches:
-      - 'feature/docker-test'
+      - 'main'
 
 jobs:
   docker:
