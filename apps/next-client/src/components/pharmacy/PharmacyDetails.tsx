@@ -1,5 +1,4 @@
 import React from 'react';
-import classNames from 'classnames';
 import { PharmacyDTO } from '@/dto/PharmacyDTO';
 import { getTodayOperatingHours, getWeeklyOperatingHours, isPharmacyOpenNowToday } from '@/utils/pharmacyUtils';
 
@@ -22,8 +21,8 @@ const PharmacyDetails: React.FC<PharmacyDetailsProps> = ({ pharmacy, onClose }) 
           <p className="pharm_name">{pharmacy.dutyName.trim()}</p>
         </div>
         <div className="pharm_info">
-          <div className={classNames('open', { 'status-open': isOpen, 'status-closed': !isOpen })}>
-            <span className={classNames({ 'text-open': isOpen, 'text-closed': !isOpen })}>
+          <div className={`open ${isOpen ? 'status-open' : 'status-closed'}`}>
+            <span className={isOpen ? 'text-open' : 'text-closed'}>
               {isOpen ? '영업중' : '미영업'}
             </span>
             <div className="no_dot">

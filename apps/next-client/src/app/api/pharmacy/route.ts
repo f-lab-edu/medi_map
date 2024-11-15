@@ -1,10 +1,9 @@
-// src/app/api/pharmacy/route.ts
-
 import { NextResponse } from 'next/server';
 import { PharmacyDataError } from '@/error/PharmaciesError';
 import { ERROR_MESSAGES } from '@/constants/errors';
 import { PharmacyDTO } from '@/dto/PharmacyDTO';
 
+// GET 요청 핸들러
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const lat = searchParams.get('lat');
@@ -15,8 +14,9 @@ export async function GET(request: Request) {
   }
 
   try {
+    // 위도(lat)와 경도(lng)를 기반으로 약국 데이터 가져오기
     const pharmacies = await fetchAllPharmacies(lat, lng);
-    return NextResponse.json(pharmacies);
+    return NextResponse.json(pharmacies); // 약국 데이터를 JSON 형식으로 응답
   } catch (error) {
     const errorMessage = error instanceof PharmacyDataError 
       ? error.message 
@@ -25,12 +25,14 @@ export async function GET(request: Request) {
   }
 }
 
+// 모든 약국 데이터를 외부 API에서 가져오는 함수
 async function fetchAllPharmacies(lat: string, lng: string) {
   const pharmacies: PharmacyDTO[] = [];
   let pageNo = 1;
   const numOfRows = 1000;
   let totalCount = Infinity;
 
+  // 모든 데이터를 가져올 때까지 반복
   while (pharmacies.length < totalCount) {
     const url = buildPharmacyApiUrl(lat, lng, pageNo, numOfRows);
     const response = await fetch(url);
@@ -44,19 +46,21 @@ async function fetchAllPharmacies(lat: string, lng: string) {
 
     pharmacies.push(...items);
 
-    totalCount = parseInt(data.response.body.totalCount, 10); // totalCount 갱신
+    totalCount = parseInt(data.response.body.totalCount, 10);
     pageNo++;
   }
 
   return pharmacies.filter(pharmacy => isWithinRadius(pharmacy, parseFloat(lat), parseFloat(lng), 1500));
 }
 
+// 약국 데이터를 요청할 API URL 생성 함수
 function buildPharmacyApiUrl(lat: string, lng: string, pageNo: number, numOfRows: number): string {
   const API_KEY = process.env.DATA_API_KEY;
   const baseUrl = 'http://apis.data.go.kr/B552657/ErmctInsttInfoInqireService/getParmacyListInfoInqire';
   return `${baseUrl}?serviceKey=${API_KEY}&WGS84_LAT=${lat}&WGS84_LON=${lng}&numOfRows=${numOfRows}&pageNo=${pageNo}&_type=json`;
 }
 
+// 두 좌표 간의 거리를 계산하는 함수 (Haversine 공식 사용)
 function getDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   function deg2rad(deg: number): number {
     return deg * (Math.PI / 180);
@@ -76,6 +80,7 @@ function getDistance(lat1: number, lon1: number, lat2: number, lon2: number): nu
   return R * c;
 }
 
+// 주어진 좌표가 특정 반경 내에 있는지 확인하는 함수
 function isWithinRadius(pharmacy: PharmacyDTO, centerLat: number, centerLng: number, radius: number): boolean {
   const pharmacyLat = pharmacy.wgs84Lat;
   const pharmacyLng = pharmacy.wgs84Lon;

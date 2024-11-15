@@ -21,7 +21,13 @@ export default function PharmacyPage() {
     try {
       const response = await fetch(`/api/pharmacy?lat=${lat}&lng=${lng}`);
       const data = await response.json();
-      setPharmacies(data);
+
+      if (Array.isArray(data)) {
+        setPharmacies(data);
+      } else {
+        console.error('Invalid data format:', data);
+        setPharmacies([]);
+      }
     } catch {
       setError(ERROR_MESSAGES.PHARMACY_DATA_ERROR);
     }
@@ -42,37 +48,42 @@ export default function PharmacyPage() {
 
   // UI 렌더링 로직
   const renderContent = () => {
-    switch (true) {
-      case !!locationError:
-        return <p className="error_message">{locationError.message}</p>;
-      case !!pharmacyError:
-        return <p className="error_message">{pharmacyError}</p>;
-      case loading:
-        return <p>로딩중...</p>;
-      case pharmacies.length === 0:
-        return <p>주변에 약국이 없습니다.</p>;
-      default:
-        return (
-          <div className="pharmacies_box">
-            <ul className="pharmacies_desc">
-              {pharmacies.map((pharmacy) => (
-                <li key={pharmacy.hpid} onClick={() => handlePharmacyClick(pharmacy)}>
-                  <h2>{pharmacy.dutyName.trim()}</h2>
-                  <p className="address">{pharmacy.dutyAddr}</p>
-                  <PharmacyTimeList pharmacy={pharmacy} />
-                  <p className="phone_number">{pharmacy.dutyTel1}</p>
-                </li>
-              ))}
-            </ul>
-            {selectedPharmacy && (
-              <PharmacyDetails
-                pharmacy={selectedPharmacy}
-                onClose={() => setSelectedPharmacy(null)}
-              />
-            )}
-          </div>
-        );
+    if (locationError) {
+      return <p className="error_message">{locationError.message}</p>;
     }
+
+    if (pharmacyError) {
+      return <p className="error_message">{pharmacyError}</p>;
+    }
+
+    if (loading) {
+      return <p>로딩중...</p>;
+    }
+
+    if (!Array.isArray(pharmacies) || pharmacies.length === 0) {
+      return <p>주변에 약국이 없습니다.</p>;
+    }
+
+    return (
+      <div className="pharmacies_box">
+        <ul className="pharmacies_desc">
+          {pharmacies.map((pharmacy) => (
+            <li key={pharmacy.hpid} onClick={() => handlePharmacyClick(pharmacy)}>
+              <h2>{pharmacy.dutyName.trim()}</h2>
+              <p className="address">{pharmacy.dutyAddr}</p>
+              <PharmacyTimeList pharmacy={pharmacy} />
+              <p className="phone_number">{pharmacy.dutyTel1}</p>
+            </li>
+          ))}
+        </ul>
+        {selectedPharmacy && (
+          <PharmacyDetails
+            pharmacy={selectedPharmacy}
+            onClose={() => setSelectedPharmacy(null)}
+          />
+        )}
+      </div>
+    );
   };
 
   return (
