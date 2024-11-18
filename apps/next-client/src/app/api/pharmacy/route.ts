@@ -59,7 +59,7 @@ async function fetchAllPharmacies(lat: string, lng: string) {
   });
 
   return pharmacies.filter((pharmacy) =>
-    isWithinRadius(pharmacy, parseFloat(lat), parseFloat(lng), 5000)
+    isWithinRadius(pharmacy, parseFloat(lat), parseFloat(lng), 2500)
   );
 }
 
@@ -76,18 +76,20 @@ function getDistance(lat1: number, lon1: number, lat2: number, lon2: number): nu
     return deg * (Math.PI / 180);
   }
 
-  const R = 6371e3;
-  const φ1 = deg2rad(lat1);
-  const φ2 = deg2rad(lat2);
-  const Δφ = deg2rad(lat2 - lat1);
-  const Δλ = deg2rad(lon2 - lon1);
+  const earthRadius = 6371e3;
+  const lat1Rad = deg2rad(lat1);
+  const lat2Rad = deg2rad(lat2);
+  const deltaLatRad = deg2rad(lat2 - lat1);
+  const deltaLonRad = deg2rad(lon2 - lon1);
 
-  const a = Math.sin(Δφ / 2) ** 2 +
-            Math.cos(φ1) * Math.cos(φ2) *
-            Math.sin(Δλ / 2) ** 2;
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const haversineLat = Math.sin(deltaLatRad / 2) ** 2;
+  const haversineLon = Math.sin(deltaLonRad / 2) ** 2;
+  const angularDistance = haversineLat +
+    Math.cos(lat1Rad) * Math.cos(lat2Rad) * haversineLon;
 
-  return R * c;
+  const centralAngle = 2 * Math.atan2(Math.sqrt(angularDistance), Math.sqrt(1 - angularDistance));
+
+  return earthRadius * centralAngle;
 }
 
 // 주어진 좌표가 특정 반경 내에 있는지 확인하는 함수
