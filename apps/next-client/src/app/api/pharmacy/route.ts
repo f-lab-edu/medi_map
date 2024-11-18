@@ -27,30 +27,40 @@ export async function GET(request: Request) {
 
 // 모든 약국 데이터를 외부 API에서 가져오는 함수
 async function fetchAllPharmacies(lat: string, lng: string) {
-  const pharmacies: PharmacyDTO[] = [];
-  let pageNo = 1;
-  const numOfRows = 1000;
-  let totalCount = Infinity;
+  const initialUrl = buildPharmacyApiUrl(lat, lng, 1, 1);
+  const initialResponse = await fetch(initialUrl);
 
-  // 모든 데이터를 가져올 때까지 반복
-  while (pharmacies.length < totalCount) {
-    const url = buildPharmacyApiUrl(lat, lng, pageNo, numOfRows);
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new PharmacyDataError(ERROR_MESSAGES.PHARMACY_DATA_ERROR);
-    }
-
-    const data = await response.json();
-    const items = data.response?.body?.items?.item || [];
-
-    pharmacies.push(...items);
-
-    totalCount = parseInt(data.response.body.totalCount, 10);
-    pageNo++;
+  if (!initialResponse.ok) {
+    throw new PharmacyDataError(ERROR_MESSAGES.PHARMACY_DATA_ERROR);
   }
 
-  return pharmacies.filter(pharmacy => isWithinRadius(pharmacy, parseFloat(lat), parseFloat(lng), 1500));
+  const initialData = await initialResponse.json();
+  const totalCount = parseInt(initialData.response.body.totalCount, 10);
+  const numOfRows = 1000;
+  const totalPages = Math.ceil(totalCount / numOfRows);
+
+  // 병렬로 모든 페이지의 데이터를 가져오기
+  const requests = Array.from({ length: totalPages }, (_, index) => {
+    const pageNo = index + 1;
+    const url = buildPharmacyApiUrl(lat, lng, pageNo, numOfRows);
+    return fetch(url).then((response) => {
+      if (!response.ok) {
+        throw new PharmacyDataError(ERROR_MESSAGES.PHARMACY_DATA_ERROR);
+      }
+      return response.json();
+    });
+  });
+
+  const results = await Promise.all(requests);
+
+  // 모든 페이지의 데이터를 합치기
+  const pharmacies: PharmacyDTO[] = results.flatMap((data) => {
+    return data.response?.body?.items?.item || [];
+  });
+
+  return pharmacies.filter((pharmacy) =>
+    isWithinRadius(pharmacy, parseFloat(lat), parseFloat(lng), 5000)
+  );
 }
 
 // 약국 데이터를 요청할 API URL 생성 함수
