@@ -35,6 +35,8 @@ fs
 // 각 모델을 개별적으로 내보낼 수 있도록 설정
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
-db.User = db.User || require('./user')(sequelize, Sequelize.DataTypes); // User 모델 추가
+db.User = db.User || require('./user')(sequelize, Sequelize.DataTypes);
+db.Pharmacy = db.Pharmacy || require('./pharmacy')(sequelize, Sequelize.DataTypes);
+
 
 module.exports = db;

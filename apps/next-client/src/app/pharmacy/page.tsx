@@ -15,11 +15,11 @@ export default function PharmacyPage() {
   const { pharmacies, setPharmacies, loading, error: pharmacyError, setLoading, setError } = usePharmacy();
   const [selectedPharmacy, setSelectedPharmacy] = useState<PharmacyDTO | null>(null);
 
-  // 약국 검색 함수
+  // 약국 검색 함수 (백엔드 API 호출)
   const handleSearch = useCallback(async (lat: number, lng: number) => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/pharmacy?lat=${lat}&lng=${lng}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_BACKEND_URL}/api/pharmacy?lat=${lat}&lng=${lng}`);
       const data = await response.json();
 
       if (Array.isArray(data)) {
