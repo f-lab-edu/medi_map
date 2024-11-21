@@ -1,6 +1,5 @@
 import fetch from 'node-fetch';
 import { Pharmacy } from '@/models';
-import { PharmacyItem } from '@/types/pharmacy.types';
 
 const BASE_URL = 'http://apis.data.go.kr/B552657/ErmctInsttInfoInqireService/getParmacyListInfoInqire';
 const API_KEY = process.env.DATA_API_KEY;
@@ -12,7 +11,7 @@ function buildUrl(pageNo: number, numOfRows: number = NUM_OF_ROWS): string {
 }
 
 // 데이터를 가져와 파싱하는 함수
-async function fetchPageData(pageNo: number): Promise<PharmacyItem[]> {
+async function fetchPageData(pageNo: number): Promise<any[]> {
   const url = buildUrl(pageNo);
   const response = await fetch(url);
 
@@ -26,14 +25,14 @@ async function fetchPageData(pageNo: number): Promise<PharmacyItem[]> {
 }
 
 // 약국 데이터를 데이터베이스에 저장
-async function savePharmacyData(items: PharmacyItem[]): Promise<void> {
+async function savePharmacyData(items: any[]) {
   const upsertPromises = items.map(item =>
     Pharmacy.upsert({
       dutyName: item.dutyName,
       dutyAddr: item.dutyAddr,
       dutyTel1: item.dutyTel1,
-      wgs84Lat: parseFloat(item.wgs84Lat.toString()),
-      wgs84Lon: parseFloat(item.wgs84Lon.toString()),
+      wgs84Lat: parseFloat(item.wgs84Lat),
+      wgs84Lon: parseFloat(item.wgs84Lon),
       dutyTime1s: item.dutyTime1s,
       dutyTime1c: item.dutyTime1c,
       dutyTime2s: item.dutyTime2s,
@@ -58,6 +57,7 @@ async function savePharmacyData(items: PharmacyItem[]): Promise<void> {
 // 약국 데이터를 업데이트하는 메인 함수
 export async function updatePharmacyData() {
   try {
+    // 첫 번째 요청으로 총 페이지 수 계산
     const firstUrl = buildUrl(1, 1);
     const firstResponse = await fetch(firstUrl);
     const firstData = await firstResponse.json();
@@ -66,6 +66,7 @@ export async function updatePharmacyData() {
 
     console.log(`Total pages to fetch: ${totalPages}`);
 
+    // 모든 페이지 데이터를 병렬로 가져옴
     const pagePromises = Array.from({ length: totalPages }, (_, index) =>
       fetchPageData(index + 1));
     const allPageData = await Promise.all(pagePromises);

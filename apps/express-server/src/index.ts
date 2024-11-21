@@ -19,8 +19,9 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // 로깅 미들웨어
-app.use((req: Request, res: Response) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   console.log('Request Origin:', req.headers.origin);
+  next();
 });
 
 // 미들웨어 설정
