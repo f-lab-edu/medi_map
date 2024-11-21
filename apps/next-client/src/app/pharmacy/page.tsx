@@ -57,7 +57,13 @@ export default function PharmacyPage() {
     }
 
     if (loading) {
-      return <p>로딩중...</p>;
+      return (
+        <div className="loading_spinner d-flex justify-content-center align-items-center">
+          <div className="spinner-grow text-info" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      );
     }
 
     if (!Array.isArray(pharmacies) || pharmacies.length === 0) {

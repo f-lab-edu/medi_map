@@ -80,7 +80,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location, onSearch, onP
 
   return (
     <div className='map_cont'>
-      <div id="map" style={{ width: '100%', height: 'calc(100vh - 75px)', marginBottom: '20px' }}></div>
+      <div id="map" style={{ width: '100%', height: 'calc(100vh - 75px)'}}></div>
       <button className='map_search' onClick={handleSearchInCurrentMap}>현재 지도에서 검색</button>
       <ul className="load_info_list">
         <li onClick={() => handleFilterChange('ALL')}>전체</li>

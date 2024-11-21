@@ -1,13 +1,36 @@
 import { ERROR_MESSAGES } from '@/constants/errors';
 
+let kakaoMapPromise: Promise<void> | null = null;
+
 export function loadKakaoMapScript(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (document.querySelector(`script[src*="sdk.js"]`)) {
-      if (window.kakao && window.kakao.maps) {
-        window.kakao.maps.load(() => resolve());
-      } else {
+  if (kakaoMapPromise) {
+    return kakaoMapPromise;
+  }
+
+  kakaoMapPromise = new Promise((resolve, reject) => {
+    if (typeof window === 'undefined') {
+      reject(new Error(ERROR_MESSAGES.KAKAO_MAP_ERROR));
+      return;
+    }
+
+    if (window.kakao && window.kakao.maps) {
+      resolve();
+      return;
+    }
+
+    const existingScript = document.querySelector(`script[src*="dapi.kakao.com/v2/maps/sdk.js"]`);
+
+    if (existingScript) {
+      existingScript.addEventListener('load', () => {
+        if (window.kakao && window.kakao.maps) {
+          resolve();
+        } else {
+          reject(new Error(ERROR_MESSAGES.KAKAO_MAP_ERROR));
+        }
+      });
+      existingScript.addEventListener('error', () => {
         reject(new Error(ERROR_MESSAGES.KAKAO_MAP_ERROR));
-      }
+      });
       return;
     }
 
@@ -15,7 +38,11 @@ export function loadKakaoMapScript(): Promise<void> {
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false&libraries=services,clusterer`;
     script.async = true;
     script.onload = () => {
-      window.kakao.maps.load(() => resolve());
+      if (window.kakao && window.kakao.maps) {
+        window.kakao.maps.load(() => resolve());
+      } else {
+        reject(new Error(ERROR_MESSAGES.KAKAO_MAP_ERROR));
+      }
     };
     script.onerror = () => {
       console.error(ERROR_MESSAGES.KAKAO_MAP_ERROR);
@@ -23,4 +50,6 @@ export function loadKakaoMapScript(): Promise<void> {
     };
     document.head.appendChild(script);
   });
+
+  return kakaoMapPromise;
 }
