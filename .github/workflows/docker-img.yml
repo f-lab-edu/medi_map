@@ -38,6 +38,7 @@ jobs:
           file: ./apps/express-server/Dockerfile
           push: true
           tags: |
+            us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/project/express-server:${{ github.sha }}
             us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/project/express-server:latest
           cache-from: type=gha,scope=express-server
           cache-to: type=gha,mode=max,scope=express-server
@@ -58,6 +59,7 @@ jobs:
           file: ./apps/next-client/Dockerfile
           push: true
           tags: |
+            us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/project/next-client:${{ github.sha }}
             us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/project/next-client:latest
           cache-from: type=gha,scope=next-client
           cache-to: type=gha,mode=max,scope=next-client
