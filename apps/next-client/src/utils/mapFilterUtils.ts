@@ -13,15 +13,23 @@ export const getCurrentTime = (): number => {
 export const isPharmacyOpenNow = (pharmacy: PharmacyDTO, currentTime: number): boolean => {
   const openTime = parseInt(pharmacy.dutyTime1s || '0000', 10);
   const closeTime = parseInt(pharmacy.dutyTime1c || '2400', 10);
-  return closeTime < openTime 
+  return closeTime < openTime
     ? currentTime >= openTime || currentTime < closeTime
     : currentTime >= openTime && currentTime < closeTime;
 };
 
 // 약국이 심야 시간대에 영업하는지 확인
 export const isNightPharmacy = (pharmacy: PharmacyDTO): boolean => {
-  const closeTime = parseInt(pharmacy.dutyTime1c || '2400', 10);
-  return closeTime >= 2400 || closeTime < 600;
+  const openTime = pharmacy.dutyTime1s;
+  const closeTime = pharmacy.dutyTime1c;
+
+  // 영업 시간이 없으면 휴무로 간주
+  if (!openTime || !closeTime) {
+    return false;
+  }
+
+  const parsedCloseTime = parseInt(closeTime, 10);
+  return parsedCloseTime >= 2400 || parsedCloseTime < 600;
 };
 
 // 약국 목록 필터링
@@ -32,7 +40,7 @@ export const applyFilter = (pharmacies: PharmacyDTO[], filter: FilterType): Phar
     case 'OPEN_NOW':
       return pharmacies.filter(pharmacy => isPharmacyOpenNow(pharmacy, currentTime));
     case 'NIGHT_PHARMACY':
-      return pharmacies.filter(isNightPharmacy);
+      return pharmacies.filter(pharmacy => isNightPharmacy(pharmacy));
     case 'ALL':
     default:
       return pharmacies;

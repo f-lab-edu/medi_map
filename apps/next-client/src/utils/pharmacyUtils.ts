@@ -1,4 +1,5 @@
 import { PharmacyDTO } from '@/dto/PharmacyDTO';
+import { TEXTS } from '@/constants/common';
 
 // 요일별 데이터 (일요일 시작)
 const DAYS_OF_WEEK = [
@@ -13,7 +14,7 @@ const DAYS_OF_WEEK = [
 
 // 시간 형식을 "09:00" 또는 "19:00" 형태로 변환
 export function formatTime(time: string | number | undefined): string {
-  if (!time) return '휴무';
+  if (!time) return TEXTS.CLOSED;
   const timeStr = time.toString().padStart(4, '0');
   return `${timeStr.slice(0, 2)}:${timeStr.slice(2)}`;
 }
@@ -25,8 +26,8 @@ export function getWeeklyOperatingHours(pharmacy: PharmacyDTO) {
     const closeTime = pharmacy[day.close];
     return {
       day: day.name,
-      openTime: openTime ? formatTime(openTime) : '휴무',
-      closeTime: closeTime ? formatTime(closeTime) : '휴무',
+      openTime: openTime ? formatTime(openTime) : TEXTS.CLOSED,
+      closeTime: closeTime ? formatTime(closeTime) : TEXTS.CLOSED,
     };
   });
 }
@@ -38,15 +39,15 @@ export function getTodayOperatingHours(pharmacy: PharmacyDTO) {
   const openTime = pharmacy[dayInfo.start];
   const closeTime = pharmacy[dayInfo.close];
   return {
-    openTime: openTime ? formatTime(openTime) : '휴무',
-    closeTime: closeTime ? formatTime(closeTime) : '휴무',
+    openTime: openTime ? formatTime(openTime) : TEXTS.CLOSED,
+    closeTime: closeTime ? formatTime(closeTime) : TEXTS.CLOSED,
   };
 }
 
 // 오늘 영업 중인지 확인하기
 export function isPharmacyOpenNowToday(pharmacy: PharmacyDTO): boolean {
   const { openTime, closeTime } = getTodayOperatingHours(pharmacy);
-  if (openTime === '휴무' || closeTime === '휴무') return false;
+  if (openTime === TEXTS.CLOSED || closeTime === TEXTS.CLOSED) return false;
 
   const currentHour = new Date().getHours();
   const currentMinute = new Date().getMinutes();
