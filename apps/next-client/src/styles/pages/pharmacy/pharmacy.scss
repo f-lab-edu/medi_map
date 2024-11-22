@@ -126,6 +126,14 @@
     .open > span {
       color: #389e0d;
 
+      &.text-closed {
+        color: #888;
+
+        &::before {
+          background-color: #888;
+        }
+      }
+
       &::before {
         display: inline-block;
         content: '';
