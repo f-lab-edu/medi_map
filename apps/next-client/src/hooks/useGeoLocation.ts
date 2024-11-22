@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { LocationError } from '@/error/PharmaciesError';
+import { LocationError } from '@/error/PharmacyError';
 
 export default function useGeoLocation() {
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);

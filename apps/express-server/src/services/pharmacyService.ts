@@ -1,5 +1,7 @@
-import fetch from 'node-fetch';
+import axios from 'axios';
 import { Pharmacy } from '@/models';
+import { PharmacyItem } from '@/types/pharmacy.types';
+import { PharmacyItemDTO } from '@/dto/PharmacyItemDTO';
 
 const BASE_URL = 'http://apis.data.go.kr/B552657/ErmctInsttInfoInqireService/getParmacyListInfoInqire';
 const API_KEY = process.env.DATA_API_KEY;
@@ -11,28 +13,29 @@ function buildUrl(pageNo: number, numOfRows: number = NUM_OF_ROWS): string {
 }
 
 // 데이터를 가져와 파싱하는 함수
-async function fetchPageData(pageNo: number): Promise<any[]> {
+async function fetchPageData(pageNo: number): Promise<PharmacyItem[]> {
   const url = buildUrl(pageNo);
-  const response = await fetch(url);
 
-  if (!response.ok) {
-    console.error(`Error fetching page ${pageNo}: ${response.statusText}`);
+  try {
+    const { data } = await axios.get(url);
+
+    // DTO 클래스를 사용한 매핑
+    return (data.response.body.items.item || []).map(PharmacyItemDTO.fromAPI);
+  } catch (error) {
+    console.error(`Error fetching page ${pageNo}:`, error.message);
     return [];
   }
-
-  const data = await response.json();
-  return data.response.body.items.item || [];
 }
 
 // 약국 데이터를 데이터베이스에 저장
-async function savePharmacyData(items: any[]) {
+async function savePharmacyData(items: PharmacyItem[]) {
   const upsertPromises = items.map(item =>
     Pharmacy.upsert({
       dutyName: item.dutyName,
       dutyAddr: item.dutyAddr,
       dutyTel1: item.dutyTel1,
-      wgs84Lat: parseFloat(item.wgs84Lat),
-      wgs84Lon: parseFloat(item.wgs84Lon),
+      wgs84Lat: item.wgs84Lat,
+      wgs84Lon: item.wgs84Lon,
       dutyTime1s: item.dutyTime1s,
       dutyTime1c: item.dutyTime1c,
       dutyTime2s: item.dutyTime2s,
@@ -59,8 +62,7 @@ export async function updatePharmacyData() {
   try {
     // 첫 번째 요청으로 총 페이지 수 계산
     const firstUrl = buildUrl(1, 1);
-    const firstResponse = await fetch(firstUrl);
-    const firstData = await firstResponse.json();
+    const { data: firstData } = await axios.get(firstUrl);
     const totalCount = parseInt(firstData.response.body.totalCount, 10);
     const totalPages = Math.ceil(totalCount / NUM_OF_ROWS);
 
@@ -78,7 +80,7 @@ export async function updatePharmacyData() {
 
     console.log('Pharmacy data update complete.');
   } catch (error) {
-    console.error('Error updating pharmacy data:', error);
+    console.error('Error updating pharmacy data:', error.message);
     throw error;
   }
 }

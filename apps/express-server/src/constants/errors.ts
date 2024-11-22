@@ -6,4 +6,8 @@ export const ERROR_MESSAGES = {
   TOKEN_REQUIRED: '접근 토큰이 필요합니다.',
   TOKEN_INVALID: '유효하지 않은 토큰입니다.',
   TOKEN_EXPIRED: '토큰이 만료되었습니다.',
+  PHARMACY_DATA_ERROR: '약국 데이터를 불러오는 중 오류가 발생했습니다.',
+  VALIDATION_ERROR: '유효하지 않은 요청 데이터입니다. 입력값을 확인해주세요.',
+  DATABASE_ERROR: '데이터베이스 오류가 발생했습니다.',
+  UPDATE_ERROR: '데이터 업데이트 중 오류가 발생했습니다.',
 };
