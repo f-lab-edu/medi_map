@@ -3,11 +3,12 @@ import { updatePharmacyData } from '@/services/pharmacyService';
 import { Pharmacy } from '@/models';
 import { ValidationError, DatabaseError, UpdateError, UnexpectedError } from '@/error/PharmacyError';
 import { ERROR_MESSAGES } from '@/constants/errors';
+import { PharmacyItem } from '@/types/pharmacy.types';
 
 const router = Router();
 
-const EARTH_RADIUS = 6371e3;
-const DEFAULT_RADIUS = 2500;
+const EARTH_RADIUS = 6371e3; // 지구 반지름 (미터)
+const DEFAULT_RADIUS = 2500; // 기본 반경 (미터)
 
 // 유틸리티 함수: 거리 계산
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
@@ -33,7 +34,7 @@ router.get('/', async (req, res) => {
 
   try {
     if (!lat || !lng) {
-      throw new ValidationError('Latitude and Longitude are required.');
+      throw new ValidationError(ERROR_MESSAGES.VALIDATION_ERROR);
     }
 
     const centerLat = parseFloat(lat as string);
@@ -44,18 +45,11 @@ router.get('/', async (req, res) => {
     try {
       pharmacies = await Pharmacy.findAll();
     } catch (error) {
-      throw new DatabaseError('Failed to fetch pharmacies from the database.');
+      throw new DatabaseError(ERROR_MESSAGES.DATABASE_ERROR);
     }
 
-    // 약국 타입 명시 (예시로 Pharmacy에 wgs84Lat, wgs84Lon 추가)
-    type PharmacyType = {
-      wgs84Lat: number;
-      wgs84Lon: number;
-      [key: string]: any;
-    };
-
     // 반경 내 약국 필터링
-    const filteredPharmacies = pharmacies.filter((pharmacy: PharmacyType) =>
+    const filteredPharmacies = pharmacies.filter((pharmacy: PharmacyItem) =>
       isWithinRadius(centerLat, centerLng, pharmacy.wgs84Lat, pharmacy.wgs84Lon));
 
     return res.status(200).json(filteredPharmacies);

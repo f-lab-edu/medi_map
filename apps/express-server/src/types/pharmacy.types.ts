@@ -1,5 +1,6 @@
 export interface PharmacyItem {
-  dutyName: string; // 약국 이름
+  id: number; // 약국 고유 ID
+  dutyName: string; // 약국 이름 (API 응답 이름)
   dutyAddr: string; // 약국 주소
   dutyTel1?: string; // 약국 전화번호
   wgs84Lat: number; // 위도
