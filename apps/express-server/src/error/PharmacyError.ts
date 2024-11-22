@@ -27,3 +27,17 @@ export class UnexpectedError extends Error {
     this.name = 'UnexpectedError';
   }
 }
+
+export class APIError extends Error {
+  constructor(message = ERROR_MESSAGES.API_ERROR) {
+    super(message);
+    this.name = 'APIError';
+  }
+}
+
+export class DataParsingError extends Error {
+  constructor(message = ERROR_MESSAGES.DATA_PARSING_ERROR) {
+    super(message);
+    this.name = 'DataParsingError';
+  }
+}
