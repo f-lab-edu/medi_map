@@ -16,19 +16,23 @@ export default function MedicineDetailPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  // 현재 선택된 탭 상태
+  const [activeTab, setActiveTab] = useState<'all' | 'efficacy' | 'dosage' | 'precautions'>('all');
+
   useEffect(() => {
-    if (id) {
-      axios
-        .get(`/api/medicine/${id}`)
-        .then((response) => {
-          setMedicine(response.data);
-          setLoading(false);
-        })
-        .catch(() => {
-          setError(SEARCH_ERROR_MESSAGES.NO_MEDICINE_FOUND);
-          setLoading(false);
-        });
-    }
+    const fetchMedicine = async () => {
+      if (!id) return;
+      try {
+        const response = await axios.get(`/api/medicine/${id}`);
+        setMedicine(response.data);
+      } catch {
+        setError(SEARCH_ERROR_MESSAGES.NO_MEDICINE_FOUND);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMedicine();
   }, [id]);
 
   if (loading) return <p>로딩 중...</p>;
@@ -40,7 +44,7 @@ export default function MedicineDetailPage() {
 
       {medicine && (
         <div className="medi_bottom_result">
-          <h3 className="name">{medicine.ITEM_NAME}</h3>
+          <h3 className="name">{medicine.ITEM_NAME} {medicine.ITEM_ENG_NAME}</h3>
           <div className="medi_desc">
             {medicine.ITEM_IMAGE && (
               <Image
@@ -71,6 +75,18 @@ export default function MedicineDetailPage() {
                     <td>{medicine.LENG_LONG} mm x {medicine.LENG_SHORT} mm x {medicine.THICK} mm</td>
                   </tr>
                   <tr>
+                    <th>제형</th>
+                    <td>{medicine.FORM_CODE_NAME}</td>
+                  </tr>
+                  <tr>
+                    <th>모양</th>
+                    <td>{medicine.DRUG_SHAPE}</td>
+                  </tr>
+                  <tr>
+                    <th>색상</th>
+                    <td>{medicine.COLOR_CLASS1}</td>
+                  </tr>
+                  <tr>
                     <th>저장 방법</th>
                     <td>{medicine.approvalInfo?.STORAGE_METHOD || ''}</td>
                   </tr>
@@ -98,9 +114,52 @@ export default function MedicineDetailPage() {
               </table>
             </div>
           </div>
-          <MedicineInfo docData={medicine.approvalInfo?.EE_DOC_DATA} sectionTitle="효능 효과" />
-          <MedicineInfo docData={medicine.approvalInfo?.UD_DOC_DATA} sectionTitle="사용상 주의사항" />
-          <MedicineInfo docData={medicine.approvalInfo?.NB_DOC_DATA} sectionTitle="주의사항" />
+
+          {/* 탭 메뉴 */}
+          <ul className="tab_menu">
+            <li
+              className={`tab_item all ${activeTab === 'all' ? 'active' : ''}`}
+              onClick={() => setActiveTab('all')}
+            >
+              전체
+            </li>
+            <li
+              className={`tab_item efficacy ${activeTab === 'efficacy' ? 'active' : ''}`}
+              onClick={() => setActiveTab('efficacy')}
+            >
+              효능효과
+            </li>
+            <li
+              className={`tab_item dosage ${activeTab === 'dosage' ? 'active' : ''}`}
+              onClick={() => setActiveTab('dosage')}
+            >
+              용법용량
+            </li>
+            <li
+              className={`tab_item precautions ${activeTab === 'precautions' ? 'active' : ''}`}
+              onClick={() => setActiveTab('precautions')}
+            >
+              주의사항
+            </li>
+          </ul>
+
+          {/* 조건부 렌더링 */}
+          {activeTab === 'all' && (
+            <>
+              <MedicineInfo docData={medicine.approvalInfo?.EE_DOC_DATA} sectionTitle="효능 효과" />
+              <MedicineInfo docData={medicine.approvalInfo?.UD_DOC_DATA} sectionTitle="사용상 주의사항" />
+              <MedicineInfo docData={medicine.approvalInfo?.NB_DOC_DATA} sectionTitle="주의사항" />
+            </>
+          )}
+          {activeTab === 'efficacy' && (
+            <MedicineInfo docData={medicine.approvalInfo?.EE_DOC_DATA} sectionTitle="효능 효과" />
+          )}
+          {activeTab === 'dosage' && (
+            <MedicineInfo docData={medicine.approvalInfo?.UD_DOC_DATA} sectionTitle="사용상 주의사항" />
+          )}
+          {activeTab === 'precautions' && (
+            <MedicineInfo docData={medicine.approvalInfo?.NB_DOC_DATA} sectionTitle="주의사항" />
+          )}
         </div>
       )}
 

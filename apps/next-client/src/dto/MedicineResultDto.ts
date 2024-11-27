@@ -27,6 +27,7 @@ export interface ApprovalInfo {
   EE_DOC_DATA?: DocData;    // 효능 효과 관련 문서 데이터
   UD_DOC_DATA?: DocData;    // 사용상 주의사항 관련 문서 데이터
   NB_DOC_DATA?: DocData;    // 주의사항 관련 문서 데이터
+  MATERIAL_NAME?: string; // 주성분명
 }
 
 export interface MedicineResultDto {

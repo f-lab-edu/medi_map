@@ -7,6 +7,35 @@
 .medicine_search {
   width: 80rem;
   margin: 0 auto;
+  p {
+    margin: 0;
+  }
+
+  .tab_menu {
+    display: flex;
+    height: 4.5rem;
+    border: 1px solid #ccc;
+    margin-bottom: 4rem;
+    padding: 0;
+
+    li {
+      width: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      cursor: pointer;
+
+      &:first-child {
+        border-right: 1px solid #ccc;
+      }
+
+      &.active {
+        background: var(--btn-color);
+        color: #fff;
+      }
+    }
+  }
 
   .search_box {
     display: flex;
@@ -17,7 +46,6 @@
     input {
       width: 100%;
       padding: 0 1rem;
-      font-size: 1.7rem;
       border-radius: 0.5rem;
     }
 
@@ -27,9 +55,11 @@
       border-radius: 0.5rem;
       background: var(--btn-color);
       color: #fff;
-      font-size: 1.7rem;
       cursor: pointer;
     }
+  }
+  .no_results_message {
+    font-size: 1.4rem;
   }
   .medicine_results {
     display: flex;
@@ -53,6 +83,7 @@
       }
       .name {
         font-weight: 600;
+        font-size: 1.6rem;
       }
       .classification {
         font-size: 1.4rem;
@@ -74,6 +105,30 @@
 
   .medi_bottom_result {
     margin-bottom: 10rem;
+
+    .tab_menu {
+      display: flex;
+      padding: 0;
+      border: 1px solid #ccc;
+      height: 5rem;
+      align-items: center;
+
+      li {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        border-right: 1px solid #ccc;
+        font-size: 1.6rem;
+        cursor: pointer;
+
+        &.active {
+          background: var(--btn-color);
+          color: #fff;
+        }
+      }
+    }
   }
 
   .medi_desc {
@@ -90,6 +145,10 @@
     .details {
       width: 60%;
     }
+  }
+  .medi_desc_bottom {
+    padding: 2rem;
+    border-bottom: 1px solid #ccc;
   }
   .name {
     font-size: 2.5rem;
@@ -130,7 +189,8 @@
   .sub_title {
     font-size: 2rem;
     font-weight: bold;
-    // margin-bottom: 2rem;
+    color: rgb(60, 60, 175);
+    margin-bottom: 2rem;
   }
 
   .medi_table {
@@ -159,7 +219,8 @@
       border-bottom: 1px solid #ccc;
       border-right: 1px solid #ccc;
       p {
-        padding: 0.5rem 1rem;
+        padding: 0.7rem 1rem;
+        margin: 0;
       }
     }
   }
@@ -172,5 +233,63 @@
     font-size: 1.7rem;
     font-weight: bold;
     margin-bottom: 1rem;
+    line-height: 1.7;
+  }
+}
+.identification_tab {
+  h3 {
+    margin-bottom: 20px;
+  }
+
+  .identification_table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th {
+      text-align: left;
+      padding: 10px;
+      background-color: #f9f9f9;
+    }
+
+    td {
+      padding: 10px;
+    }
+
+    .form_buttons,
+    .shape_buttons,
+    .color_buttons,
+    .division_line_buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+
+      button {
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        background-color: #f4f4f4;
+        cursor: pointer;
+
+        &.selected {
+          background-color: #ccc;
+        }
+
+        &:hover {
+          background-color: #ddd;
+        }
+      }
+    }
+  }
+
+  .search_button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #0056b3;
+    }
   }
 }
