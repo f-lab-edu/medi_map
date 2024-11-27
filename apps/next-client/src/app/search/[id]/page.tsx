@@ -16,7 +16,6 @@ export default function MedicineDetailPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 현재 선택된 탭 상태
   const [activeTab, setActiveTab] = useState<'all' | 'efficacy' | 'dosage' | 'precautions'>('all');
 
   useEffect(() => {
@@ -86,18 +85,24 @@ export default function MedicineDetailPage() {
                     <th>색상</th>
                     <td>{medicine.COLOR_CLASS1}</td>
                   </tr>
-                  <tr>
-                    <th>저장 방법</th>
-                    <td>{medicine.approvalInfo?.STORAGE_METHOD || ''}</td>
-                  </tr>
-                  <tr>
-                    <th>유효기간</th>
-                    <td>{medicine.approvalInfo?.VALID_TERM || ''}</td>
-                  </tr>
-                  <tr>
-                    <th>포장 단위</th>
-                    <td>{medicine.approvalInfo?.PACK_UNIT || ''}</td>
-                  </tr>
+                  {medicine.approvalInfo?.STORAGE_METHOD && (
+                    <tr>
+                      <th>저장 방법</th>
+                      <td>{medicine.approvalInfo.STORAGE_METHOD}</td>
+                    </tr>
+                  )}
+                  {medicine.approvalInfo?.VALID_TERM && (
+                    <tr>
+                      <th>유효기간</th>
+                      <td>{medicine.approvalInfo.VALID_TERM}</td>
+                    </tr>
+                  )}
+                  {medicine.approvalInfo?.PACK_UNIT && (
+                    <tr>
+                      <th>포장 단위</th>
+                      <td>{medicine.approvalInfo.PACK_UNIT}</td>
+                    </tr>
+                  )}
                   <tr>
                     <th>전문/일반 구분</th>
                     <td>{medicine.ETC_OTC_NAME}</td>
@@ -106,16 +111,11 @@ export default function MedicineDetailPage() {
                     <th>허가 날짜</th>
                     <td>{medicine.ITEM_PERMIT_DATE}</td>
                   </tr>
-                  <tr>
-                    <th>제형 코드</th>
-                    <td>{medicine.FORM_CODE_NAME}</td>
-                  </tr>
                 </tbody>
               </table>
             </div>
           </div>
 
-          {/* 탭 메뉴 */}
           <ul className="tab_menu">
             <li
               className={`tab_item all ${activeTab === 'all' ? 'active' : ''}`}
@@ -143,7 +143,6 @@ export default function MedicineDetailPage() {
             </li>
           </ul>
 
-          {/* 조건부 렌더링 */}
           {activeTab === 'all' && (
             <>
               <MedicineInfo docData={medicine.approvalInfo?.EE_DOC_DATA} sectionTitle="효능 효과" />

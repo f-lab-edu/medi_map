@@ -11,23 +11,28 @@ export default function useMedicineSearch() {
   const [warning, setWarning] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState<boolean>(true);
 
-  const fetchMedicineInfo = useCallback(async (searchTerm: string, page: number) => {
+  const fetchMedicineInfo = useCallback(async (searchTerm: string, page: number, companyName?: string) => {
     setLoading(true);
     setError(null);
     setWarning(null);
-
+  
     try {
       const response = await axios.get('/api/medicine', {
-        params: { name: searchTerm, page, limit: 10 },
+        params: {
+          name: searchTerm || undefined, // 약물 이름이 없으면 undefined
+          entp_name: companyName || undefined, // 업체 이름이 없으면 undefined
+          page,
+          limit: 10,
+        },
       });
-
+  
       const newResults: MedicineResultDto[] = Array.isArray(response.data.results) ? response.data.results : [];
       const newTotal: number = response.data.total || 0;
-
-      setResults((prevResults) => page === 1 ? newResults : [...prevResults, ...newResults]);
+  
+      setResults((prevResults) => (page === 1 ? newResults : [...prevResults, ...newResults]));
       setTotalResults(newTotal);
       setHasMore(newResults.length > 0);
-
+  
       if (newTotal === 0 && page === 1) {
         throw new NoResultsError();
       }
@@ -41,6 +46,7 @@ export default function useMedicineSearch() {
       setLoading(false);
     }
   }, []);
+  
 
   const resetResults = () => {
     setResults([]);

@@ -48,5 +48,6 @@ export interface MedicineResultDto {
   PRINT_BACK?: string;          // 약물 뒷면 인쇄 코드
   ITEM_PERMIT_DATE?: string;    // 허가 날짜
   FORM_CODE_NAME?: string;      // 제형 코드 이름
+  ITEM_ENG_NAME?: string;       // 약물 영문 이름
   approvalInfo?: ApprovalInfo;  // 승인 정보 (문서 데이터 포함)
 }

@@ -15,7 +15,7 @@ const ParagraphContent: React.FC<{ paragraph?: Paragraph }> = ({ paragraph }) =>
     return (
       <table
         className="medi_table"
-        dangerouslySetInnerHTML={{ __html: `<tbody>${sanitizedHTML}</tbody>` }}
+        dangerouslySetInnerHTML={{ __html: `${paragraph.cdata}` }}
       />
     );
   }
