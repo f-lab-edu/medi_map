@@ -11,35 +11,68 @@ export default function useMedicineSearch() {
   const [hasMore, setHasMore] = useState<boolean>(true);
 
   const fetchMedicineInfo = useCallback(
-    async (medicineTerm: string, companyTerm: string, page: number) => {
+    async ({
+      name = "",
+      company = "",
+      color = [],
+      shape = [],
+      form = [],
+      page = 1,
+    }: {
+      name: string;
+      company: string;
+      color: string[]; // 배열 타입
+      shape: string[]; // 배열 타입
+      form: string[]; // 배열 타입
+      page: number;
+    }) => {
       setLoading(true);
       setError(null);
-
+  
       try {
-        // 백엔드 검색 API 호출
-        const response = await axios.get('http://localhost:5000/api/medicine/search', {
+        // 필터 조건 처리: 빈 배열이거나 "전체"만 포함된 경우 조건 제거
+        const filterColors = color.length === 0 || color.includes("전체") ? undefined : color.join(",");
+        const filterShapes = shape.length === 0 || shape.includes("전체") ? undefined : shape.join(",");
+        const filterForms = form.length === 0 || form.includes("전체") ? undefined : form.join(",");
+  
+        console.log("Fetching medicine info with params:", {
+          name,
+          company,
+          color: filterColors,
+          shape: filterShapes,
+          form: filterForms,
+          page,
+        });
+  
+        const response = await axios.get("http://localhost:5000/api/medicine/search", {
           params: {
-            medicineName: medicineTerm,
-            companyName: companyTerm,
+            medicineName: name || undefined,
+            companyName: company || undefined,
+            color: filterColors, // 필터가 없을 경우 undefined 전달
+            shape: filterShapes,
+            formCodeName: filterForms,
             page,
             limit: 10,
           },
         });
-
-        // 반환된 데이터를 처리
+  
         const newResults: MedicineResultDto[] = Array.isArray(response.data.results)
           ? response.data.results
           : [];
         const newTotal: number = response.data.total || 0;
-
+  
+        console.log("Fetched results:", newResults);
+  
         setResults((prevResults) => (page === 1 ? newResults : [...prevResults, ...newResults]));
         setTotalResults(newTotal);
-        setHasMore(newResults.length > 0); // 다음 데이터가 있는지 확인
-
+        setHasMore(newResults.length > 0);
+  
         if (newTotal === 0 && page === 1) {
           throw new NoResultsError();
         }
       } catch (error) {
+        console.error("Error fetching medicine info:", error);
+  
         if (error instanceof NoResultsError) {
           setError(error.message);
         } else {
@@ -51,6 +84,7 @@ export default function useMedicineSearch() {
     },
     []
   );
+  
 
   const resetResults = () => {
     setResults([]);

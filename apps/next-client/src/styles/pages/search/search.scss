@@ -52,10 +52,16 @@
       border-radius: 0.5rem;
     }
 
-    .color_filters {
+    .filters {
       display: grid;
       grid-template-columns: repeat(11, 1fr);
       gap: 1rem;
+      border-bottom: 1px solid #ccc;
+      padding: 3rem 0;
+
+      &.form_filters {
+        border-bottom: none;
+      }
 
       button {
         background: #fff;
@@ -67,9 +73,89 @@
         min-width: 4rem;
         height: 5rem;
 
-        &.selected {
-          background: #ccc;
+        &.white {
+          background: #fff;
+          color: #000;
+        }
+
+        &.yellow {
+          background: #ffeb3b;
+          color: #000;
+        }
+
+        &.orange {
+          background: #ff9800;
           color: #fff;
+        }
+
+        &.pink {
+          background: #e91e63;
+          color: #fff;
+        }
+
+        &.red {
+          background: #f44336;
+          color: #fff;
+        }
+
+        &.brown {
+          background: #795548;
+          color: #fff;
+        }
+
+        &.light-green {
+          background: #8bc34a;
+          color: #fff;
+        }
+
+        &.green {
+          background: #4caf50;
+          color: #fff;
+        }
+
+        &.cyan {
+          background: #00bcd4;
+          color: #fff;
+        }
+
+        &.blue {
+          background: #2196f3;
+          color: #fff;
+        }
+
+        &.navy {
+          background: #3f51b5;
+          color: #fff;
+        }
+
+        &.purple {
+          background: #9c27b0;
+          color: #fff;
+        }
+
+        &.violet {
+          background: #673ab7;
+          color: #fff;
+        }
+
+        &.gray {
+          background: #9e9e9e;
+          color: #fff;
+        }
+
+        &.black {
+          background: #000;
+          color: #fff;
+        }
+
+        &.transparent {
+          background: transparent;
+          border: 1px dashed #ccc;
+          color: #000;
+        }
+
+        &.selected {
+          border: 2px solid #1717b9;
         }
       }
     }

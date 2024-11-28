@@ -40,29 +40,54 @@ router.get('/search', async (req, res) => {
   try {
     const medicineName = req.query.medicineName as string;
     const companyName = req.query.companyName as string;
+    const colorClass1 = req.query.color as string; // 쉼표로 구분된 색상
+    const drugShape = req.query.shape as string; // 쉼표로 구분된 모양
+    const formCodeName = req.query.formCodeName as string; // 쉼표로 구분된 형태
     const pageNumber = parseInt(req.query.page as string, 10) || 1;
     const limitNumber = parseInt(req.query.limit as string, 10) || 10;
 
     const offset = (pageNumber - 1) * limitNumber;
 
-    const whereClause = {
-      [Op.or]: [],
-    };
+    // AND 조건 조합
+    const whereClause: any = {};
 
     if (medicineName) {
-      whereClause[Op.or].push({
-        itemName: {
-          [Op.iLike]: `%${medicineName}%`,
-        },
-      });
+      whereClause.itemName = {
+        [Op.iLike]: `%${medicineName}%`,
+      };
     }
 
     if (companyName) {
-      whereClause[Op.or].push({
-        entpName: {
-          [Op.iLike]: `%${companyName}%`,
-        },
-      });
+      whereClause.entpName = {
+        [Op.iLike]: `%${companyName}%`,
+      };
+    }
+
+    if (colorClass1) {
+      const colors = colorClass1.split(',').map(c => c.trim());
+      whereClause.colorClass1 = {
+        [Op.or]: colors.map(color => ({
+          [Op.iLike]: `%${color}%`,
+        })),
+      };
+    }
+
+    if (drugShape) {
+      const shapes = drugShape.split(',').map(s => s.trim());
+      whereClause.drugShape = {
+        [Op.or]: shapes.map(shape => ({
+          [Op.iLike]: `%${shape}%`,
+        })),
+      };
+    }
+
+    if (formCodeName) {
+      const forms = formCodeName.split(',').map(f => f.trim());
+      whereClause.formCodeName = {
+        [Op.or]: forms.map(form => ({
+          [Op.iLike]: `%${form}%`,
+        })),
+      };
     }
 
     const medicines = await Medicine.findAndCountAll({
