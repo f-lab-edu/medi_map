@@ -11,41 +11,48 @@ export default function useMedicineSearch() {
   const [warning, setWarning] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState<boolean>(true);
 
-  const fetchMedicineInfo = useCallback(async (searchTerm: string, page: number, companyName?: string) => {
-    setLoading(true);
-    setError(null);
-    setWarning(null);
+  const fetchMedicineInfo = useCallback(
+    async (searchTerm: string, page: number, companyName?: string, color?: string) => {
+      setLoading(true);
+      setError(null);
+      setWarning(null);
   
-    try {
-      const response = await axios.get('/api/medicine', {
-        params: {
-          name: searchTerm || undefined, // 약물 이름이 없으면 undefined
-          entp_name: companyName || undefined, // 업체 이름이 없으면 undefined
-          page,
-          limit: 10,
-        },
-      });
+      try {
+        const response = await axios.get('/api/medicine', {
+          params: {
+            name: searchTerm || undefined, // 약물 이름
+            entp_name: companyName || undefined, // 업체 이름
+            COLOR_CLASS1: color || undefined, // 색상 필터링
+            page,
+            limit: 10,
+          },
+        });
   
-      const newResults: MedicineResultDto[] = Array.isArray(response.data.results) ? response.data.results : [];
-      const newTotal: number = response.data.total || 0;
+        const newResults: MedicineResultDto[] = Array.isArray(response.data.results)
+          ? response.data.results
+          : [];
+        const newTotal: number = response.data.total || 0;
   
-      setResults((prevResults) => (page === 1 ? newResults : [...prevResults, ...newResults]));
-      setTotalResults(newTotal);
-      setHasMore(newResults.length > 0);
+        setResults((prevResults) => (page === 1 ? newResults : [...prevResults, ...newResults]));
+        setTotalResults(newTotal);
+        setHasMore(newResults.length > 0);
   
-      if (newTotal === 0 && page === 1) {
-        throw new NoResultsError();
+        if (newTotal === 0 && page === 1) {
+          throw new NoResultsError();
+        }
+      } catch (error) {
+        if (error instanceof NoResultsError) {
+          setWarning(error.message);
+        } else {
+          setError(new ApiRequestError().message);
+        }
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      if (error instanceof NoResultsError) {
-        setWarning(error.message);
-      } else {
-        setError(new ApiRequestError().message);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    []
+  );
+  
   
 
   const resetResults = () => {

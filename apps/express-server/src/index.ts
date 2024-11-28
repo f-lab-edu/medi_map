@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import authRoutes from '@/routes/auth';
 import pharmacyRoutes from '@/routes/parmacy/index';
+import medicineRoutes from '@/routes/medicine/index';
 import { PORT } from '@/app-constants/constants';
 import { checkEnvVariables } from '@/config/env';
 import { ROUTES } from '@/constants/urls';
@@ -30,6 +31,7 @@ app.use(express.json());
 // 라우트 설정
 app.use(ROUTES.API.AUTH, authRoutes);
 app.use(ROUTES.API.PHARMACY, pharmacyRoutes);
+app.use(ROUTES.API.MEDICINE, medicineRoutes);
 
 // 루트 라우트 추가
 app.get(ROUTES.HOME, (req: Request, res: Response) => {

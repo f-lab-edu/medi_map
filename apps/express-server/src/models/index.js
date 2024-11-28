@@ -37,6 +37,7 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 db.User = db.User || require('./user')(sequelize, Sequelize.DataTypes);
 db.Pharmacy = db.Pharmacy || require('./pharmacy')(sequelize, Sequelize.DataTypes);
+db.Medicine = db.Mediciney || require('./medicine')(sequelize, Sequelize.DataTypes);
 
 
 module.exports = db;

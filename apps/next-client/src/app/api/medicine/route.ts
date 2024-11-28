@@ -42,11 +42,11 @@ function handleError(error: unknown) {
 }
 
 // 1. 의약품 정보 API 호출 함수
-async function fetchMedicineInfo(
+async function fetchMedicineInfoAllPages(
   name: string,
-  pageNo: number,
-  numOfRows: number,
-  entpName?: string
+  entpName: string,
+  color: string,
+  numOfRows: number = 10
 ): Promise<MedicineResultDto[]> {
   if (!MEDI_DATA_API_KEY) {
     throw new ApiKeyMissingError(SEARCH_ERROR_MESSAGES.API_KEY_MISSING);
@@ -55,28 +55,56 @@ async function fetchMedicineInfo(
   const url = `http://apis.data.go.kr/1471000/MdcinGrnIdntfcInfoService01/getMdcinGrnIdntfcInfoList01?ServiceKey=${MEDI_DATA_API_KEY}`;
 
   try {
-    const params: {
-      item_name?: string;
-      entp_name?: string;
-      pageNo: number;
-      numOfRows: number;
-    } = {
-      item_name: name || undefined,
-      entp_name: entpName || undefined,
-      pageNo,
-      numOfRows,
-    };
-
-    const response: AxiosResponse<string> = await axios.get(url, {
-      params,
+    // 1. 첫 번째 요청으로 전체 페이지 수 계산
+    const initialResponse: AxiosResponse<string> = await axios.get(url, {
+      params: {
+        item_name: name || undefined,
+        entp_name: entpName || undefined,
+        pageNo: 1,
+        numOfRows,
+      },
       responseType: 'text',
     });
 
-    validateApiResponse(response, SEARCH_ERROR_MESSAGES.API_REQUEST_ERROR);
-    const jsonData = parseXmlResponse(response.data);
-    const items = jsonData?.response?.body?.items?.item || [];
+    validateApiResponse(initialResponse, SEARCH_ERROR_MESSAGES.API_REQUEST_ERROR);
+    const initialJson = parseXmlResponse(initialResponse.data);
 
-    return Array.isArray(items) ? (items as MedicineResultDto[]) : [items] as MedicineResultDto[];
+    const totalCount = initialJson?.response?.body?.totalCount || 0;
+    const totalPages = Math.ceil(totalCount / numOfRows);
+
+    if (totalCount === 0) return []; // 데이터가 없으면 빈 배열 반환
+
+    // 2. 모든 페이지에 대한 요청 배열 생성
+    const pageRequests = Array.from({ length: totalPages }, (_, index) =>
+      axios.get(url, {
+        params: {
+          item_name: name || undefined,
+          entp_name: entpName || undefined,
+          pageNo: index + 1,
+          numOfRows,
+        },
+        responseType: 'text',
+      })
+    );
+
+    // 3. 병렬로 모든 페이지 요청 실행
+    const responses = await Promise.all(pageRequests);
+
+    // 4. 모든 응답 데이터를 파싱하고, 색상 필터링 적용
+    const allResults = responses.flatMap((response) => {
+      validateApiResponse(response, SEARCH_ERROR_MESSAGES.API_REQUEST_ERROR);
+      const jsonData = parseXmlResponse(response.data);
+      const items = jsonData?.response?.body?.items?.item || [];
+      return Array.isArray(items) ? items : [items];
+    });
+
+    // 5. 색상 필터링
+    const filteredResults = allResults.filter((item) =>
+      item.COLOR_CLASS1 &&
+      color.split(',').some((c) => item.COLOR_CLASS1.includes(c))
+    );
+
+    return filteredResults as MedicineResultDto[];
   } catch (error: unknown) {
     if (
       error instanceof ApiKeyMissingError ||
@@ -89,23 +117,30 @@ async function fetchMedicineInfo(
   }
 }
 
+
 // 2. GET 요청 핸들러 함수
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const name = searchParams.get('name') || '';
   const entpName = searchParams.get('entp_name') || '';
-  const pageNo = parseInt(searchParams.get('page') || '1', 10);
+  const color = searchParams.get('COLOR_CLASS1') || ''; // 색상 필터링 추가
   const numOfRows = parseInt(searchParams.get('limit') || '10', 10);
 
-  if (!name && !entpName) {
+  if (!name && !entpName && !color) {
     return NextResponse.json(
-      { message: '약물 이름이나 업체 이름을 입력해야 합니다.' },
+      { message: '약물 이름, 업체 이름 또는 색상 중 하나는 입력해야 합니다.' },
       { status: 400 }
     );
   }
 
   try {
-    const medicineInfo = await fetchMedicineInfo(name, pageNo, numOfRows, entpName);
+    // 병렬 요청으로 모든 페이지 탐색 및 필터링
+    const medicineInfo = await fetchMedicineInfoAllPages(
+      name,
+      entpName,
+      color,
+      numOfRows
+    );
 
     return NextResponse.json({
       results: medicineInfo,
@@ -116,3 +151,5 @@ export async function GET(request: Request) {
     return NextResponse.json({ message }, { status });
   }
 }
+
+

@@ -1,19 +1,20 @@
 "use client";
 
-import { useState, useEffect, ChangeEvent, KeyboardEvent } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import useMedicineSearch from '@/hooks/useMedicineSearch';
-import useInfiniteScroll from '@/hooks/useInfiniteScroll';
-import { SEARCH_ERROR_MESSAGES } from '@/constants/search_errors';
-import { ShortSearchTermError } from '@/error/SearchError';
-import '@/styles/pages/search/search.scss';
+import { useState, useEffect, ChangeEvent, KeyboardEvent } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import useMedicineSearch from "@/hooks/useMedicineSearch";
+import useInfiniteScroll from "@/hooks/useInfiniteScroll";
+import { SEARCH_ERROR_MESSAGES } from "@/constants/search_errors";
+import "@/styles/pages/search/search.scss";
 
 export default function SearchPage() {
-  const [searchTerm, setSearchTerm] = useState<string>(''); // 약물 이름
-  const [companyName, setCompanyName] = useState<string>(''); // 업체 이름
-  const [currentSearchTerm, setCurrentSearchTerm] = useState<string>(''); // 검색 실행 시 설정되는 약물 이름
-  const [currentCompanyName, setCurrentCompanyName] = useState<string>(''); // 검색 실행 시 설정되는 업체 이름
+  const [searchTerm, setSearchTerm] = useState<string>(""); // 약물 이름
+  const [companyName, setCompanyName] = useState<string>(""); // 업체 이름
+  const [color, setColor] = useState<string>(""); // 색상 필터링
+  const [currentSearchTerm, setCurrentSearchTerm] = useState<string>(""); // 검색 실행 시 설정되는 약물 이름
+  const [currentCompanyName, setCurrentCompanyName] = useState<string>(""); // 검색 실행 시 설정되는 업체 이름
+  const [currentColor, setCurrentColor] = useState<string>(""); // 검색 실행 시 설정되는 색상 필터링 값
   const [page, setPage] = useState<number>(1);
   const [isSearchExecuted, setIsSearchExecuted] = useState<boolean>(false);
   const [warning, setWarning] = useState<string | null>(null);
@@ -29,14 +30,19 @@ export default function SearchPage() {
 
   // 검색 버튼 클릭 시 검색 실행
   const handleSearch = () => {
-    if (searchTerm.trim().length < 2 && companyName.trim().length < 2) {
-      setWarning('약물 이름이나 업체 이름을 최소 2자 이상 입력하세요.');
+    if (
+      searchTerm.trim().length < 2 &&
+      companyName.trim().length < 2 &&
+      color.trim().length < 2
+    ) {
+      setWarning("약물 이름, 업체 이름 또는 색상 중 하나를 최소 2자 이상 입력하세요.");
       return;
     }
 
     resetResults();
     setCurrentSearchTerm(searchTerm.trim());
     setCurrentCompanyName(companyName.trim());
+    setCurrentColor(color.trim());
     setPage(1);
     setIsSearchExecuted(true);
     setWarning(null);
@@ -44,27 +50,30 @@ export default function SearchPage() {
 
   // 엔터키로 검색 실행
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
   };
 
-  // 약물 이름 입력 상태 업데이트
+  // 입력 상태 업데이트
   const handleSearchTermChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
 
-  // 업체 이름 입력 상태 업데이트
   const handleCompanyNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setCompanyName(e.target.value);
   };
 
+  const handleColorChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setColor(e.target.value);
+  };
+
   // API 요청 실행 (검색 조건이 설정된 경우에만)
   useEffect(() => {
-    if (currentSearchTerm || currentCompanyName) {
-      fetchMedicineInfo(currentSearchTerm, page, currentCompanyName);
+    if (currentSearchTerm || currentCompanyName || currentColor) {
+      fetchMedicineInfo(currentSearchTerm, page, currentCompanyName, currentColor);
     }
-  }, [currentSearchTerm, currentCompanyName, page, fetchMedicineInfo]);
+  }, [currentSearchTerm, currentCompanyName, currentColor, page, fetchMedicineInfo]);
 
   const lastElementRef = useInfiniteScroll({
     loading,
@@ -90,6 +99,13 @@ export default function SearchPage() {
           onChange={handleCompanyNameChange}
           onKeyDown={handleKeyDown}
           placeholder="업체 이름을 입력하세요"
+        />
+        <input
+          type="text"
+          value={color}
+          onChange={handleColorChange}
+          onKeyDown={handleKeyDown}
+          placeholder="색상을 입력하세요 (예: 하양, 투명)"
         />
         <button onClick={handleSearch}>검색</button>
       </div>
