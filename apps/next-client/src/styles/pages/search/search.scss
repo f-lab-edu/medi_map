@@ -228,12 +228,12 @@
     // border: 1px solid #ccc;
 
     tbody {
-      border-left: 1px solid #ccc;
+      border-left: 1px solid #ccc !important;
     }
 
     tr:first-child {
       td {
-        border-top: 1px solid #ccc;
+        border-top: 1px solid #ccc !important;
         background: #efefef;
       }
       p {
@@ -242,8 +242,8 @@
     }
 
     td {
-      border-bottom: 1px solid #ccc;
-      border-right: 1px solid #ccc;
+      border-bottom: 1px solid #ccc !important;
+      border-right: 1px solid #ccc !important;
       p {
         padding: 0.7rem 1rem;
         margin: 0;

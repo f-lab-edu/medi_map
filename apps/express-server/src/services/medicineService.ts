@@ -1,42 +1,14 @@
 import { Medicine } from '@/models';
 import axios from 'axios';
 import moment from 'moment';
+import pLimit from 'p-limit';
+import { MedicineData, ApprovalData } from '@/types/medicineTypes';
 
 const MEDI_DATA_API_KEY = process.env.DATA_API_KEY;
-
-// Medicine 타입 정의
-interface MedicineData {
-  ITEM_SEQ: string;
-  ITEM_NAME: string;
-  ENTP_NAME: string;
-  ITEM_PERMIT_DATE: string;
-  CHART?: string;
-  COLOR_CLASS1?: string;
-  CLASS_NAME?: string;
-  ETC_OTC_NAME?: string;
-  ITEM_IMAGE?: string;
-  FORM_CODE_NAME?: string;
-  DRUG_SHAPE?: string;
-  LENG_LONG?: string;
-  LENG_SHORT?: string;
-  THICK?: string;
-}
-
-// Approval Data 타입 정의
-interface ApprovalData {
-  STORAGE_METHOD?: string;
-  VALID_TERM?: string;
-  PACK_UNIT?: string;
-  EE_DOC_DATA?: string;
-  UD_DOC_DATA?: string;
-  NB_DOC_DATA?: string;
-}
 
 // 기본 데이터 저장
 async function saveMedicineData(medicineData: MedicineData): Promise<void> {
   try {
-    console.log('Saving medicine data:', medicineData);
-
     // 날짜 변환
     const formattedPermitDate = medicineData.ITEM_PERMIT_DATE
       ? moment(medicineData.ITEM_PERMIT_DATE, 'YYYYMMDD').format('YYYY-MM-DD')
@@ -46,7 +18,7 @@ async function saveMedicineData(medicineData: MedicineData): Promise<void> {
       itemSeq: medicineData.ITEM_SEQ,
       itemName: medicineData.ITEM_NAME,
       entpName: medicineData.ENTP_NAME,
-      itemPermitDate: formattedPermitDate, // 변환된 날짜 사용
+      itemPermitDate: formattedPermitDate,
       chart: medicineData.CHART,
       colorClass1: medicineData.COLOR_CLASS1,
       className: medicineData.CLASS_NAME,
@@ -54,9 +26,9 @@ async function saveMedicineData(medicineData: MedicineData): Promise<void> {
       itemImage: medicineData.ITEM_IMAGE,
       formCodeName: medicineData.FORM_CODE_NAME,
       drugShape: medicineData.DRUG_SHAPE,
-      lengLong: medicineData.LENG_LONG ? parseFloat(medicineData.LENG_LONG) : null,
-      lengShort: medicineData.LENG_SHORT ? parseFloat(medicineData.LENG_SHORT) : null,
-      thick: medicineData.THICK ? parseFloat(medicineData.THICK) : null,
+      lengLong: medicineData.LENG_LONG ?? null,
+      lengShort: medicineData.LENG_SHORT ?? null,
+      thick: medicineData.THICK ?? null,
     });
 
     console.log(`Successfully saved data for ITEM_SEQ: ${medicineData.ITEM_SEQ}`);
@@ -66,7 +38,7 @@ async function saveMedicineData(medicineData: MedicineData): Promise<void> {
 }
 
 // 세부 정보 업데이트
-async function updateApprovalInfo(itemSeq: string, approvalData: ApprovalData): Promise<void> {
+async function updateApprovalInfo(itemSeq: number, approvalData: ApprovalData): Promise<void> {
   console.log(`Updating approval info for ITEM_SEQ: ${itemSeq} with data:`, approvalData);
 
   try {
@@ -145,41 +117,64 @@ async function fetchAndUpdateApprovalInfo(): Promise<void> {
   console.log('Fetching medicines from database for approval info update');
 
   const medicines = await Medicine.findAll();
+  const totalMedicines = medicines.length; // 전체 데이터 수
+  let processedMedicines = 0; // 처리된 데이터 수
 
-  console.log(`Fetched ${medicines.length} medicines from database.`);
+  console.log(`Fetched ${totalMedicines} medicines from database.`);
 
-  for (const medicine of medicines) {
-    console.log(`Fetching approval info for ITEM_SEQ: ${medicine.itemSeq}`);
+  const batchSize = 100; // 한 배치 크기
+  const concurrencyLimit = 10; // 동시에 실행할 요청 수
 
-    const approvalUrl = `https://apis.data.go.kr/1471000/DrugPrdtPrmsnInfoService06/getDrugPrdtPrmsnDtlInq05?serviceKey=${MEDI_DATA_API_KEY}&type=json&item_seq=${medicine.itemSeq}`;
-
-    try {
-      const response = await axios.get(approvalUrl);
-      console.log(`Approval info received for ITEM_SEQ: ${medicine.itemSeq}`, response.data);
-
-      const items = response.data.body.items;
-      let approvalData: ApprovalData | null = null;
-
-      if (Array.isArray(items)) {
-        // items가 배열일 경우 첫 번째 요소를 가져옵니다.
-        approvalData = items[0] as ApprovalData;
-      } else if (items?.item) {
-        // items.item이 객체일 경우 처리
-        approvalData = items.item as ApprovalData;
-      }
-
-      if (approvalData) {
-        console.log(`Updating database for ITEM_SEQ: ${medicine.itemSeq} with data:`, approvalData);
-        await updateApprovalInfo(medicine.itemSeq, approvalData);
-      } else {
-        console.warn(`No valid approval data found for ITEM_SEQ: ${medicine.itemSeq}`);
-      }
-    } catch (error) {
-      console.error(`Error fetching approval info for ITEM_SEQ: ${medicine.itemSeq}:`, error.message);
-    }
+  const batches = [];
+  for (let i = 0; i < medicines.length; i += batchSize) {
+    batches.push(medicines.slice(i, i + batchSize));
   }
 
-  console.log('Approval info update completed.');
+  console.log(`Total batches to process: ${batches.length}`);
+
+  for (const [batchIndex, batch] of batches.entries()) {
+    console.log(`Processing batch ${batchIndex + 1}/${batches.length}`);
+
+    // 병렬 요청을 제한하기 위해 Promise.all을 사용
+    const tasks = batch.map((medicine, index) => {
+      return new Promise<void>(resolve => {
+        setTimeout(async () => {
+          const approvalUrl = `https://apis.data.go.kr/1471000/DrugPrdtPrmsnInfoService06/getDrugPrdtPrmsnDtlInq05?serviceKey=${MEDI_DATA_API_KEY}&type=json&item_seq=${medicine.itemSeq}`;
+
+          try {
+            const response = await axios.get(approvalUrl);
+            const items = response.data.body.items;
+            let approvalData: ApprovalData | null = null;
+
+            if (Array.isArray(items)) {
+              approvalData = items[0] as ApprovalData;
+            } else if (items?.item) {
+              approvalData = items.item as ApprovalData;
+            }
+
+            if (approvalData) {
+              await updateApprovalInfo(medicine.itemSeq, approvalData);
+            } else {
+              console.warn(`No valid approval data found for ITEM_SEQ: ${medicine.itemSeq}`);
+            }
+          } catch (error) {
+            console.error(`Error fetching approval info for ITEM_SEQ: ${medicine.itemSeq}:`, error.message);
+          }
+
+          processedMedicines++; // 처리된 개수 증가
+          const remainingMedicines = totalMedicines - processedMedicines; // 남은 개수 계산
+          console.log(`Processed ${processedMedicines}/${totalMedicines} medicines. ${remainingMedicines} remaining.`);
+
+          resolve(); // 요청 완료 시 resolve
+        }, index * 100); // 요청 간 간격을 두어 병렬 실행 수 제어
+      });
+    });
+
+    // Promise.all로 모든 요청 처리 완료까지 기다림
+    await Promise.all(tasks);
+  }
+
+  console.log('All batches have been processed.');
 }
 
 

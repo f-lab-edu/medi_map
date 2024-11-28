@@ -22,17 +22,21 @@ export default function MedicineDetailPage() {
     const fetchMedicine = async () => {
       if (!id) return;
       try {
-        const response = await axios.get(`/api/medicine/${id}`);
+        const response = await axios.get(`http://localhost:5000/api/medicine/${id}`);
         setMedicine(response.data);
-      } catch {
+      } catch (error) {
+        console.error('Error fetching medicine data:', error);
         setError(SEARCH_ERROR_MESSAGES.NO_MEDICINE_FOUND);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchMedicine();
   }, [id]);
+  
+
+  
 
   if (loading) return <p>로딩 중...</p>;
   if (error) return <p className="error_message">{error}</p>;
@@ -43,12 +47,12 @@ export default function MedicineDetailPage() {
 
       {medicine && (
         <div className="medi_bottom_result">
-          <h3 className="name">{medicine.ITEM_NAME} {medicine.ITEM_ENG_NAME}</h3>
+          <h3 className="name">{medicine.itemName}</h3>
           <div className="medi_desc">
-            {medicine.ITEM_IMAGE && (
+            {medicine.itemImage && (
               <Image
-                src={medicine.ITEM_IMAGE}
-                alt={medicine.ITEM_NAME}
+                src={medicine.itemImage}
+                alt={medicine.itemName}
                 width={500}
                 height={280}
               />
@@ -59,57 +63,57 @@ export default function MedicineDetailPage() {
                 <tbody>
                   <tr>
                     <th>분류</th>
-                    <td>{medicine.CLASS_NAME}</td>
+                    <td>{medicine.className}</td>
                   </tr>
                   <tr>
                     <th>외형</th>
-                    <td>{medicine.CHART}</td>
+                    <td>{medicine.chart}</td>
                   </tr>
                   <tr>
                     <th>제조사</th>
-                    <td>{medicine.ENTP_NAME}</td>
+                    <td>{medicine.entpName}</td>
                   </tr>
                   <tr>
                     <th>크기</th>
-                    <td>{medicine.LENG_LONG} mm x {medicine.LENG_SHORT} mm x {medicine.THICK} mm</td>
+                    <td>{medicine.lengLong} mm x {medicine.lengShort} mm x {medicine.thick} mm</td>
                   </tr>
                   <tr>
                     <th>제형</th>
-                    <td>{medicine.FORM_CODE_NAME}</td>
+                    <td>{medicine.formCodeName}</td>
                   </tr>
                   <tr>
                     <th>모양</th>
-                    <td>{medicine.DRUG_SHAPE}</td>
+                    <td>{medicine.drugShape}</td>
                   </tr>
                   <tr>
                     <th>색상</th>
-                    <td>{medicine.COLOR_CLASS1}</td>
+                    <td>{medicine.colorClass1}</td>
                   </tr>
-                  {medicine.approvalInfo?.STORAGE_METHOD && (
+                  {medicine.storageMethod && (
                     <tr>
                       <th>저장 방법</th>
-                      <td>{medicine.approvalInfo.STORAGE_METHOD}</td>
+                      <td>{medicine.storageMethod}</td>
                     </tr>
                   )}
-                  {medicine.approvalInfo?.VALID_TERM && (
+                  {medicine.validTerm && (
                     <tr>
                       <th>유효기간</th>
-                      <td>{medicine.approvalInfo.VALID_TERM}</td>
+                      <td>{medicine.validTerm}</td>
                     </tr>
                   )}
-                  {medicine.approvalInfo?.PACK_UNIT && (
+                  {medicine.packUnit && (
                     <tr>
                       <th>포장 단위</th>
-                      <td>{medicine.approvalInfo.PACK_UNIT}</td>
+                      <td>{medicine.packUnit}</td>
                     </tr>
                   )}
                   <tr>
                     <th>전문/일반 구분</th>
-                    <td>{medicine.ETC_OTC_NAME}</td>
+                    <td>{medicine.etcOtcName}</td>
                   </tr>
                   <tr>
                     <th>허가 날짜</th>
-                    <td>{medicine.ITEM_PERMIT_DATE}</td>
+                    <td>{medicine.itemPermitDate}</td>
                   </tr>
                 </tbody>
               </table>
@@ -145,19 +149,19 @@ export default function MedicineDetailPage() {
 
           {activeTab === 'all' && (
             <>
-              <MedicineInfo docData={medicine.approvalInfo?.EE_DOC_DATA} sectionTitle="효능 효과" />
-              <MedicineInfo docData={medicine.approvalInfo?.UD_DOC_DATA} sectionTitle="사용상 주의사항" />
-              <MedicineInfo docData={medicine.approvalInfo?.NB_DOC_DATA} sectionTitle="주의사항" />
+              <MedicineInfo docData={medicine.eeDocData} sectionTitle="효능 효과" />
+              <MedicineInfo docData={medicine.udDocData} sectionTitle="사용상 주의사항" />
+              <MedicineInfo docData={medicine.nbDocData} sectionTitle="주의사항" />
             </>
           )}
           {activeTab === 'efficacy' && (
-            <MedicineInfo docData={medicine.approvalInfo?.EE_DOC_DATA} sectionTitle="효능 효과" />
+            <MedicineInfo docData={medicine.eeDocData} sectionTitle="효능 효과" />
           )}
           {activeTab === 'dosage' && (
-            <MedicineInfo docData={medicine.approvalInfo?.UD_DOC_DATA} sectionTitle="사용상 주의사항" />
+            <MedicineInfo docData={medicine.udDocData} sectionTitle="사용상 주의사항" />
           )}
           {activeTab === 'precautions' && (
-            <MedicineInfo docData={medicine.approvalInfo?.NB_DOC_DATA} sectionTitle="주의사항" />
+            <MedicineInfo docData={medicine.nbDocData} sectionTitle="주의사항" />
           )}
         </div>
       )}

@@ -1,23 +1,20 @@
 "use client";
 
-import { useState, useEffect, ChangeEvent, KeyboardEvent } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import useMedicineSearch from "@/hooks/useMedicineSearch";
-import useInfiniteScroll from "@/hooks/useInfiniteScroll";
-import { SEARCH_ERROR_MESSAGES } from "@/constants/search_errors";
-import "@/styles/pages/search/search.scss";
+import { useState, useEffect, ChangeEvent, KeyboardEvent } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import useMedicineSearch from '@/hooks/useMedicineSearch';
+import useInfiniteScroll from '@/hooks/useInfiniteScroll';
+import { SEARCH_ERROR_MESSAGES } from '@/constants/search_errors';
+import { ShortSearchTermError } from '@/error/SearchError';
+import '@/styles/pages/search/search.scss';
 
 export default function SearchPage() {
-  const [searchTerm, setSearchTerm] = useState<string>(""); // 약물 이름
-  const [companyName, setCompanyName] = useState<string>(""); // 업체 이름
-  const [color, setColor] = useState<string>(""); // 색상 필터링
-  const [currentSearchTerm, setCurrentSearchTerm] = useState<string>(""); // 검색 실행 시 설정되는 약물 이름
-  const [currentCompanyName, setCurrentCompanyName] = useState<string>(""); // 검색 실행 시 설정되는 업체 이름
-  const [currentColor, setCurrentColor] = useState<string>(""); // 검색 실행 시 설정되는 색상 필터링 값
-  const [page, setPage] = useState<number>(1);
-  const [isSearchExecuted, setIsSearchExecuted] = useState<boolean>(false);
-  const [warning, setWarning] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>(''); // 검색어
+  const [currentSearchTerm, setCurrentSearchTerm] = useState<string>(''); // 현재 검색어
+  const [page, setPage] = useState<number>(1); // 현재 페이지
+  const [isSearchExecuted, setIsSearchExecuted] = useState<boolean>(false); // 검색 실행 여부
+  const [warning, setWarning] = useState<string | null>(null); // 경고 메시지
 
   const {
     results,
@@ -28,84 +25,56 @@ export default function SearchPage() {
     resetResults,
   } = useMedicineSearch();
 
-  // 검색 버튼 클릭 시 검색 실행
+  // 검색 실행
   const handleSearch = () => {
-    if (
-      searchTerm.trim().length < 2 &&
-      companyName.trim().length < 2 &&
-      color.trim().length < 2
-    ) {
-      setWarning("약물 이름, 업체 이름 또는 색상 중 하나를 최소 2자 이상 입력하세요.");
+    if (searchTerm.trim().length < 2) {
+      setWarning(new ShortSearchTermError().message); // 검색어가 너무 짧으면 경고
       return;
     }
-
     resetResults();
     setCurrentSearchTerm(searchTerm.trim());
-    setCurrentCompanyName(companyName.trim());
-    setCurrentColor(color.trim());
-    setPage(1);
+    setPage(1); // 첫 페이지로 초기화
     setIsSearchExecuted(true);
     setWarning(null);
   };
 
-  // 엔터키로 검색 실행
+  // Enter 키로 검색 실행
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       handleSearch();
     }
   };
 
-  // 입력 상태 업데이트
-  const handleSearchTermChange = (e: ChangeEvent<HTMLInputElement>) => {
+  // 검색어 입력 변경
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
 
-  const handleCompanyNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setCompanyName(e.target.value);
-  };
-
-  const handleColorChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setColor(e.target.value);
-  };
-
-  // API 요청 실행 (검색 조건이 설정된 경우에만)
-  useEffect(() => {
-    if (currentSearchTerm || currentCompanyName || currentColor) {
-      fetchMedicineInfo(currentSearchTerm, page, currentCompanyName, currentColor);
-    }
-  }, [currentSearchTerm, currentCompanyName, currentColor, page, fetchMedicineInfo]);
-
+  // 무한 스크롤 핸들링
   const lastElementRef = useInfiniteScroll({
     loading,
     hasMore,
     onLoadMore: () => setPage((prevPage) => prevPage + 1),
   });
 
+  // 검색어 또는 페이지 변경 시 API 호출
+  useEffect(() => {
+    if (currentSearchTerm) {
+      fetchMedicineInfo(currentSearchTerm, page);
+    }
+  }, [currentSearchTerm, page, fetchMedicineInfo]);
+
   return (
     <div className="medicine_search">
       <h2 className="title">의약품 정보</h2>
-
+      
       <div className="search_box">
         <input
           type="text"
           value={searchTerm}
-          onChange={handleSearchTermChange}
+          onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder="약물 이름을 입력하세요"
-        />
-        <input
-          type="text"
-          value={companyName}
-          onChange={handleCompanyNameChange}
-          onKeyDown={handleKeyDown}
-          placeholder="업체 이름을 입력하세요"
-        />
-        <input
-          type="text"
-          value={color}
-          onChange={handleColorChange}
-          onKeyDown={handleKeyDown}
-          placeholder="색상을 입력하세요 (예: 하양, 투명)"
         />
         <button onClick={handleSearch}>검색</button>
       </div>
@@ -122,25 +91,24 @@ export default function SearchPage() {
         {results.map((item) => (
           <li
             className="medicine_desc"
-            key={item.ITEM_SEQ}
+            key={item.itemSeq}
             ref={item === results[results.length - 1] ? lastElementRef : null}
           >
-            <Link href={`/search/${item.ITEM_SEQ}`} passHref>
-              {item.ITEM_IMAGE && (
+            <Link href={`/search/${item.itemSeq}`} passHref>
+              {item.itemImage && (
                 <Image
-                  src={item.ITEM_IMAGE}
-                  alt={item.ITEM_NAME}
+                  src={item.itemImage}
+                  alt={item.itemName}
                   width={100}
                   height={50}
                 />
               )}
               <div className="medicine_info">
-                <h3 className="name">{item.ITEM_NAME}</h3>
-
+                <h3 className="name">{item.itemName}</h3>
                 <div className="details">
-                  <p className="classification">약물 분류: {item.CLASS_NAME}</p>
-                  <p className="type">전문/일반 구분: {item.ETC_OTC_NAME}</p>
-                  <p className="manufacturer">제조사: {item.ENTP_NAME}</p>
+                  <p className="classification">약물 분류: {item.className}</p>
+                  <p className="type">전문/일반 구분: {item.etcOtcName}</p>
+                  <p className="manufacturer">제조사: {item.entpName}</p>
                 </div>
               </div>
             </Link>

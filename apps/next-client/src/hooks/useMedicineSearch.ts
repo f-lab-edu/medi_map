@@ -11,49 +11,38 @@ export default function useMedicineSearch() {
   const [warning, setWarning] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState<boolean>(true);
 
-  const fetchMedicineInfo = useCallback(
-    async (searchTerm: string, page: number, companyName?: string, color?: string) => {
-      setLoading(true);
-      setError(null);
-      setWarning(null);
-  
-      try {
-        const response = await axios.get('/api/medicine', {
-          params: {
-            name: searchTerm || undefined, // 약물 이름
-            entp_name: companyName || undefined, // 업체 이름
-            COLOR_CLASS1: color || undefined, // 색상 필터링
-            page,
-            limit: 10,
-          },
-        });
-  
-        const newResults: MedicineResultDto[] = Array.isArray(response.data.results)
-          ? response.data.results
-          : [];
-        const newTotal: number = response.data.total || 0;
-  
-        setResults((prevResults) => (page === 1 ? newResults : [...prevResults, ...newResults]));
-        setTotalResults(newTotal);
-        setHasMore(newResults.length > 0);
-  
-        if (newTotal === 0 && page === 1) {
-          throw new NoResultsError();
-        }
-      } catch (error) {
-        if (error instanceof NoResultsError) {
-          setWarning(error.message);
-        } else {
-          setError(new ApiRequestError().message);
-        }
-      } finally {
-        setLoading(false);
+  const fetchMedicineInfo = useCallback(async (searchTerm: string, page: number) => {
+    setLoading(true);
+    setError(null);
+    setWarning(null);
+
+    try {
+      // 백엔드 검색 API 호출
+      const response = await axios.get('http://localhost:5000/api/medicine/search', {
+        params: { name: searchTerm, page, limit: 10 }, // 검색어와 페이징 정보를 전달
+      });
+
+      // 반환된 데이터를 처리
+      const newResults: MedicineResultDto[] = Array.isArray(response.data.results) ? response.data.results : [];
+      const newTotal: number = response.data.total || 0;
+
+      setResults((prevResults) => (page === 1 ? newResults : [...prevResults, ...newResults]));
+      setTotalResults(newTotal);
+      setHasMore(newResults.length > 0); // 다음 데이터가 있는지 확인
+
+      if (newTotal === 0 && page === 1) {
+        throw new NoResultsError();
       }
-    },
-    []
-  );
-  
-  
+    } catch (error) {
+      if (error instanceof NoResultsError) {
+        setWarning(error.message);
+      } else {
+        setError(new ApiRequestError().message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const resetResults = () => {
     setResults([]);
