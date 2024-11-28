@@ -10,8 +10,10 @@ import { ShortSearchTermError } from '@/error/SearchError';
 import '@/styles/pages/search/search.scss';
 
 export default function SearchPage() {
-  const [searchTerm, setSearchTerm] = useState<string>(''); // 검색어
-  const [currentSearchTerm, setCurrentSearchTerm] = useState<string>(''); // 현재 검색어
+  const [medicineSearchTerm, setMedicineSearchTerm] = useState<string>(''); // 약물 검색어
+  const [companySearchTerm, setCompanySearchTerm] = useState<string>(''); // 업체 검색어
+  const [currentMedicineSearchTerm, setCurrentMedicineSearchTerm] = useState<string>(''); // 현재 약물 검색어
+  const [currentCompanySearchTerm, setCurrentCompanySearchTerm] = useState<string>(''); // 현재 업체 검색어
   const [page, setPage] = useState<number>(1); // 현재 페이지
   const [isSearchExecuted, setIsSearchExecuted] = useState<boolean>(false); // 검색 실행 여부
   const [warning, setWarning] = useState<string | null>(null); // 경고 메시지
@@ -27,12 +29,13 @@ export default function SearchPage() {
 
   // 검색 실행
   const handleSearch = () => {
-    if (searchTerm.trim().length < 2) {
-      setWarning(new ShortSearchTermError().message); // 검색어가 너무 짧으면 경고
+    if (medicineSearchTerm.trim().length < 2 && companySearchTerm.trim().length < 2) {
+      setWarning('검색어를 2자 이상 입력해주세요.'); // 검색어가 너무 짧으면 경고
       return;
     }
     resetResults();
-    setCurrentSearchTerm(searchTerm.trim());
+    setCurrentMedicineSearchTerm(medicineSearchTerm.trim());
+    setCurrentCompanySearchTerm(companySearchTerm.trim());
     setPage(1); // 첫 페이지로 초기화
     setIsSearchExecuted(true);
     setWarning(null);
@@ -45,9 +48,14 @@ export default function SearchPage() {
     }
   };
 
-  // 검색어 입력 변경
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+  // 약물 검색어 입력 변경
+  const handleMedicineInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setMedicineSearchTerm(e.target.value);
+  };
+
+  // 업체 검색어 입력 변경
+  const handleCompanyInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setCompanySearchTerm(e.target.value);
   };
 
   // 무한 스크롤 핸들링
@@ -59,10 +67,10 @@ export default function SearchPage() {
 
   // 검색어 또는 페이지 변경 시 API 호출
   useEffect(() => {
-    if (currentSearchTerm) {
-      fetchMedicineInfo(currentSearchTerm, page);
+    if (currentMedicineSearchTerm || currentCompanySearchTerm) {
+      fetchMedicineInfo(currentMedicineSearchTerm, currentCompanySearchTerm, page);
     }
-  }, [currentSearchTerm, page, fetchMedicineInfo]);
+  }, [currentMedicineSearchTerm, currentCompanySearchTerm, page, fetchMedicineInfo]);
 
   return (
     <div className="medicine_search">
@@ -71,10 +79,17 @@ export default function SearchPage() {
       <div className="search_box">
         <input
           type="text"
-          value={searchTerm}
-          onChange={handleInputChange}
+          value={medicineSearchTerm}
+          onChange={handleMedicineInputChange}
           onKeyDown={handleKeyDown}
           placeholder="약물 이름을 입력하세요"
+        />
+        <input 
+          type="text"
+          value={companySearchTerm}
+          onChange={handleCompanyInputChange}
+          onKeyDown={handleKeyDown}
+          placeholder="업체 이름을 입력하세요"
         />
         <button onClick={handleSearch}>검색</button>
       </div>
@@ -88,11 +103,11 @@ export default function SearchPage() {
       )}
 
       <ul className="medicine_results">
-        {results.map((item) => (
+        {results.map((item, index) => (
           <li
             className="medicine_desc"
             key={item.itemSeq}
-            ref={item === results[results.length - 1] ? lastElementRef : null}
+            ref={index === results.length - 1 ? lastElementRef : null}
           >
             <Link href={`/search/${item.itemSeq}`} passHref>
               {item.itemImage && (

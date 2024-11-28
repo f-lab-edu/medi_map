@@ -38,18 +38,35 @@ router.get('/', async (req, res) => {
 // 검색 API 추가 (/search)
 router.get('/search', async (req, res) => {
   try {
-    const name = req.query.name as string;
+    const medicineName = req.query.medicineName as string;
+    const companyName = req.query.companyName as string;
     const pageNumber = parseInt(req.query.page as string, 10) || 1;
     const limitNumber = parseInt(req.query.limit as string, 10) || 10;
 
     const offset = (pageNumber - 1) * limitNumber;
 
-    const medicines = await Medicine.findAndCountAll({
-      where: {
+    const whereClause = {
+      [Op.or]: [],
+    };
+
+    if (medicineName) {
+      whereClause[Op.or].push({
         itemName: {
-          [Op.iLike]: `%${name}%`, // 대소문자 구분 없는 검색
+          [Op.iLike]: `%${medicineName}%`,
         },
-      },
+      });
+    }
+
+    if (companyName) {
+      whereClause[Op.or].push({
+        entpName: {
+          [Op.iLike]: `%${companyName}%`,
+        },
+      });
+    }
+
+    const medicines = await Medicine.findAndCountAll({
+      where: whereClause,
       limit: limitNumber,
       offset,
     });
@@ -63,6 +80,7 @@ router.get('/search', async (req, res) => {
     res.status(500).json({ error: '검색 중 오류 발생', message: error.message });
   }
 });
+
 
 // 특정 의약품 정보 조회
 router.get('/:id', async (req, res) => {

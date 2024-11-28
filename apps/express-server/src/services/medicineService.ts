@@ -118,63 +118,55 @@ async function fetchAndUpdateApprovalInfo(): Promise<void> {
 
   const medicines = await Medicine.findAll();
   const totalMedicines = medicines.length; // 전체 데이터 수
+  const pageSize = 100; // 한 페이지에 처리할 데이터 수
+  const totalPages = Math.ceil(totalMedicines / pageSize); // 전체 페이지 수 계산
   let processedMedicines = 0; // 처리된 데이터 수
 
   console.log(`Fetched ${totalMedicines} medicines from database.`);
+  console.log(`Total pages to process: ${totalPages}`);
 
-  const batchSize = 100; // 한 배치 크기
-  const concurrencyLimit = 10; // 동시에 실행할 요청 수
+  // 페이지 순회
+  for (let pageNo = 1; pageNo <= totalPages; pageNo++) {
+    console.log(`Processing page ${pageNo}/${totalPages}`);
 
-  const batches = [];
-  for (let i = 0; i < medicines.length; i += batchSize) {
-    batches.push(medicines.slice(i, i + batchSize));
+    // 현재 페이지의 데이터를 슬라이싱
+    const pageData = medicines.slice((pageNo - 1) * pageSize, pageNo * pageSize);
+
+    for (const medicine of pageData) {
+      const approvalUrl = `https://apis.data.go.kr/1471000/DrugPrdtPrmsnInfoService06/getDrugPrdtPrmsnDtlInq05?serviceKey=${MEDI_DATA_API_KEY}&type=json&item_seq=${medicine.itemSeq}`;
+
+      try {
+        const response = await axios.get(approvalUrl);
+        const items = response.data.body.items;
+        let approvalData: ApprovalData | null = null;
+
+        // 응답 데이터 확인
+        if (Array.isArray(items)) {
+          approvalData = items[0] as ApprovalData;
+        } else if (items?.item) {
+          approvalData = items.item as ApprovalData;
+        }
+
+        // 승인 데이터 업데이트
+        if (approvalData) {
+          await updateApprovalInfo(medicine.itemSeq, approvalData);
+        } else {
+          console.warn(`No valid approval data found for ITEM_SEQ: ${medicine.itemSeq}`);
+        }
+      } catch (error) {
+        console.error(`Error fetching approval info for ITEM_SEQ: ${medicine.itemSeq}:`, error.message);
+      }
+
+      processedMedicines++;
+      console.log(`Processed ${processedMedicines}/${totalMedicines} medicines.`);
+    }
+
+    // 페이지 간 지연 (옵션: 서버 부담을 줄이기 위해)
+    console.log(`Completed page ${pageNo}. Waiting before next page...`);
+    await new Promise(resolve => setTimeout(resolve, 1000)); // 1초 대기
   }
 
-  console.log(`Total batches to process: ${batches.length}`);
-
-  for (const [batchIndex, batch] of batches.entries()) {
-    console.log(`Processing batch ${batchIndex + 1}/${batches.length}`);
-
-    // 병렬 요청을 제한하기 위해 Promise.all을 사용
-    const tasks = batch.map((medicine, index) => {
-      return new Promise<void>(resolve => {
-        setTimeout(async () => {
-          const approvalUrl = `https://apis.data.go.kr/1471000/DrugPrdtPrmsnInfoService06/getDrugPrdtPrmsnDtlInq05?serviceKey=${MEDI_DATA_API_KEY}&type=json&item_seq=${medicine.itemSeq}`;
-
-          try {
-            const response = await axios.get(approvalUrl);
-            const items = response.data.body.items;
-            let approvalData: ApprovalData | null = null;
-
-            if (Array.isArray(items)) {
-              approvalData = items[0] as ApprovalData;
-            } else if (items?.item) {
-              approvalData = items.item as ApprovalData;
-            }
-
-            if (approvalData) {
-              await updateApprovalInfo(medicine.itemSeq, approvalData);
-            } else {
-              console.warn(`No valid approval data found for ITEM_SEQ: ${medicine.itemSeq}`);
-            }
-          } catch (error) {
-            console.error(`Error fetching approval info for ITEM_SEQ: ${medicine.itemSeq}:`, error.message);
-          }
-
-          processedMedicines++; // 처리된 개수 증가
-          const remainingMedicines = totalMedicines - processedMedicines; // 남은 개수 계산
-          console.log(`Processed ${processedMedicines}/${totalMedicines} medicines. ${remainingMedicines} remaining.`);
-
-          resolve(); // 요청 완료 시 resolve
-        }, index * 100); // 요청 간 간격을 두어 병렬 실행 수 제어
-      });
-    });
-
-    // Promise.all로 모든 요청 처리 완료까지 기다림
-    await Promise.all(tasks);
-  }
-
-  console.log('All batches have been processed.');
+  console.log('All pages have been processed.');
 }
 
 
