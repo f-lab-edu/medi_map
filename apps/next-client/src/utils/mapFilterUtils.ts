@@ -13,6 +13,12 @@ export const getCurrentTime = (): number => {
 export const isPharmacyOpenNow = (pharmacy: PharmacyDTO, currentTime: number): boolean => {
   const openTime = parseInt(pharmacy.dutyTime1s || '0000', 10);
   const closeTime = parseInt(pharmacy.dutyTime1c || '2400', 10);
+
+  // 영업 시간이 없으면 휴무로 간주
+  if (!openTime || !closeTime) {
+    return false;
+  }
+
   return closeTime < openTime
     ? currentTime >= openTime || currentTime < closeTime
     : currentTime >= openTime && currentTime < closeTime;

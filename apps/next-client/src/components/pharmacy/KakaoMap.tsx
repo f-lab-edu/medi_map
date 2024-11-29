@@ -80,12 +80,27 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location, onSearch, onP
 
   return (
     <div className='map_cont'>
-      <div id="map" style={{ width: '100%', height: 'calc(100vh - 75px)'}}></div>
+      <div id="map" style={{ width: '100%', height: 'calc(100vh - 82px)'}}></div>
       <button className='map_search' onClick={handleSearchInCurrentMap}>현재 지도에서 검색</button>
       <ul className="load_info_list">
-        <li onClick={() => handleFilterChange('ALL')}>전체</li>
-        <li onClick={() => handleFilterChange('OPEN_NOW')}>영업중</li>
-        <li onClick={() => handleFilterChange('NIGHT_PHARMACY')}>공공심야약국</li>
+        <li
+          className={filter === 'ALL' ? 'selected' : ''}
+          onClick={() => handleFilterChange('ALL')}
+        >
+          전체
+        </li>
+        <li
+          className={filter === 'OPEN_NOW' ? 'selected' : ''}
+          onClick={() => handleFilterChange('OPEN_NOW')}
+        >
+          영업중
+        </li>
+        <li
+          className={filter === 'NIGHT_PHARMACY' ? 'selected' : ''}
+          onClick={() => handleFilterChange('NIGHT_PHARMACY')}
+        >
+          공공심야약국
+        </li>
       </ul>
     </div>
   );

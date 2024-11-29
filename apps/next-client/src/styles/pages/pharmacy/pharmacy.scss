@@ -5,27 +5,41 @@
   }
 }
 .info_name {
-  width: 100%;
-  display: block;
-  font-size: 1.8rem;
-  padding: 0.5rem;
-  text-align: center;
+  width: 16rem;
+  height: 3.5rem;
+  border-radius: 1rem;
+  border: 1px solid #ccc;
+  position: absolute;
+  background: #fff;
+  top: -11px;
+  left: -5px;
+
+  p {
+    font-size: 1.5rem;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    font-weight: 500;
+  }
 }
 .map_cont {
   position: relative;
 
   .map_search {
-    background: greenyellow;
+    background: var(--sky-blue);
     position: absolute;
-    bottom: 10px;
-    right: 10px;
+    bottom: 2rem;
+    right: 2rem;
     z-index: 10;
     gap: 1rem;
-    padding: 2rem;
+    padding: 1rem 2rem;
     cursor: pointer;
     border-radius: 1rem;
-    font-size: 1.8rem;
-    font-weight: bold;
+    font-size: 1.6rem;
+    color: #fff;
+    border: 1px solid #ccc;
   }
 
   .load_info_list {
@@ -36,14 +50,20 @@
     display: flex;
     gap: 1rem;
     justify-content: end;
-    padding: 1rem;
+    padding: 1.5rem;
 
     li {
-      background: #fff;
       border-radius: 1rem;
       border: 1px solid #ccc;
       padding: 0.5rem 1rem;
       cursor: pointer;
+      background: var(--off-white);
+      color: var(--medium-gray);
+
+      &.selected {
+        background: var(--btn-color);
+        color: #fff;
+      }
     }
   }
 }
@@ -69,11 +89,12 @@
     overflow-y: scroll;
     position: relative;
 
-    button {
+    .close_button {
       position: absolute;
       right: 2rem;
       top: 2.5rem;
       cursor: pointer;
+      width: 3rem;
     }
 
     .pharm_modal_wrap {
@@ -88,6 +109,10 @@
         .open {
           display: flex;
           gap: 1rem;
+        }
+
+        .time {
+          color: var(--dark-gray);
         }
       }
     }
@@ -117,14 +142,16 @@
 
     .phone_number {
       border: 1px solid #aaa;
+      color: var(--black);
       display: inline-block;
       border-radius: 1.5rem;
       padding: 0 1rem;
+      font-size: 1.4rem;
       font-weight: 500;
     }
 
     .open > span {
-      color: #389e0d;
+      color: var(--btn-color);
 
       &.text-closed {
         color: #888;
@@ -139,7 +166,7 @@
         content: '';
         width: 4px;
         height: 4px;
-        background-color: #389e0d;
+        background-color: var(--btn-color);
         border-radius: 100%;
         margin: 0 7px 3px 0;
       }
@@ -156,7 +183,7 @@
 
         .sub {
           font-size: 1.5rem;
-          color: #444;
+          color: var(--dark-gray);
           letter-spacing: -0.5px;
           margin-bottom: 1rem;
         }
@@ -193,7 +220,7 @@
       }
 
       .time_table_wrap {
-        border: 1px solid #f0f0f0;
+        border: 1px solid var(--off-white);
         width: 100%;
         border-bottom: 0px;
         border-right: 0px;
@@ -203,19 +230,21 @@
           border-collapse: collapse;
 
           tr {
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid var(--off-white);
 
             td {
               padding: 8px 16px;
-              border-right: 1px solid #f0f0f0;
+              border-right: 1px solid var(--off-white);
+              color: var(--dark-gray);
             }
           }
 
           .day {
             text-align: center;
-            background: #00000005;
+            background: var(--off-white);
             width: 100px;
             border-right: 1px solid #f0f0f0;
+            color: var(--medium-gray);
           }
         }
       }
@@ -237,7 +266,7 @@
       content: '';
       width: 4px;
       height: 4px;
-      background-color: #389e0d;
+      background-color: var(--btn-color);
       border-radius: 100%;
       margin: 0 7px 3px 0;
     }
@@ -249,7 +278,7 @@
     }
   }
   .status_open {
-    color: #389e0d;
+    color: var(--btn-color);
   }
   .status_closed {
     color: #888;
