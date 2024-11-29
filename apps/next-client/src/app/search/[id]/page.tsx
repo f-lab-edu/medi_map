@@ -9,6 +9,7 @@ import { MedicineResultDto } from '@/dto/MedicineResultDto';
 import MedicineInfo from '@/components/medicineDetail/MedicineInfo';
 import '@/styles/pages/search/search.scss';
 import { SEARCH_ERROR_MESSAGES } from '@/constants/search_errors';
+import { API_URLS } from '@/constants/urls';
 
 export default function MedicineDetailPage() {
   const { id } = useParams();
@@ -16,16 +17,17 @@ export default function MedicineDetailPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  // 탭 메뉴 상태
   const [activeTab, setActiveTab] = useState<'all' | 'efficacy' | 'dosage' | 'precautions'>('all');
 
   useEffect(() => {
     const fetchMedicine = async () => {
       if (!id) return;
       try {
-        const response = await axios.get(`http://localhost:5000/api/medicine/${id}`);
+        const response = await axios.get(`${API_URLS.MEDICINE}/${id}`);
         setMedicine(response.data);
       } catch (error) {
-        console.error('Error fetching medicine data:', error);
+        console.error(SEARCH_ERROR_MESSAGES.NO_MEDICINE_FOUND, error);
         setError(SEARCH_ERROR_MESSAGES.NO_MEDICINE_FOUND);
       } finally {
         setLoading(false);
@@ -35,9 +37,6 @@ export default function MedicineDetailPage() {
     fetchMedicine();
   }, [id]);
   
-
-  
-
   if (loading) return <p>로딩 중...</p>;
   if (error) return <p className="error_message">{error}</p>;
 
@@ -149,16 +148,16 @@ export default function MedicineDetailPage() {
 
           {activeTab === 'all' && (
             <>
-              <MedicineInfo docData={medicine.eeDocData} sectionTitle="효능 효과" />
-              <MedicineInfo docData={medicine.udDocData} sectionTitle="사용상 주의사항" />
+              <MedicineInfo docData={medicine.eeDocData} sectionTitle="효능효과" />
+              <MedicineInfo docData={medicine.udDocData} sectionTitle="용법용량" />
               <MedicineInfo docData={medicine.nbDocData} sectionTitle="주의사항" />
             </>
           )}
           {activeTab === 'efficacy' && (
-            <MedicineInfo docData={medicine.eeDocData} sectionTitle="효능 효과" />
+            <MedicineInfo docData={medicine.eeDocData} sectionTitle="효능효과" />
           )}
           {activeTab === 'dosage' && (
-            <MedicineInfo docData={medicine.udDocData} sectionTitle="사용상 주의사항" />
+            <MedicineInfo docData={medicine.udDocData} sectionTitle="용법용량" />
           )}
           {activeTab === 'precautions' && (
             <MedicineInfo docData={medicine.nbDocData} sectionTitle="주의사항" />

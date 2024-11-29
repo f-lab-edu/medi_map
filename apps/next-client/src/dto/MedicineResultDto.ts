@@ -1,11 +1,13 @@
 export interface Paragraph {
   cdata?: string;
   text?: string;
+  "#text"?: string;
   tagName?: string;
+  "@_tagName"?: string;
 }
 
 export interface Article {
-  title?: string; 
+  "@_title"?: string;
   PARAGRAPH?: Paragraph | Paragraph[];
 }
 
@@ -13,21 +15,14 @@ export interface Section {
   ARTICLE?: Article | Article[];
 }
 
-export interface DocData {
-  DOC?: {
-    title?: string;
-    SECTION?: Section;
-  };
+export interface Doc {
+  "@_title"?: string;
+  SECTION?: Section;
 }
 
-export interface ApprovalInfo {
-  STORAGE_METHOD?: string;  // 저장 방법
-  VALID_TERM?: string;      // 유효 기간
-  PACK_UNIT?: string;       // 포장 단위
-  EE_DOC_DATA?: DocData;    // 효능 효과 관련 문서 데이터
-  UD_DOC_DATA?: DocData;    // 사용상 주의사항 관련 문서 데이터
-  NB_DOC_DATA?: DocData;    // 주의사항 관련 문서 데이터
-  MATERIAL_NAME?: string; // 주성분명
+export interface MedicineInfoProps {
+  docData?: string; 
+  sectionTitle: string;
 }
 
 export interface MedicineResultDto {
@@ -49,9 +44,9 @@ export interface MedicineResultDto {
   storageMethod?: string;   // 저장 방법
   validTerm?: string;       // 유효 기간
   packUnit?: string;        // 포장 단위
-  eeDocData?: DocData;      // 효능 효과 데이터
-  udDocData?: DocData;      // 사용상 주의사항 데이터
-  nbDocData?: DocData;      // 주의사항 데이터
+  eeDocData?: string;       // 효능 효과 데이터
+  udDocData?: string;       // 사용상 주의사항 데이터
+  nbDocData?: string;       // 주의사항 데이터
   createdAt?: string;       // 생성 날짜
   updatedAt?: string;       // 수정 날짜
 }

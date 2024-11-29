@@ -9,6 +9,7 @@ import KakaoMap from '@/components/pharmacy/KakaoMap';
 import PharmacyDetails from '@/components/pharmacy/PharmacyDetails';
 import { PharmacyDTO } from '@/dto/PharmacyDTO';
 import { ERROR_MESSAGES } from '@/constants/errors';
+import { API_URLS } from '@/constants/urls';
 
 export default function PharmacyPage() {
   const { location, locationError } = useGeoLocation();
@@ -19,7 +20,7 @@ export default function PharmacyPage() {
   const handleSearch = useCallback(async (lat: number, lng: number) => {
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_BACKEND_URL}/api/pharmacy?lat=${lat}&lng=${lng}`);
+      const response = await fetch(`${API_URLS.PHARMACY}?lat=${lat}&lng=${lng}`);
       const data = await response.json();
 
       if (Array.isArray(data)) {

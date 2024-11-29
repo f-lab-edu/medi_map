@@ -2,6 +2,7 @@ import express from 'express';
 import { Op } from 'sequelize';
 import { fetchAndSaveAllMedicines, fetchAndUpdateApprovalInfo } from '@/services/medicineService';
 import { Medicine } from '@/models';
+import { SEARCH_MESSAGES } from '@/constants/search_messages';
 
 const router = express.Router();
 
@@ -9,9 +10,9 @@ const router = express.Router();
 router.post('/sync', async (req, res) => {
   try {
     await fetchAndSaveAllMedicines();
-    res.status(200).json({ message: '기본 데이터 동기화 완료' });
+    res.status(200).json({ message: SEARCH_MESSAGES.DATA_SYNC_SUCCESS });
   } catch (error) {
-    res.status(500).json({ error: '기본 데이터 동기화 중 오류 발생', message: error.message });
+    res.status(500).json({ error: SEARCH_MESSAGES.DATA_SYNC_ERROR, message: error.message });
   }
 });
 
@@ -19,9 +20,9 @@ router.post('/sync', async (req, res) => {
 router.post('/sync-approval', async (req, res) => {
   try {
     await fetchAndUpdateApprovalInfo();
-    res.status(200).json({ message: '세부 정보 업데이트 완료' });
+    res.status(200).json({ message: SEARCH_MESSAGES.APPROVAL_SYNC_SUCCESS });
   } catch (error) {
-    res.status(500).json({ error: '세부 정보 업데이트 중 오류 발생', message: error.message });
+    res.status(500).json({ error: SEARCH_MESSAGES.APPROVAL_SYNC_ERROR, message: error.message });
   }
 });
 
@@ -31,7 +32,7 @@ router.get('/', async (req, res) => {
     const medicines = await Medicine.findAll();
     res.status(200).json(medicines);
   } catch (error) {
-    res.status(500).json({ error: '데이터 조회 중 오류 발생', message: error.message });
+    res.status(500).json({ error: SEARCH_MESSAGES.DATA_FETCH_ERROR, message: error.message });
   }
 });
 
@@ -40,29 +41,32 @@ router.get('/search', async (req, res) => {
   try {
     const medicineName = req.query.medicineName as string;
     const companyName = req.query.companyName as string;
-    const colorClass1 = req.query.color as string; // 쉼표로 구분된 색상
-    const drugShape = req.query.shape as string; // 쉼표로 구분된 모양
-    const formCodeName = req.query.formCodeName as string; // 쉼표로 구분된 형태
+    const colorClass1 = req.query.color as string;
+    const drugShape = req.query.shape as string;
+    const formCodeName = req.query.formCodeName as string;
     const pageNumber = parseInt(req.query.page as string, 10) || 1;
     const limitNumber = parseInt(req.query.limit as string, 10) || 10;
 
     const offset = (pageNumber - 1) * limitNumber;
 
-    // AND 조건 조합
+    // 검색 조건
     const whereClause: any = {};
 
+    // 검색 조건 추가
     if (medicineName) {
       whereClause.itemName = {
         [Op.iLike]: `%${medicineName}%`,
       };
     }
 
+    // 회사명 검색
     if (companyName) {
       whereClause.entpName = {
         [Op.iLike]: `%${companyName}%`,
       };
     }
 
+    // 색상 검색
     if (colorClass1) {
       const colors = colorClass1.split(',').map(c => c.trim());
       whereClause.colorClass1 = {
@@ -72,6 +76,7 @@ router.get('/search', async (req, res) => {
       };
     }
 
+    // 모양 검색
     if (drugShape) {
       const shapes = drugShape.split(',').map(s => s.trim());
       whereClause.drugShape = {
@@ -81,6 +86,7 @@ router.get('/search', async (req, res) => {
       };
     }
 
+    // 제형 검색
     if (formCodeName) {
       const forms = formCodeName.split(',').map(f => f.trim());
       whereClause.formCodeName = {
@@ -101,11 +107,10 @@ router.get('/search', async (req, res) => {
       total: medicines.count,
     });
   } catch (error) {
-    console.error('Error fetching data:', error);
-    res.status(500).json({ error: '검색 중 오류 발생', message: error.message });
+    console.error(SEARCH_MESSAGES.DATA_FETCH_ERROR, error);
+    res.status(500).json({ error: SEARCH_MESSAGES.SEARCH_ERROR, message: error.message });
   }
 });
-
 
 // 특정 의약품 정보 조회
 router.get('/:id', async (req, res) => {
@@ -119,13 +124,13 @@ router.get('/:id', async (req, res) => {
     console.log('Fetched medicine:', medicine);
 
     if (!medicine) {
-      return res.status(404).json({ error: '해당 의약품 정보를 찾을 수 없습니다.' });
+      return res.status(404).json({ error: SEARCH_MESSAGES.NO_RESULT_DEDICINE });
     }
 
     res.status(200).json(medicine);
   } catch (error) {
-    console.error('Error fetching medicine data:', error);
-    res.status(500).json({ error: '데이터 조회 중 오류 발생', message: error.message });
+    console.error(SEARCH_MESSAGES.DATA_FETCH_ERROR, error);
+    res.status(500).json({ error: SEARCH_MESSAGES.DATA_FETCH_ERROR, message: error.message });
   }
 });
 
