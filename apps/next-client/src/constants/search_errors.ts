@@ -8,4 +8,5 @@ export const SEARCH_ERROR_MESSAGES = {
   API_REQUEST_ERROR: 'API 요청 중 오류가 발생했습니다.',
   NO_RESULTS_FOUND: '찾으시는 약물 정보가 없습니다.',
   XML_PARSING_ERROR: 'XML 데이터를 파싱하는 중 오류가 발생했습니다.',
+  INVALID_DOC_DATA_FORMAT: '유효하지 않은 docData 형식입니다.',
 };

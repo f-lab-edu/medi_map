@@ -4,7 +4,7 @@ const nextConfig = {
     domains: ['img.icons8.com', 'nedrug.mfds.go.kr'],
   },
   experimental: {
-    incrementalCacheHandlerPath: './cache',
+    cacheHandler: './cache',
   },
 };
 
