@@ -60,7 +60,7 @@ async function updateApprovalInfo(itemSeq: number, approvalData: ApprovalData): 
 }
 
 // 의약품 데이터 저장
-async function fetchAndSaveAllMedicines(): Promise<void> {
+async function fetchAllMedicines(): Promise<void> {
   const numOfRows = 100; // 한 번에 가져올 데이터 수
   const urlBase = `http://apis.data.go.kr/1471000/MdcinGrnIdntfcInfoService01/getMdcinGrnIdntfcInfoList01?ServiceKey=${MEDI_DATA_API_KEY}&type=json&numOfRows=${numOfRows}`;
   let totalCount = 0;
@@ -101,7 +101,7 @@ async function fetchAndSaveAllMedicines(): Promise<void> {
 
     console.log('All medicines have been saved successfully.');
   } catch (error) {
-    console.error('Error in fetchAndSaveAllMedicines:', error.message);
+    console.error('Error in fetchAllMedicines:', error.message);
     if (error.response) {
       console.error('Error response data:', JSON.stringify(error.response.data, null, 2));
     }
@@ -110,7 +110,7 @@ async function fetchAndSaveAllMedicines(): Promise<void> {
 }
 
 // 승인 정보 업데이트
-async function fetchAndUpdateApprovalInfo(): Promise<void> {
+async function fetchApprovalInfo(): Promise<void> {
   console.log('Fetching medicines from database for approval info update');
 
   const medicines = await Medicine.findAll();
@@ -166,6 +166,6 @@ async function fetchAndUpdateApprovalInfo(): Promise<void> {
 }
 
 export {
-  fetchAndSaveAllMedicines,
-  fetchAndUpdateApprovalInfo,
+  fetchAllMedicines,
+  fetchApprovalInfo,
 };

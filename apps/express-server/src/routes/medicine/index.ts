@@ -1,6 +1,6 @@
 import express from 'express';
 import { Op } from 'sequelize';
-import { fetchAndSaveAllMedicines, fetchAndUpdateApprovalInfo } from '@/services/medicineService';
+import { fetchAllMedicines, fetchApprovalInfo } from '@/services/medicineService';
 import { Medicine } from '@/models';
 import { SEARCH_MESSAGES } from '@/constants/search_messages';
 
@@ -9,7 +9,7 @@ const router = express.Router();
 // 기본 데이터 저장
 router.post('/sync', async (req, res) => {
   try {
-    await fetchAndSaveAllMedicines();
+    await fetchAllMedicines();
     res.status(200).json({ message: SEARCH_MESSAGES.DATA_SYNC_SUCCESS });
   } catch (error) {
     res.status(500).json({ error: SEARCH_MESSAGES.DATA_SYNC_ERROR, message: error.message });
@@ -19,7 +19,7 @@ router.post('/sync', async (req, res) => {
 // 세부 정보 업데이트
 router.post('/sync-approval', async (req, res) => {
   try {
-    await fetchAndUpdateApprovalInfo();
+    await fetchApprovalInfo();
     res.status(200).json({ message: SEARCH_MESSAGES.APPROVAL_SYNC_SUCCESS });
   } catch (error) {
     res.status(500).json({ error: SEARCH_MESSAGES.APPROVAL_SYNC_ERROR, message: error.message });
