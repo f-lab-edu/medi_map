@@ -8,11 +8,11 @@
   width: 16rem;
   height: 3.5rem;
   border-radius: 1rem;
-  border: 1px solid #ccc;
+  border: 0.1rem solid #ccc;
   position: absolute;
   background: #fff;
-  top: -11px;
-  left: -5px;
+  top: -1.1rem;
+  left: -0.5rem;
 
   p {
     font-size: 1.5rem;
@@ -39,7 +39,7 @@
     border-radius: 1rem;
     font-size: 1.6rem;
     color: #fff;
-    border: 1px solid #ccc;
+    border: 0.1rem solid #ccc;
   }
 
   .load_info_list {
@@ -54,7 +54,7 @@
 
     li {
       border-radius: 1rem;
-      border: 1px solid #ccc;
+      border: 0.1rem solid #ccc;
       padding: 0.5rem 1rem;
       cursor: pointer;
       background: var(--off-white);
@@ -73,16 +73,15 @@
   height: 100vh;
   position: fixed;
   z-index: 998;
-  padding-top: 80px;
-  letter-spacing: -0.5px;
-  top: 0;
+  letter-spacing: -0.05rem;
+  top: 8rem;
   display: flex;
 
   .pharmacies_desc {
-    margin: 20px 0 20px 20px;
-    width: 426px;
-    border-radius: 8px;
-    box-shadow: 0 10px 6px #18114e1a;
+    margin: 2rem 0 2rem 2rem;
+    width: 42.6rem;
+    border-radius: 0.8rem;
+    box-shadow: 0 1rem 0.6rem #18114e1a;
     background: #fff;
     padding: 3rem;
     overflow: hidden;
@@ -100,9 +99,9 @@
     .pharm_modal_wrap {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      font-size: 15px;
-      letter-spacing: -0.5px;
+      gap: 1.2rem;
+      font-size: 1.5rem;
+      letter-spacing: -0.05rem;
       margin-top: 4rem;
 
       .pharm_info {
@@ -119,15 +118,30 @@
 
     .pharm_name_wrap {
       .pharm_name {
-        font-size: 20px;
+        font-size: 1.9rem;
         font-weight: 700;
         color: #000;
       }
     }
 
-    > li {
-      border-bottom: 1px solid #ccc;
-      padding: 2.5rem 0;
+    .pharmacies_count {
+      font-weight: 600;
+
+      span {
+        color: var(--btn-color);
+        font-size: 1.7rem;
+        font-weight: bold;
+      }
+    }
+
+    .pharmacies_list {
+      padding: 0;
+
+      li {
+        border-bottom: 0.1rem solid #ccc;
+        padding: 2.5rem 0;
+        cursor: pointer;
+      }
     }
 
     h2 {
@@ -141,7 +155,7 @@
     }
 
     .phone_number {
-      border: 1px solid #aaa;
+      border: 0.1rem solid #aaa;
       color: var(--black);
       display: inline-block;
       border-radius: 1.5rem;
@@ -164,11 +178,11 @@
       &::before {
         display: inline-block;
         content: '';
-        width: 4px;
-        height: 4px;
+        width: 0.4rem;
+        height: 0.4rem;
         background-color: var(--btn-color);
         border-radius: 100%;
-        margin: 0 7px 3px 0;
+        margin: 0 0.7rem 0.3rem 0;
       }
     }
 
@@ -184,24 +198,24 @@
         .sub {
           font-size: 1.5rem;
           color: var(--dark-gray);
-          letter-spacing: -0.5px;
+          letter-spacing: -0.05rem;
           margin-bottom: 1rem;
         }
       }
 
       .number {
         .title {
-          font-size: 16px;
+          font-size: 1.6rem;
           font-weight: 600;
           color: #444;
-          margin-right: 10px;
-          letter-spacing: -0.5px;
+          margin-right: 1rem;
+          letter-spacing: -0.05rem;
         }
 
         .sub {
-          font-size: 16px;
+          font-size: 1.6rem;
           color: #444;
-          letter-spacing: -0.5px;
+          letter-spacing: -0.05rem;
         }
       }
     }
@@ -209,32 +223,32 @@
     .time_table {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 0.8rem;
       margin-top: 2rem;
 
       .time_table_title {
-        font-size: 16px;
+        font-size: 1.6rem;
         font-weight: 700;
         text-align: left;
         color: #000;
       }
 
       .time_table_wrap {
-        border: 1px solid var(--off-white);
+        border: 0.1rem solid var(--off-white);
         width: 100%;
-        border-bottom: 0px;
-        border-right: 0px;
+        border-bottom: 0;
+        border-right: 0;
 
         table {
           width: 100%;
           border-collapse: collapse;
 
           tr {
-            border-bottom: 1px solid var(--off-white);
+            border-bottom: 0.1rem solid var(--off-white);
 
             td {
-              padding: 8px 16px;
-              border-right: 1px solid var(--off-white);
+              padding: 0.8rem 1.6rem;
+              border-right: 0.1rem solid var(--off-white);
               color: var(--dark-gray);
             }
           }
@@ -242,8 +256,8 @@
           .day {
             text-align: center;
             background: var(--off-white);
-            width: 100px;
-            border-right: 1px solid #f0f0f0;
+            width: 10rem;
+            border-right: 0.1rem solid #f0f0f0;
             color: var(--medium-gray);
           }
         }
@@ -264,11 +278,11 @@
     &::before {
       display: inline-block;
       content: '';
-      width: 4px;
-      height: 4px;
+      width: 0.4rem;
+      height: 0.4rem;
       background-color: var(--btn-color);
       border-radius: 100%;
-      margin: 0 7px 3px 0;
+      margin: 0 0.7rem 0.3rem 0;
     }
 
     &.status_closed {

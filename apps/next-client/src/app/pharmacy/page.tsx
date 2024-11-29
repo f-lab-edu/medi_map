@@ -72,16 +72,20 @@ export default function PharmacyPage() {
 
     return (
       <div className="pharmacies_box">
-        <ul className="pharmacies_desc">
-          {pharmacies.map((pharmacy) => (
-            <li key={pharmacy.hpid} onClick={() => handlePharmacyClick(pharmacy)}>
-              <h2>{pharmacy.dutyName.trim()}</h2>
-              <p className="address">{pharmacy.dutyAddr}</p>
-              <PharmacyTimeList pharmacy={pharmacy} />
-              <p className="phone_number">{pharmacy.dutyTel1}</p>
-            </li>
-          ))}
-        </ul>
+        <div className='pharmacies_desc'>
+          <p className="pharmacies_count">총 <span>{pharmacies.length}</span>
+            개의 약국이 검색되었습니다🍀</p>
+          <ul className="pharmacies_list">
+            {pharmacies.map((pharmacy) => (
+              <li key={pharmacy.hpid} onClick={() => handlePharmacyClick(pharmacy)}>
+                <h2>{pharmacy.dutyName.trim()}</h2>
+                <p className="address">{pharmacy.dutyAddr}</p>
+                <PharmacyTimeList pharmacy={pharmacy} />
+                <p className="phone_number">{pharmacy.dutyTel1}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
         {selectedPharmacy && (
           <PharmacyDetails
             pharmacy={selectedPharmacy}
