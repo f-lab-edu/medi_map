@@ -46,8 +46,8 @@ const MedicineInfo: React.FC<MedicineInfoProps> = ({ docData, sectionTitle }) =>
   try {
     if (typeof docData === 'string') {
       parsedData = parseXMLToJSON(docData);
-    } else if (docData && typeof docData === 'object') {
-      parsedData = docData; 
+    } else if (typeof docData === 'object' && docData !== null) {
+      parsedData = docData;
     } else {
       throw new Error(SEARCH_ERROR_MESSAGES.INVALID_DOC_DATA_FORMAT);
     }
@@ -55,6 +55,7 @@ const MedicineInfo: React.FC<MedicineInfoProps> = ({ docData, sectionTitle }) =>
     console.error(SEARCH_ERROR_MESSAGES.XML_PARSING_ERROR, error);
     return <p>XML 데이터를 처리할 수 없습니다.</p>;
   }
+  
 
   const { DOC } = parsedData || {};
   const { "@_title": title, SECTION } = DOC || {};
