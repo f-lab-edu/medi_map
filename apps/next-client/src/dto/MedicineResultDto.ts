@@ -20,6 +20,10 @@ export interface Doc {
   SECTION?: Section;
 }
 
+export interface DocData {
+  DOC?: Doc;
+}
+
 export interface MedicineInfoProps {
   docData?: string; 
   sectionTitle: string;
@@ -44,9 +48,9 @@ export interface MedicineResultDto {
   storageMethod?: string;   // 저장 방법
   validTerm?: string;       // 유효 기간
   packUnit?: string;        // 포장 단위
-  eeDocData?: string;       // 효능 효과 데이터
-  udDocData?: string;       // 사용상 주의사항 데이터
-  nbDocData?: string;       // 주의사항 데이터
+  eeDocData?: DocData;      // 효능 효과 데이터
+  udDocData?: DocData;      // 사용상 주의사항 데이터
+  nbDocData?: DocData;      // 주의사항 데이터
   createdAt?: string;       // 생성 날짜
   updatedAt?: string;       // 수정 날짜
 }

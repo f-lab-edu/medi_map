@@ -33,22 +33,6 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location, onSearch, onP
     initialize();
   }, []);
 
-  // 지도 초기화 및 위치 설정
-  useEffect(() => {
-    if (mapLoaded && location && mapRef.current === null) {
-      initializeMap('map', location, (map) => {
-        mapRef.current = map;
-        updateMarkers(pharmacies);  // 초기 마커 설정
-      });
-    }
-  }, [mapLoaded, location]);
-
-  // 약국 데이터나 필터 변경 시 마커 업데이트
-  useEffect(() => {
-    if (mapRef.current) {
-      updateMarkers(pharmacies);
-    }
-  }, [pharmacies, filter]);
 
   // 마커를 업데이트하는 함수
   const updateMarkers = (pharmacies: PharmacyDTO[]) => {
@@ -63,6 +47,23 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location, onSearch, onP
     const newMarkers = addMarkers(mapRef.current!, filteredPharmacies, onPharmacyClick); // 클릭 이벤트 전달
     markersRef.current = newMarkers;  // 새 마커 목록을 저장
   };
+
+  // 지도 초기화 및 위치 설정
+  useEffect(() => {
+    if (mapLoaded && location && mapRef.current === null) {
+      initializeMap('map', location, (map) => {
+        mapRef.current = map;
+        updateMarkers(pharmacies); // 초기 마커 설정
+      });
+    }
+  }, [mapLoaded, location, pharmacies, initializeMap, updateMarkers]);
+  
+  // 약국 데이터나 필터 변경 시 마커 업데이트
+  useEffect(() => {
+    if (mapRef.current) {
+      updateMarkers(pharmacies);
+    }
+  }, [pharmacies, filter]);
 
   // 현재 지도 위치 기준으로 약국 검색
   const handleSearchInCurrentMap = () => {
