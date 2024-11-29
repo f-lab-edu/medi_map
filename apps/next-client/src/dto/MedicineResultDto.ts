@@ -25,7 +25,7 @@ export interface DocData {
 }
 
 export interface MedicineInfoProps {
-  docData?: string; 
+  docData?: string | DocData;
   sectionTitle: string;
 }
 

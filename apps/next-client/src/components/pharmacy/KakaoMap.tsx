@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { PharmacyDTO } from '@/dto/PharmacyDTO';
 import { loadKakaoMapScript } from '@/utils/kakaoMapLoader';
 import { initializeMap, addMarkers } from '@/utils/mapUtils';
@@ -33,20 +33,22 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location, onSearch, onP
     initialize();
   }, []);
 
+  // 마커를 업데이트하는 함수 (useCallback으로 메모이제이션)
+  const updateMarkers = useCallback(
+    (pharmacies: PharmacyDTO[]) => {
+      // 기존 마커 제거
+      if (Array.isArray(markersRef.current)) {
+        markersRef.current.forEach(marker => marker.setMap(null));
+      }
+      markersRef.current = [];
 
-  // 마커를 업데이트하는 함수
-  const updateMarkers = (pharmacies: PharmacyDTO[]) => {
-    // 기존 마커 제거
-    if (Array.isArray(markersRef.current)) {
-      markersRef.current.forEach(marker => marker.setMap(null));
-    }
-    markersRef.current = [];
-
-    // 필터된 약국 목록으로 새로운 마커 추가
-    const filteredPharmacies = applyFilter(pharmacies, filter);
-    const newMarkers = addMarkers(mapRef.current!, filteredPharmacies, onPharmacyClick); // 클릭 이벤트 전달
-    markersRef.current = newMarkers;  // 새 마커 목록을 저장
-  };
+      // 필터된 약국 목록으로 새로운 마커 추가
+      const filteredPharmacies = applyFilter(pharmacies, filter);
+      const newMarkers = addMarkers(mapRef.current!, filteredPharmacies, onPharmacyClick); // 클릭 이벤트 전달
+      markersRef.current = newMarkers; // 새 마커 목록을 저장
+    },
+    [filter, onPharmacyClick]
+  );
 
   // 지도 초기화 및 위치 설정
   useEffect(() => {
@@ -56,14 +58,14 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ pharmacies, location, onSearch, onP
         updateMarkers(pharmacies); // 초기 마커 설정
       });
     }
-  }, [mapLoaded, location, pharmacies, initializeMap, updateMarkers]);
-  
+  }, [mapLoaded, location, pharmacies, updateMarkers]);
+
   // 약국 데이터나 필터 변경 시 마커 업데이트
   useEffect(() => {
     if (mapRef.current) {
       updateMarkers(pharmacies);
     }
-  }, [pharmacies, filter]);
+  }, [pharmacies, filter, updateMarkers]);
 
   // 현재 지도 위치 기준으로 약국 검색
   const handleSearchInCurrentMap = () => {

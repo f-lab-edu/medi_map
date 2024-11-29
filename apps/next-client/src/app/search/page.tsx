@@ -107,8 +107,8 @@ export default function SearchPage() {
         page,
       });
     }
-  }, [isSearchExecuted, page, fetchMedicineInfo, medicineSearchTerm, companySearchTerm, selectedColors, selectedShapes, selectedForms]);
-  
+  }, [page]);
+
   return (
     <div className="medicine_search">
       <h2 className="title">의약품 정보</h2>
