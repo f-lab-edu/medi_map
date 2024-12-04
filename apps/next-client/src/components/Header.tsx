@@ -3,12 +3,13 @@
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
 import { ROUTES } from '@/constants/urls';
+import Cookies from 'js-cookie';
 
 export default function Header() {
   const { data: session } = useSession();
 
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
+    Cookies.remove('accessToken');
     signOut({ callbackUrl: ROUTES.AUTH.SIGN_IN });
   };
 

@@ -1,11 +1,11 @@
-import { signIn } from 'next-auth/react';
-import { ROUTES } from '@/constants/urls';
-import { ERROR_MESSAGES } from '@/constants/errors';
-import { LoginError } from '@/error/AuthError';
+import { signIn } from "next-auth/react";
+import { ROUTES } from "@/constants/urls";
+import { ERROR_MESSAGES } from "@/constants/errors";
+import { LoginError } from "@/error/AuthError";
 
 export const loginWithCredentials = async (email: string, password: string) => {
   try {
-    const result = await signIn('credentials', {
+    const result = await signIn("credentials", {
       redirect: false,
       email,
       password,
@@ -19,7 +19,17 @@ export const loginWithCredentials = async (email: string, password: string) => {
       throw new LoginError(result.error || ERROR_MESSAGES.LOGIN_ERROR);
     }
 
-    return result;
+    const response = await fetch(ROUTES.AUTH.SESSION);
+    const data = await response.json();
+
+    if (!response.ok || !data?.accessToken) {
+      throw new LoginError(ERROR_MESSAGES.LOGIN_ERROR);
+    }
+
+    return {
+      ...result,
+      accessToken: data.accessToken,
+    };
   } catch (error: unknown) {
     handleLoginError(error);
   }
@@ -27,7 +37,7 @@ export const loginWithCredentials = async (email: string, password: string) => {
 
 export const loginWithGoogle = async () => {
   try {
-    const result = await signIn('google', { callbackUrl: ROUTES.HOME });
+    const result = await signIn("google", { callbackUrl: ROUTES.HOME });
 
     if (!result) {
       throw new LoginError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
@@ -37,7 +47,17 @@ export const loginWithGoogle = async () => {
       throw new LoginError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
     }
 
-    return result;
+    const response = await fetch(ROUTES.AUTH.SESSION);
+    const data = await response.json();
+
+    if (!response.ok || !data?.accessToken) {
+      throw new LoginError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
+    }
+
+    return {
+      ...result,
+      accessToken: data.accessToken,
+    };
   } catch (error: unknown) {
     handleLoginError(error);
   }
@@ -48,5 +68,5 @@ const handleLoginError = (error: unknown) => {
     throw error;
   }
 
-  throw new LoginError();
+  throw new LoginError(ERROR_MESSAGES.LOGIN_ERROR);
 };

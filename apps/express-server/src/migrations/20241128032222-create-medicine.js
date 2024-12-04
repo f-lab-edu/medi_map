@@ -1,4 +1,5 @@
 'use strict';
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -15,7 +16,7 @@ module.exports = {
         unique: true,
       },
       itemName: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: false,
       },
       entpName: {
@@ -25,13 +26,13 @@ module.exports = {
         type: Sequelize.DATE,
       },
       chart: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       colorClass1: {
         type: Sequelize.STRING,
       },
       className: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       etcOtcName: {
         type: Sequelize.STRING,
@@ -40,10 +41,10 @@ module.exports = {
         type: Sequelize.TEXT,
       },
       formCodeName: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       drugShape: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       lengLong: {
         type: Sequelize.FLOAT,
@@ -53,24 +54,6 @@ module.exports = {
       },
       thick: {
         type: Sequelize.FLOAT,
-      },
-      storageMethod: {
-        type: Sequelize.STRING,
-      },
-      validTerm: {
-        type: Sequelize.STRING,
-      },
-      packUnit: {
-        type: Sequelize.STRING,
-      },
-      eeDocData: {
-        type: Sequelize.TEXT,
-      },
-      udDocData: {
-        type: Sequelize.TEXT,
-      },
-      nbDocData: {
-        type: Sequelize.TEXT,
       },
       createdAt: {
         allowNull: false,
@@ -83,9 +66,25 @@ module.exports = {
         defaultValue: Sequelize.fn('NOW'),
       },
     });
+
+    await queryInterface.addIndex('Medicine', ['itemName'], {
+      name: 'itemName_index',
+    });
+
+    await queryInterface.addIndex('Medicine', ['entpName'], {
+      name: 'entpName_index',
+    });
+
+    await queryInterface.addIndex('Medicine', ['colorClass1', 'drugShape'], {
+      name: 'colorShape_index',
+    });
   },
 
   async down(queryInterface, Sequelize) {
+    await queryInterface.removeIndex('Medicine', 'itemName_index');
+    await queryInterface.removeIndex('Medicine', 'entpName_index');
+    await queryInterface.removeIndex('Medicine', 'colorShape_index');
+
     await queryInterface.dropTable('Medicine');
   },
 };

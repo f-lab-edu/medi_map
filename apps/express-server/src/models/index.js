@@ -4,7 +4,6 @@
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
-const process = require('process');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.js')[env];
@@ -32,12 +31,13 @@ fs
     db[model.name] = model;
   });
 
-// 각 모델을 개별적으로 내보낼 수 있도록 설정
+Object.values(db).forEach(model => {
+  if (model.associate) {
+    model.associate(db);
+  }
+});
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
-db.User = db.User || require('./user')(sequelize, Sequelize.DataTypes);
-db.Pharmacy = db.Pharmacy || require('./pharmacy')(sequelize, Sequelize.DataTypes);
-db.Medicine = db.Mediciney || require('./medicine')(sequelize, Sequelize.DataTypes);
-
 
 module.exports = db;

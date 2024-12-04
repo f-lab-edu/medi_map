@@ -1,13 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { JWT_SECRET } from '@/app-constants/constants';
+import { User } from '@/models';
 
-interface AuthenticatedRequest extends Request {
-  user?: string | jwt.JwtPayload;
+export interface CustomJwtPayload extends JwtPayload {
+  id: string;
 }
 
-// JWT 토큰 검증 미들웨어
-export const authMiddleware = (
+export interface AuthenticatedRequest extends Request {
+  user?: CustomJwtPayload & { username?: string };
+}
+
+export const authMiddleware = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
@@ -20,10 +24,20 @@ export const authMiddleware = (
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
+    const decoded = jwt.verify(token, JWT_SECRET) as CustomJwtPayload;
+    const user = await User.findByPk(decoded.id);
+
+    if (!user) {
+      return res.status(401).json({ message: 'User not found' });
+    }
+
+    req.user = {
+      ...decoded,
+      username: user.username,
+    };
+
     next();
-  } catch (err) {
-    return res.status(403).json({ message: 'Invalid token' });
+  } catch (error) {
+    return res.status(403).json({ message: 'Invalid token', error: error.message });
   }
 };
