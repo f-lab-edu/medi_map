@@ -1,13 +1,6 @@
 import { PharmacyDTO } from '@/dto/PharmacyDTO';
 import { ERROR_MESSAGES } from '@/constants/errors';
 
-declare global {
-  interface Window {
-    kakao: typeof kakao;
-    markers: kakao.maps.Marker[];
-  }
-}
-
 // 지도 초기화 함수
 export const initializeMap = (
   containerId: string,
@@ -43,16 +36,30 @@ export const addMarkers = (
 
   pharmacies.forEach((pharmacy) => {
     const markerPosition = new kakao.maps.LatLng(pharmacy.wgs84Lat, pharmacy.wgs84Lon);
-    const marker = new kakao.maps.Marker({ map, position: markerPosition, title: pharmacy.dutyName });
 
+    // 마커 이미지 설정
+    const markerImageSrc = '/images/marker.png';
+    const markerImageSize = new kakao.maps.Size(29, 28);
+    const markerImageOption = { offset: new kakao.maps.Point(12, 35) };
+    const markerImage = new kakao.maps.MarkerImage(markerImageSrc, markerImageSize, markerImageOption);
+
+    // 마커 생성
+    const marker = new kakao.maps.Marker({
+      map,
+      position: markerPosition,
+      title: pharmacy.dutyName,
+      image: markerImage,
+    });
+
+    // InfoWindow 생성
     const infoWindow = new kakao.maps.InfoWindow({
-      content: `<div class='info_name'>${pharmacy.dutyName}</div>`,
+      content: `<div class='info_name'><p>${pharmacy.dutyName}</p></div>`,
     });
 
     kakao.maps.event.addListener(marker, 'mouseover', () => infoWindow.open(map, marker));
+    
     kakao.maps.event.addListener(marker, 'mouseout', () => infoWindow.close());
 
-    // 마커 클릭 시 약국 정보 전달
     kakao.maps.event.addListener(marker, 'click', () => onPharmacyClick(pharmacy));
 
     markers.push(marker);

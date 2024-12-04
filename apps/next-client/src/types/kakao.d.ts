@@ -1,6 +1,7 @@
 declare global {
   interface Window {
     kakao: typeof kakao;
+    markers: kakao.maps.Marker[];
   }
 }
 
@@ -20,13 +21,14 @@ declare namespace kakao.maps {
     constructor(container: HTMLElement | null, options: MapOptions);
     setCenter(latlng: LatLng): void;
     setLevel(level: number): void;
-    getCenter(): LatLng; // 추가
+    getCenter(): LatLng;
   }
 
   interface MarkerOptions {
     map: Map;
     position: LatLng;
     title?: string;
+    image?: MarkerImage;
   }
 
   class Marker {
@@ -45,23 +47,20 @@ declare namespace kakao.maps {
     close(): void;
   }
 
-  interface CircleOptions {
-    center: LatLng;
-    radius: number;
-    strokeWeight?: number;
-    strokeColor?: string;
-    strokeOpacity?: number;
-    strokeStyle?: 'solid' | 'shortdash' | 'shortdot' | 'shortdashdot' | 'shortdashdotdot' | 'dot' | 'dash' | 'dashdot' | 'longdash' | 'longdashdot' | 'longdashdotdot';
-    fillColor?: string;
-    fillOpacity?: number;
+  class Size {
+    constructor(width: number, height: number);
   }
 
-  // Circle 클래스 추가
-  class Circle {
-    constructor(options: CircleOptions);
-    setMap(map: Map | null): void;
-    getPosition(): LatLng;
-    getRadius(): number;
+  class Point {
+    constructor(x: number, y: number);
+  }
+
+  interface MarkerImageOptions {
+    offset: Point;
+  }
+
+  class MarkerImage {
+    constructor(src: string, size: Size, options?: MarkerImageOptions);
   }
 
   namespace event {

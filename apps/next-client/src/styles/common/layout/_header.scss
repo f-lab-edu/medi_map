@@ -1,19 +1,23 @@
 #header {
   display: flex;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  z-index: 999999;
 
   .inner {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    padding: 2rem 0;
+    padding: 1.5rem 0;
     gap: 10rem;
+    align-items: center;
   }
 
   h1 {
+    margin: 0;
     a {
       font-size: 2rem;
       font-weight: bold;
+      margin: 0;
     }
   }
 
@@ -25,8 +29,10 @@
     .menu_cont {
       display: flex;
       gap: 4rem;
+      margin: 0;
+
       li {
-        a{
+        a {
           font-size: 1.6rem;
           font-weight: 500;
         }
@@ -34,9 +40,25 @@
     }
     .auth_cont {
       display: flex;
-      gap: 4rem;
+      align-items: center;
+      gap: 3rem;
+      margin: 0;
       button {
         cursor: pointer;
+      }
+
+      a {
+        font-size: 1.6rem;
+      }
+
+      .sign_up_button {
+        background: var(--btn-color);
+        padding: 1rem 2rem;
+        border-radius: 2rem;
+
+        a {
+          color: #fff;
+        }
       }
     }
   }

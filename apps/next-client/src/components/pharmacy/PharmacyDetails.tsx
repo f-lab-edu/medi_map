@@ -1,6 +1,7 @@
 import React from 'react';
 import { PharmacyDTO } from '@/dto/PharmacyDTO';
 import { getTodayOperatingHours, getWeeklyOperatingHours, isPharmacyOpenNowToday } from '@/utils/pharmacyUtils';
+import { TEXTS } from '@/constants/common';
 
 interface PharmacyDetailsProps {
   pharmacy: PharmacyDTO;
@@ -15,7 +16,9 @@ const PharmacyDetails: React.FC<PharmacyDetailsProps> = ({ pharmacy, onClose }) 
   return (
     <div className="pharmacies_desc">
       <h3>약국 상세</h3>
-      <button onClick={onClose}>닫기</button>
+      <button className='close_button' onClick={onClose}>
+        <img src="/images/icon_close.png" alt="" />
+      </button>
       <div className="pharm_modal_wrap">
         <div className="pharm_name_wrap">
           <p className="pharm_name">{pharmacy.dutyName.trim()}</p>
@@ -50,7 +53,7 @@ const PharmacyDetails: React.FC<PharmacyDetailsProps> = ({ pharmacy, onClose }) 
                   <tr key={day.day}>
                     <td className="day">{day.day}</td>
                     <td>
-                      {day.openTime || '휴무'} - {day.closeTime || '휴무'}
+                      {day.openTime || TEXTS.CLOSED} - {day.closeTime || TEXTS.CLOSED}
                     </td>
                   </tr>
                 ))}

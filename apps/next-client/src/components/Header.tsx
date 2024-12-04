@@ -20,9 +20,9 @@ export default function Header() {
         </h1>
         <div className="right_cont">
           <ul className="menu_cont">
-            <li><Link href="/pharmacy">약국찾기</Link></li>
-            <li><Link href="/search">약찾기</Link></li>
-            <li><Link href="/community">커뮤니티</Link></li>
+            <li><Link href="/pharmacy">약국 찾아보기🔍</Link></li>
+            <li><Link href="/search">약 정보 검색💊</Link></li>
+            <li><Link href="/community">건강 이야기🗨️</Link></li>
           </ul>
           <ul className="auth_cont">
             {session ? (
@@ -34,8 +34,8 @@ export default function Header() {
               </>
             ) : (
               <>
-                <li><Link href="/auth/login">로그인</Link></li>
-                <li><Link href="/auth/signup">회원가입</Link></li>
+                <li className='login_button'><Link href="/auth/login">로그인</Link></li>
+                <li className='sign_up_button'><Link href="/auth/signup">회원가입</Link></li>
               </>
             )}
           </ul>
