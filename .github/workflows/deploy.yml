@@ -25,8 +25,8 @@ jobs:
       # 3. App Engine에 애플리케이션 배포
       - name: Deploy to App Engine
         run: |
-          gcloud app deploy apps/express-server/app.yaml --image-url=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/project/express-server:latest
-          gcloud app deploy apps/next-client/app.yaml --image-url=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/project/next-client:latest
+          gcloud app deploy apps/express-server/app.yaml --image-url=us-central1-docker.pkg.dev/f-lab-project-440413/project/express-server:latest
+          gcloud app deploy apps/next-client/app.yaml --image-url=us-central1-docker.pkg.dev/f-lab-project-440413/project/next-client:latest
 
       # 4. PR에 댓글 남기기
       - name: Comment on PR
