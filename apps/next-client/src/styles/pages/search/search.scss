@@ -90,7 +90,7 @@
 
         &.pink {
           background: #e91e63;
-          color: #fff;
+          color: #fc9e9e;
         }
 
         &.red {
@@ -293,7 +293,7 @@
     }
 
     th {
-      background-color: var(--color--gray);
+      background-color: var(--off-white);
       font-weight: bold;
       width: 25%;
     }
@@ -301,7 +301,7 @@
   .sub_title {
     font-size: 2rem;
     font-weight: bold;
-    color: rgb(60, 60, 175);
+    color: var(--btn-color);
     margin-bottom: 2rem;
   }
 

@@ -13,7 +13,6 @@ const ParagraphContent: React.FC<{ paragraph?: Paragraph }> = ({ paragraph }) =>
 
   // 테이블 태그일 경우, 테이블 컴포넌트로 렌더링
   if (paragraph["@_tagName"] === 'table' && paragraph["#text"]) {
-    console.log('Raw table HTML content:', paragraph["#text"]);
     return (
       <div className="table_container">
         <table
