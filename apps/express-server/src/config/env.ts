@@ -9,7 +9,8 @@ export const checkEnvVariables = () => {
     'DB_NAME',
     'DB_PASSWORD',
     'DB_PORT',
-    'FRONTEND_URL'
+    'FRONTEND_URL',
+    'DATA_API_KEY',
   ];
 
   requiredEnvVars.forEach(varName => {

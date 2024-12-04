@@ -50,6 +50,7 @@ jobs:
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_PORT=${{ secrets.DB_PORT }}
             FRONTEND_URL=${{ secrets.FRONTEND_URL }}
+            DATA_API_KEY=${{ secrets.DATA_API_KEY }}
 
       # 6. next-client 이미지 빌드 및 푸시
       - name: Build and Push next-client Image
@@ -69,3 +70,5 @@ jobs:
             NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
             NEXT_PUBLIC_LOCAL_BACKEND_URL=${{ secrets.NEXT_PUBLIC_LOCAL_BACKEND_URL }}
             NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+            NEXT_PUBLIC_KAKAO_MAP_KEY=${{ secrets.NEXT_PUBLIC_KAKAO_MAP_KEY }}
+            DATA_API_KEY=${{ secrets.DATA_API_KEY }}
