@@ -113,7 +113,7 @@ export default function SearchPage() {
       form: selectedForms,
       page,
     });
-  }, [isSearchExecuted, page, medicineSearchTerm, companySearchTerm, selectedColors, selectedShapes, selectedForms, fetchMedicineInfo]);
+  }, [page]);
   
 
   return (
@@ -193,10 +193,6 @@ export default function SearchPage() {
       {loading && <p>로딩 중...</p>}
       {error && <p className="error_message">{error}</p>}
       {warning && <p className="warning_message">{warning}</p>}
-
-      {!loading && isSearchExecuted && results.length === 0 && !warning && (
-        <p className="no_results_message">{SEARCH_ERROR_MESSAGES.NO_RESULTS_FOUND}</p>
-      )}
       
       <ul className="medicine_results">
         {results.map((item: MedicineResultDto, index: number) => (
