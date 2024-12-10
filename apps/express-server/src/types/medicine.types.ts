@@ -58,24 +58,24 @@ export interface MedicineQuery {
 }
 
 export interface JoinedMedicine {
-  item_seq: string;
-  item_name: string;
-  entp_name: string;
-  item_permit_date: string | null;
+  itemSeq: string;
+  itemName: string;
+  entpName: string;
+  itemPermitDate: string | null;
   chart: string | null;
-  color_class1: string | null;
-  class_name: string | null;
-  etc_otc_name: string | null;
-  item_image: string | null;
-  form_code_name: string | null;
-  drug_shape: string | null;
-  leng_long: number | null;
-  leng_short: number | null;
+  colorClass1: string | null;
+  className: string | null;
+  etcOtcName: string | null;
+  itemImage: string | null;
+  formCodeName: string | null;
+  drugShape: string | null;
+  lengLong: number | null;
+  lengShort: number | null;
   thick: number | null;
-  storage_method: string | null;
-  valid_term: string | null;
-  pack_unit: string | null;
-  ee_doc_data: string | null;
-  ud_doc_data: string | null;
-  nb_doc_data: string | null;
+  storageMethod: string | null;
+  validTerm: string | null;
+  packUnit: string | null;
+  eeDocData: string | null;
+  udDocData: string | null;
+  nbDocData: string | null;
 }

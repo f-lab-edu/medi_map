@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, KeyboardEvent, ChangeEvent } from "react";
+import { useEffect, KeyboardEvent, ChangeEvent, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import useMedicineSearch from "@/hooks/useMedicineSearch";
@@ -9,7 +9,8 @@ import { SEARCH_ERROR_MESSAGES } from "@/constants/search_errors";
 import { FILTERS, FILTER_ALL } from "@/constants/filters";
 import "@/styles/pages/search/search.scss";
 import { useSearchStore } from "@/store/useSearchStore";
-import { MedicineResultDto } from '@/dto/MedicineResultDto'
+import { MedicineResultDto } from '@/dto/MedicineResultDto';
+import { ScrollToTopButton } from "@/components/common/ScrollToTopButton";
 
 export default function SearchPage() {
   const {
@@ -64,13 +65,17 @@ export default function SearchPage() {
   };
 
   const updateFilter = (selectedItems: string[], newItem: string) => {
-    if (newItem === FILTER_ALL) return [FILTER_ALL];
+    if (newItem === FILTER_ALL) {
+      return [FILTER_ALL];
+    }
   
-    const updatedItems = selectedItems.includes(newItem)
-      ? selectedItems.filter((item) => item !== newItem)
-      : [...selectedItems, newItem];
+    const updatedItems = selectedItems.filter((item) => item !== FILTER_ALL);
   
-    return updatedItems.length === 0 ? [FILTER_ALL] : updatedItems;
+    if (updatedItems.includes(newItem)) {
+      return updatedItems.filter((item) => item !== newItem);
+    }
+  
+    return [...updatedItems, newItem];
   };
 
   const handleColorSelect = (color: string) =>
@@ -114,7 +119,6 @@ export default function SearchPage() {
       page,
     });
   }, [page]);
-  
 
   return (
     <div className="medicine_search">
@@ -222,6 +226,7 @@ export default function SearchPage() {
           </li>
         ))}
       </ul>
+      <ScrollToTopButton offset={200} />
     </div>
   );
 }

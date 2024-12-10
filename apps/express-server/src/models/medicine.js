@@ -5,9 +5,21 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Medicine extends Model {
     static associate(models) {
+      // MedicineDesc와의 관계 설정
       Medicine.hasOne(models.MedicineDesc, {
         foreignKey: 'itemSeq',
         sourceKey: 'itemSeq',
+      });
+
+      // 자기 참조 관계 설정
+      Medicine.hasMany(models.Medicine, {
+        as: 'RelatedMedicines',
+        foreignKey: 'relatedMedicineId',
+      });
+
+      Medicine.belongsTo(models.Medicine, {
+        as: 'ParentMedicine',
+        foreignKey: 'relatedMedicineId',
       });
     }
   }
@@ -35,6 +47,10 @@ module.exports = (sequelize, DataTypes) => {
       lengLong: DataTypes.FLOAT,
       lengShort: DataTypes.FLOAT,
       thick: DataTypes.FLOAT,
+      relatedMedicineId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
     },
     {
       sequelize,

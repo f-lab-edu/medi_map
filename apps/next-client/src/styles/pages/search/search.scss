@@ -265,7 +265,12 @@
   .name {
     font-size: 2.5rem;
     font-weight: 700;
-    margin-bottom: 2rem;
+    margin-bottom: 4rem;
+
+    span {
+      font-size: 1.8rem;
+      color: #363636;
+    }
   }
   .back_btn {
     background: var(--btn-color);

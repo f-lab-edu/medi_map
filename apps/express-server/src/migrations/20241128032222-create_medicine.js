@@ -13,7 +13,7 @@ module.exports = {
       itemSeq: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true,
+        unique: true, // Unique index
       },
       itemName: {
         type: Sequelize.TEXT,
@@ -66,9 +66,25 @@ module.exports = {
         defaultValue: Sequelize.fn('NOW'),
       },
     });
+
+    await queryInterface.addIndex('Medicine', ['itemName'], {
+      name: 'itemName_index',
+    });
+
+    await queryInterface.addIndex('Medicine', ['entpName'], {
+      name: 'entpName_index',
+    });
+
+    await queryInterface.addIndex('Medicine', ['colorClass1', 'drugShape'], {
+      name: 'colorShape_index',
+    });
   },
 
   async down(queryInterface, Sequelize) {
+    await queryInterface.removeIndex('Medicine', 'itemName_index');
+    await queryInterface.removeIndex('Medicine', 'entpName_index');
+    await queryInterface.removeIndex('Medicine', 'colorShape_index');
+
     await queryInterface.dropTable('Medicine');
   },
 };

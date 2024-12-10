@@ -124,7 +124,7 @@ export async function getJoinedMedicines(itemSeq: string): Promise<JoinedMedicin
       include: [
         {
           model: MedicineDesc,
-          required: true,
+          required: false, // MedicineDesc가 없어도 데이터 반환
         },
       ],
     });
@@ -133,33 +133,37 @@ export async function getJoinedMedicines(itemSeq: string): Promise<JoinedMedicin
       return null;
     }
 
+    // MedicineDesc가 null일 경우 안전하게 처리
+    const medicineDesc = medicine.MedicineDesc || {};
+
     return {
-      item_seq: medicine.itemSeq,
-      item_name: medicine.itemName,
-      entp_name: medicine.entpName,
-      item_permit_date: medicine.itemPermitDate,
+      itemSeq: medicine.itemSeq,
+      itemName: medicine.itemName,
+      entpName: medicine.entpName,
+      itemPermitDate: medicine.itemPermitDate,
       chart: medicine.chart,
-      color_class1: medicine.colorClass1,
-      class_name: medicine.className,
-      etc_otc_name: medicine.etcOtcName,
-      item_image: medicine.itemImage,
-      form_code_name: medicine.formCodeName,
-      drug_shape: medicine.drugShape,
-      leng_long: medicine.lengLong,
-      leng_short: medicine.lengShort,
+      colorClass1: medicine.colorClass1,
+      className: medicine.className,
+      etcOtcName: medicine.etcOtcName,
+      itemImage: medicine.itemImage,
+      formCodeName: medicine.formCodeName,
+      drugShape: medicine.drugShape,
+      lengLong: medicine.lengLong,
+      lengShort: medicine.lengShort,
       thick: medicine.thick,
-      storage_method: medicine.MedicineDesc.storageMethod,
-      valid_term: medicine.MedicineDesc.validTerm,
-      pack_unit: medicine.MedicineDesc.packUnit,
-      ee_doc_data: medicine.MedicineDesc.eeDocData,
-      ud_doc_data: medicine.MedicineDesc.udDocData,
-      nb_doc_data: medicine.MedicineDesc.nbDocData,
+      storageMethod: medicineDesc.storageMethod || null, // null-safe 접근
+      validTerm: medicineDesc.validTerm || null, // null-safe 접근
+      packUnit: medicineDesc.packUnit || null, // null-safe 접근
+      eeDocData: medicineDesc.eeDocData || null, // null-safe 접근
+      udDocData: medicineDesc.udDocData || null, // null-safe 접근
+      nbDocData: medicineDesc.nbDocData || null, // null-safe 접근
     };
   } catch (error) {
     console.error('Error fetching joined data:', error.message);
     throw error;
   }
 }
+
 
 // 4. 모든 의약품 정보를 페이지네이션 방식으로 조회
 export async function getAllMedicines(page: number, limit: number) {
