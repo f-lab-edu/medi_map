@@ -79,3 +79,11 @@ export interface JoinedMedicine {
   udDocData: string | null;
   nbDocData: string | null;
 }
+
+export interface QueryParams {
+  medicineName?: string;
+  companyName?: string;
+  color?: string;
+  shape?: string;
+  formCodeName?: string;
+}

@@ -2,27 +2,28 @@ import express from 'express';
 import { syncMedicines, syncApprovals, getJoinedMedicines, getAllMedicines } from '@/services/medicineService';
 import { Medicine, MedicineDesc } from '@/models';
 import { sendResponse } from '@/utils/medicineUtils';
-import { SEARCH_MESSAGES } from '@/constants/search_messages';
 import { buildWhereClause } from '@/utils/queryBuilder';
+import { SEARCH_MESSAGES } from '@/constants/search_messages';
 
 const router = express.Router();
 
-// 1. 데이터 동기화
+// 의약물 데이터 동기화
 router.post('/sync', async (req, res) => {
   try {
     await syncMedicines();
-    sendResponse(res, 200, { message: 'Medicine data synced successfully.' });
+    sendResponse(res, 200, { message: SEARCH_MESSAGES.DATA_SYNC_SUCCESS });
   } catch (error) {
-    sendResponse(res, 500, { error: 'Failed to sync medicines.', message: (error as Error).message });
+    sendResponse(res, 500, { error: SEARCH_MESSAGES.DATA_SYNC_ERROR, message: error.message });
   }
 });
 
+// 의약물 상세 데이터 동기화
 router.post('/sync-approval', async (req, res) => {
   try {
     await syncApprovals();
-    sendResponse(res, 200, { message: 'Approval data synced successfully.' });
+    sendResponse(res, 200, { message: SEARCH_MESSAGES.APPROVAL_SYNC_SUCCESS });
   } catch (error) {
-    sendResponse(res, 500, { error: 'Failed to sync approval data.', message: (error as Error).message });
+    sendResponse(res, 500, { error: SEARCH_MESSAGES.APPROVAL_SYNC_ERROR, message: error.message });
   }
 });
 
@@ -35,7 +36,7 @@ router.get('/', async (req, res) => {
     const data = await getAllMedicines(page, limit);
     sendResponse(res, 200, data);
   } catch (error) {
-    sendResponse(res, 500, { error: 'Failed to fetch data.', message: (error as Error).message });
+    sendResponse(res, 500, { error: SEARCH_MESSAGES.DATA_FETCH_ERROR, message: error.message });
   }
 });
 
@@ -47,10 +48,7 @@ router.get('/search', async (req, res) => {
     const limitNumber = parseInt(limit as string, 10);
     const offset = (pageNumber - 1) * limitNumber;
 
-    console.log('[Search API] Query params:', req.query); // 쿼리 확인
-
     const whereClause = buildWhereClause(req.query);
-    console.log('[Search API] Built whereClause:', whereClause); // 조건 확인
 
     const totalCountPromise = Medicine.count({ where: whereClause });
     const dataPromise = Medicine.findAll({
@@ -60,12 +58,12 @@ router.get('/search', async (req, res) => {
           model: Medicine,
           as: 'RelatedMedicines',
           required: false,
-          attributes: ['id', 'itemSeq', 'itemName'], // 필요한 필드만 가져오기
+          attributes: ['id', 'itemSeq', 'itemName'],
         },
         {
           model: MedicineDesc,
           required: false,
-          attributes: ['itemSeq', 'itemName'], // 필요한 필드만 가져오기
+          attributes: ['itemSeq', 'itemName'],
         },
       ],
       limit: limitNumber,
@@ -73,8 +71,6 @@ router.get('/search', async (req, res) => {
     });
 
     const [totalCount, data] = await Promise.all([totalCountPromise, dataPromise]);
-    console.log('[Search API] Total count:', totalCount); // 총 개수 확인
-    console.log('[Search API] Retrieved data:', data); // 데이터 확인
 
     sendResponse(res, 200, {
       results: data,
@@ -86,11 +82,10 @@ router.get('/search', async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('[Search API] Error occurred:', error); // 에러 로그 출력
-    sendResponse(res, 500, { error: '검색 중 오류 발생', message: error.message });
+    console.error('[Search API] Error occurred:', error);
+    sendResponse(res, 500, { error: SEARCH_MESSAGES.SEARCH_ERROR, message: error.message });
   }
 });
-
 
 // 특정 ITEM_SEQ 조인 데이터 조회
 router.get('/:itemSeq', async (req, res) => {
@@ -99,14 +94,13 @@ router.get('/:itemSeq', async (req, res) => {
     const data = await getJoinedMedicines(itemSeq);
 
     if (!data) {
-      return sendResponse(res, 404, { error: 'No data found for the given ITEM_SEQ.' });
+      return sendResponse(res, 404, { error: SEARCH_MESSAGES.NO_RESULT_DEDICINE });
     }
 
     sendResponse(res, 200, data);
   } catch (error) {
-    sendResponse(res, 500, { error: 'Failed to fetch data.', message: (error as Error).message });
+    sendResponse(res, 500, { error: 'Failed to fetch data.', message: error.message });
   }
 });
-
 
 export default router;

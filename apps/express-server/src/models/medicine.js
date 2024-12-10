@@ -5,13 +5,11 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Medicine extends Model {
     static associate(models) {
-      // MedicineDesc와의 관계 설정
       Medicine.hasOne(models.MedicineDesc, {
         foreignKey: 'itemSeq',
         sourceKey: 'itemSeq',
       });
 
-      // 자기 참조 관계 설정
       Medicine.hasMany(models.Medicine, {
         as: 'RelatedMedicines',
         foreignKey: 'relatedMedicineId',

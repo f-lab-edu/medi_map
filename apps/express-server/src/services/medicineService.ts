@@ -6,7 +6,6 @@ import { MedicineData, JoinedMedicine } from '@/types/medicine.types';
 const BASE_URL = 'http://apis.data.go.kr/1471000';
 const API_KEY = process.env.DATA_API_KEY;
 const NUM_OF_ROWS = 100;
-const FETCH_DELAY = 1000;
 
 // 1. 의약품 공공 데이터 가져오기
 export async function syncMedicines(): Promise<void> {
@@ -124,7 +123,7 @@ export async function getJoinedMedicines(itemSeq: string): Promise<JoinedMedicin
       include: [
         {
           model: MedicineDesc,
-          required: false, // MedicineDesc가 없어도 데이터 반환
+          required: false,
         },
       ],
     });
@@ -133,7 +132,6 @@ export async function getJoinedMedicines(itemSeq: string): Promise<JoinedMedicin
       return null;
     }
 
-    // MedicineDesc가 null일 경우 안전하게 처리
     const medicineDesc = medicine.MedicineDesc || {};
 
     return {
@@ -151,19 +149,18 @@ export async function getJoinedMedicines(itemSeq: string): Promise<JoinedMedicin
       lengLong: medicine.lengLong,
       lengShort: medicine.lengShort,
       thick: medicine.thick,
-      storageMethod: medicineDesc.storageMethod || null, // null-safe 접근
-      validTerm: medicineDesc.validTerm || null, // null-safe 접근
-      packUnit: medicineDesc.packUnit || null, // null-safe 접근
-      eeDocData: medicineDesc.eeDocData || null, // null-safe 접근
-      udDocData: medicineDesc.udDocData || null, // null-safe 접근
-      nbDocData: medicineDesc.nbDocData || null, // null-safe 접근
+      storageMethod: medicineDesc.storageMethod || null,
+      validTerm: medicineDesc.validTerm || null,
+      packUnit: medicineDesc.packUnit || null,
+      eeDocData: medicineDesc.eeDocData || null,
+      udDocData: medicineDesc.udDocData || null,
+      nbDocData: medicineDesc.nbDocData || null,
     };
   } catch (error) {
     console.error('Error fetching joined data:', error.message);
     throw error;
   }
 }
-
 
 // 4. 모든 의약품 정보를 페이지네이션 방식으로 조회
 export async function getAllMedicines(page: number, limit: number) {
