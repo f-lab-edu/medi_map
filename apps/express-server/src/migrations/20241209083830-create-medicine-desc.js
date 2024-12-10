@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Medicine', {
+    await queryInterface.createTable('MedicineDesc', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -13,47 +13,40 @@ module.exports = {
       itemSeq: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true,
       },
       itemName: {
         type: Sequelize.TEXT,
         allowNull: false,
       },
-      entpName: {
+      itemEngName: {
+        type: Sequelize.TEXT,
+      },
+      indutyType: {
         type: Sequelize.STRING,
       },
-      itemPermitDate: {
-        type: Sequelize.DATE,
-      },
-      chart: {
-        type: Sequelize.TEXT,
-      },
-      colorClass1: {
+      makeMaterialFlag: {
         type: Sequelize.STRING,
       },
-      className: {
+      storageMethod: {
         type: Sequelize.TEXT,
       },
-      etcOtcName: {
-        type: Sequelize.STRING,
-      },
-      itemImage: {
+      validTerm: {
         type: Sequelize.TEXT,
       },
-      formCodeName: {
+      packUnit: {
         type: Sequelize.TEXT,
       },
-      drugShape: {
+      meterialName: {
         type: Sequelize.TEXT,
       },
-      lengLong: {
-        type: Sequelize.FLOAT,
+      eeDocData: {
+        type: Sequelize.TEXT,
       },
-      lengShort: {
-        type: Sequelize.FLOAT,
+      udDocData: {
+        type: Sequelize.TEXT,
       },
-      thick: {
-        type: Sequelize.FLOAT,
+      nbDocData: {
+        type: Sequelize.TEXT,
       },
       createdAt: {
         allowNull: false,
@@ -69,6 +62,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Medicine');
+    await queryInterface.dropTable('MedicineDesc');
   },
 };

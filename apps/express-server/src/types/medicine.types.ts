@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-inline-comments
 export interface Paragraph {
   cdata?: string;
   text?: string;
@@ -44,4 +45,37 @@ export interface MedicineData {
   LENG_LONG?: number; // 약물 길이
   LENG_SHORT?: number; // 약물 폭
   THICK?: number; // 약물 두께
+}
+
+export interface MedicineQuery {
+  medicineName?: string;
+  companyName?: string;
+  color?: string;
+  shape?: string;
+  formCodeName?: string;
+  page?: string;
+  limit?: string;
+}
+
+export interface JoinedMedicine {
+  item_seq: string;
+  item_name: string;
+  entp_name: string;
+  item_permit_date: string | null;
+  chart: string | null;
+  color_class1: string | null;
+  class_name: string | null;
+  etc_otc_name: string | null;
+  item_image: string | null;
+  form_code_name: string | null;
+  drug_shape: string | null;
+  leng_long: number | null;
+  leng_short: number | null;
+  thick: number | null;
+  storage_method: string | null;
+  valid_term: string | null;
+  pack_unit: string | null;
+  ee_doc_data: string | null;
+  ud_doc_data: string | null;
+  nb_doc_data: string | null;
 }

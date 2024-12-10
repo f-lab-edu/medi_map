@@ -32,12 +32,17 @@ fs
     db[model.name] = model;
   });
 
-// 각 모델을 개별적으로 내보낼 수 있도록 설정
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 db.User = db.User || require('./user')(sequelize, Sequelize.DataTypes);
 db.Pharmacy = db.Pharmacy || require('./pharmacy')(sequelize, Sequelize.DataTypes);
-db.Medicine = db.Mediciney || require('./medicine')(sequelize, Sequelize.DataTypes);
+db.Medicine = db.Medicine || require('./medicine')(sequelize, Sequelize.DataTypes);
+db.MedicineDesc = db.MedicineDesc || require('./medicinedesc')(sequelize, Sequelize.DataTypes);
 
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
 
 module.exports = db;

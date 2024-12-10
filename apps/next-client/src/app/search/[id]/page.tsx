@@ -16,8 +16,8 @@ export default function MedicineDetailPage() {
   const [medicine, setMedicine] = useState<MedicineResultDto | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [showTopBtn, setShowTopBtn] = useState<boolean>(false);
 
-  // 탭 메뉴 상태
   const [activeTab, setActiveTab] = useState<'all' | 'efficacy' | 'dosage' | 'precautions'>('all');
 
   useEffect(() => {
@@ -36,7 +36,24 @@ export default function MedicineDetailPage() {
   
     fetchMedicine();
   }, [id]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 200) {
+        setShowTopBtn(true);
+      } else {
+        setShowTopBtn(false);
+      }
+    };
   
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleScrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   if (loading) return <p>로딩 중...</p>;
   if (error) return <p className="error_message">{error}</p>;
 
@@ -46,7 +63,10 @@ export default function MedicineDetailPage() {
 
       {medicine && (
         <div className="medi_bottom_result">
-          <h3 className="name">{medicine.itemName}</h3>
+          <h3 className="name">
+            {medicine.itemName}
+            {medicine.MedicineDesc?.itemEngName &&  (`(${medicine.MedicineDesc.itemEngName})`)}
+          </h3>
           <div className="medi_desc">
             {medicine.itemImage && (
               <Image
@@ -88,31 +108,25 @@ export default function MedicineDetailPage() {
                     <th>색상</th>
                     <td>{medicine.colorClass1}</td>
                   </tr>
-                  {medicine.storageMethod && (
-                    <tr>
-                      <th>저장 방법</th>
-                      <td>{medicine.storageMethod}</td>
-                    </tr>
-                  )}
-                  {medicine.validTerm && (
-                    <tr>
-                      <th>유효기간</th>
-                      <td>{medicine.validTerm}</td>
-                    </tr>
-                  )}
-                  {medicine.packUnit && (
-                    <tr>
-                      <th>포장 단위</th>
-                      <td>{medicine.packUnit}</td>
-                    </tr>
-                  )}
+                  <tr>
+                    <th>저장 방법</th>
+                    <td>{medicine.MedicineDesc?.storageMethod}</td>
+                  </tr>
+                  <tr>
+                    <th>유효기간</th>
+                    <td>{medicine.MedicineDesc?.validTerm}</td>
+                  </tr>
+                  <tr>
+                    <th>포장 단위</th>
+                    <td>{medicine.MedicineDesc?.packUnit}</td>
+                  </tr>
                   <tr>
                     <th>전문/일반 구분</th>
                     <td>{medicine.etcOtcName}</td>
                   </tr>
                   <tr>
                     <th>허가 날짜</th>
-                    <td>{medicine.itemPermitDate}</td>
+                    <td>{medicine.itemPermitDate ? new Date(medicine.itemPermitDate).toISOString().split("T")[0] : "N/A"}</td>
                   </tr>
                 </tbody>
               </table>
@@ -148,24 +162,30 @@ export default function MedicineDetailPage() {
 
           {activeTab === 'all' && (
             <>
-              <MedicineInfo docData={medicine.eeDocData} sectionTitle="효능효과" />
-              <MedicineInfo docData={medicine.udDocData} sectionTitle="용법용량" />
-              <MedicineInfo docData={medicine.nbDocData} sectionTitle="주의사항" />
+              <MedicineInfo docData={medicine.MedicineDesc?.eeDocData} sectionTitle="효능효과" />
+              <MedicineInfo docData={medicine.MedicineDesc?.udDocData} sectionTitle="용법용량" />
+              <MedicineInfo docData={medicine.MedicineDesc?.nbDocData} sectionTitle="주의사항" />
             </>
           )}
           {activeTab === 'efficacy' && (
-            <MedicineInfo docData={medicine.eeDocData} sectionTitle="효능효과" />
+            <MedicineInfo docData={medicine.MedicineDesc?.eeDocData} sectionTitle="효능효과" />
           )}
           {activeTab === 'dosage' && (
-            <MedicineInfo docData={medicine.udDocData} sectionTitle="용법용량" />
+            <MedicineInfo docData={medicine.MedicineDesc?.udDocData} sectionTitle="용법용량" />
           )}
           {activeTab === 'precautions' && (
-            <MedicineInfo docData={medicine.nbDocData} sectionTitle="주의사항" />
+            <MedicineInfo docData={medicine.MedicineDesc?.nbDocData} sectionTitle="주의사항" />
           )}
         </div>
       )}
 
       <Link href="/search" className="back_btn">뒤로가기</Link>
+
+      {showTopBtn && (
+        <button className="top_btn" onClick={handleScrollToTop}>
+          TOP
+        </button>
+      )}
     </div>
   );
 }

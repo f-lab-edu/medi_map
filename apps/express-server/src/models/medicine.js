@@ -5,7 +5,10 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Medicine extends Model {
     static associate(models) {
-      // Define associations here if needed
+      Medicine.hasOne(models.MedicineDesc, {
+        foreignKey: 'itemSeq',
+        sourceKey: 'itemSeq',
+      });
     }
   }
 
@@ -17,32 +20,27 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
       },
       itemName: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
       },
       entpName: DataTypes.STRING,
       itemPermitDate: DataTypes.DATE,
-      chart: DataTypes.STRING,
+      chart: DataTypes.TEXT,
       colorClass1: DataTypes.STRING,
-      className: DataTypes.STRING,
+      className: DataTypes.TEXT,
       etcOtcName: DataTypes.STRING,
       itemImage: DataTypes.TEXT,
-      formCodeName: DataTypes.STRING,
-      drugShape: DataTypes.STRING,
+      formCodeName: DataTypes.TEXT,
+      drugShape: DataTypes.TEXT,
       lengLong: DataTypes.FLOAT,
       lengShort: DataTypes.FLOAT,
       thick: DataTypes.FLOAT,
-      storageMethod: DataTypes.STRING,
-      validTerm: DataTypes.STRING,
-      packUnit: DataTypes.STRING,
-      eeDocData: DataTypes.TEXT,
-      udDocData: DataTypes.TEXT,
-      nbDocData: DataTypes.TEXT,
     },
     {
       sequelize,
       modelName: 'Medicine',
       tableName: 'Medicine',
+      timestamps: true,
     }
   );
 
