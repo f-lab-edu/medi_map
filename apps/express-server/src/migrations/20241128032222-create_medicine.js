@@ -13,7 +13,7 @@ module.exports = {
       itemSeq: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true, // Unique index
+        unique: true,
       },
       itemName: {
         type: Sequelize.TEXT,

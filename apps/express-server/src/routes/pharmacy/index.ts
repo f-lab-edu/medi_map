@@ -68,7 +68,7 @@ router.get('/', async (req, res) => {
 });
 
 // 약국 데이터를 업데이트하는 엔드포인트
-router.post('/update-pharmacy', async (req, res) => {
+router.post('/sync', async (req, res) => {
   try {
     try {
       await updatePharmacyData();

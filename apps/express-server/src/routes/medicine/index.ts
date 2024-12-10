@@ -4,6 +4,7 @@ import { Medicine, MedicineDesc } from '@/models';
 import { sendResponse } from '@/utils/medicineUtils';
 import { buildWhereClause } from '@/utils/queryBuilder';
 import { SEARCH_MESSAGES } from '@/constants/search_messages';
+import { ValidationError, UnexpectedError, DatabaseError } from '@/error/PharmacyError';
 
 const router = express.Router();
 
@@ -13,7 +14,8 @@ router.post('/sync', async (req, res) => {
     await syncMedicines();
     sendResponse(res, 200, { message: SEARCH_MESSAGES.DATA_SYNC_SUCCESS });
   } catch (error) {
-    sendResponse(res, 500, { error: SEARCH_MESSAGES.DATA_SYNC_ERROR, message: error.message });
+    const err = error instanceof DatabaseError ? error : new UnexpectedError();
+    sendResponse(res, err.statusCode, { error: err.message });
   }
 });
 
@@ -23,7 +25,8 @@ router.post('/sync-approval', async (req, res) => {
     await syncApprovals();
     sendResponse(res, 200, { message: SEARCH_MESSAGES.APPROVAL_SYNC_SUCCESS });
   } catch (error) {
-    sendResponse(res, 500, { error: SEARCH_MESSAGES.APPROVAL_SYNC_ERROR, message: error.message });
+    const err = error instanceof DatabaseError ? error : new UnexpectedError();
+    sendResponse(res, err.statusCode, { error: err.message });
   }
 });
 
@@ -36,7 +39,8 @@ router.get('/', async (req, res) => {
     const data = await getAllMedicines(page, limit);
     sendResponse(res, 200, data);
   } catch (error) {
-    sendResponse(res, 500, { error: SEARCH_MESSAGES.DATA_FETCH_ERROR, message: error.message });
+    const err = error instanceof DatabaseError ? error : new UnexpectedError();
+    sendResponse(res, err.statusCode, { error: err.message });
   }
 });
 
@@ -82,8 +86,8 @@ router.get('/search', async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('[Search API] Error occurred:', error);
-    sendResponse(res, 500, { error: SEARCH_MESSAGES.SEARCH_ERROR, message: error.message });
+    const err = error instanceof ValidationError ? error : new UnexpectedError();
+    sendResponse(res, err.statusCode, { error: err.message });
   }
 });
 
@@ -94,12 +98,13 @@ router.get('/:itemSeq', async (req, res) => {
     const data = await getJoinedMedicines(itemSeq);
 
     if (!data) {
-      return sendResponse(res, 404, { error: SEARCH_MESSAGES.NO_RESULT_DEDICINE });
+      throw new ValidationError(SEARCH_MESSAGES.NO_RESULT_DEDICINE);
     }
 
     sendResponse(res, 200, data);
   } catch (error) {
-    sendResponse(res, 500, { error: 'Failed to fetch data.', message: error.message });
+    const err = error instanceof ValidationError ? error : new UnexpectedError();
+    sendResponse(res, err.statusCode, { error: err.message });
   }
 });
 
