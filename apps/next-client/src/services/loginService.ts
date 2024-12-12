@@ -1,11 +1,11 @@
-import { signIn } from "next-auth/react";
-import { ROUTES } from "@/constants/urls";
-import { ERROR_MESSAGES } from "@/constants/errors";
-import { LoginError } from "@/error/AuthError";
+import { signIn } from 'next-auth/react';
+import { ROUTES } from '@/constants/urls';
+import { ERROR_MESSAGES } from '@/constants/errors';
+import { LoginError } from '@/error/AuthError';
 
 export const loginWithCredentials = async (email: string, password: string) => {
   try {
-    const result = await signIn("credentials", {
+    const result = await signIn('credentials', {
       redirect: false,
       email,
       password,
@@ -37,7 +37,7 @@ export const loginWithCredentials = async (email: string, password: string) => {
 
 export const loginWithGoogle = async () => {
   try {
-    const result = await signIn("google", { callbackUrl: ROUTES.HOME });
+    const result = await signIn('google', { callbackUrl: ROUTES.HOME });
 
     if (!result) {
       throw new LoginError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);

@@ -1,10 +1,10 @@
-import { useRouter } from "next/navigation";
-import { Dispatch, SetStateAction, useEffect } from "react";
-import { loginWithCredentials, loginWithGoogle } from "@/services/loginService";
-import { ERROR_MESSAGES } from "@/constants/errors";
-import { ROUTES } from "@/constants/urls";
-import { useSession } from "next-auth/react";
-import Cookies from "js-cookie";
+import { useRouter } from 'next/navigation';
+import { Dispatch, SetStateAction, useEffect } from 'react';
+import { loginWithCredentials, loginWithGoogle } from '@/services/loginService';
+import { ERROR_MESSAGES } from '@/constants/errors';
+import { ROUTES } from '@/constants/urls';
+import { useSession } from 'next-auth/react';
+import Cookies from 'js-cookie';
 
 interface AuthActionsParams {
   email: string;
@@ -17,10 +17,10 @@ export const useLoginActions = ({ email, password, setError }: AuthActionsParams
   const { data: session, status } = useSession();
 
   useEffect(() => {
-    if (status === "authenticated" && session?.user?.accessToken) {
-      Cookies.set("accessToken", session.user.accessToken, {
+    if (status === 'authenticated' && session?.user?.accessToken) {
+      Cookies.set('accessToken', session.user.accessToken, {
         secure: true,
-        sameSite: "Strict",
+        sameSite: 'Strict',
       });
       router.push(ROUTES.HOME);
     }
@@ -38,9 +38,9 @@ export const useLoginActions = ({ email, password, setError }: AuthActionsParams
       if (result?.error) {
         setError(result.error);
       } else if (result?.accessToken) {
-        Cookies.set("accessToken", result.accessToken, {
+        Cookies.set('accessToken', result.accessToken, {
           secure: true,
-          sameSite: "Strict",
+          sameSite: 'Strict',
         });
         router.push(ROUTES.HOME);
       }
