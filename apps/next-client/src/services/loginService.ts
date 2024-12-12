@@ -19,17 +19,8 @@ export const loginWithCredentials = async (email: string, password: string) => {
       throw new LoginError(result.error || ERROR_MESSAGES.LOGIN_ERROR);
     }
 
-    const response = await fetch(ROUTES.AUTH.SESSION);
-    const data = await response.json();
-
-    if (!response.ok || !data?.accessToken) {
-      throw new LoginError(ERROR_MESSAGES.LOGIN_ERROR);
-    }
-
-    return {
-      ...result,
-      accessToken: data.accessToken,
-    };
+    // 여기서는 바로 accessToken을 받지 않고 result만 반환
+    return result;
   } catch (error: unknown) {
     handleLoginError(error);
   }
@@ -37,7 +28,8 @@ export const loginWithCredentials = async (email: string, password: string) => {
 
 export const loginWithGoogle = async () => {
   try {
-    const result = await signIn('google', { callbackUrl: ROUTES.HOME });
+    // [수정 포인트] redirect를 false로 설정
+    const result = await signIn('google', { redirect: false, callbackUrl: ROUTES.HOME });
 
     if (!result) {
       throw new LoginError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
@@ -47,17 +39,8 @@ export const loginWithGoogle = async () => {
       throw new LoginError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
     }
 
-    const response = await fetch(ROUTES.AUTH.SESSION);
-    const data = await response.json();
-
-    if (!response.ok || !data?.accessToken) {
-      throw new LoginError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
-    }
-
-    return {
-      ...result,
-      accessToken: data.accessToken,
-    };
+    // 구글 로그인도 여기서 fetch하지 않고 result만 반환
+    return result;
   } catch (error: unknown) {
     handleLoginError(error);
   }

@@ -5,7 +5,6 @@ import { ERROR_MESSAGES } from '@/constants/errors';
 import { ROUTES } from '@/constants/urls';
 import { useSession } from 'next-auth/react';
 import Cookies from 'js-cookie';
-import { LoginError } from '@/error/AuthError';
 
 interface AuthActionsParams {
   email: string;
@@ -37,36 +36,24 @@ export const useLoginActions = ({ email, password, setError }: AuthActionsParams
       const result = await loginWithCredentials(email, password);
 
       if (result?.error) {
-        throw new LoginError(result.error);
+        setError(result.error);
       }
-
-      if (result?.accessToken) {
-        Cookies.set('accessToken', result.accessToken, {
-          secure: true,
-          sameSite: 'Strict',
-        });
-        router.push(ROUTES.HOME);
-      }
-    } catch (error) {
-      if (error instanceof LoginError) {
-        setError(error.message);
-      } else {
-        setError(ERROR_MESSAGES.LOGIN_FAILED);
-      }
+    } catch (err: unknown) {
+      setError(ERROR_MESSAGES.LOGIN_FAILED);
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
-      await loginWithGoogle();
-    } catch (error) {
-      if (error instanceof LoginError) {
-        setError(error.message);
-      } else {
+      const result = await loginWithGoogle();
+  
+      if (result?.error && !result?.url) {
         setError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
       }
+    } catch (err: unknown) {
+      console.error(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR, err);
     }
   };
-
+  
   return { handleLogin, handleGoogleLogin };
 };
