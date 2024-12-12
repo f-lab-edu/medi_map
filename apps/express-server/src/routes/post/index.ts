@@ -4,24 +4,25 @@ import { authMiddleware, AuthenticatedRequest } from '@/middleware/authMiddlewar
 import { MESSAGES_POST } from '@/constants/post_messages';
 
 const router = express.Router();
+
 // 게시글 생성
 router.post('/', authMiddleware, async (req: AuthenticatedRequest, res, next) => {
   try {
     const { title, content } = req.body;
-
+    // 제목과 내용이 없으면 에러 반환
     if (!title || !content) {
       return res.status(400).json({ message: MESSAGES_POST.TITLE_CONTENT_REQUIRED });
     }
 
     const userId = req.user?.id;
     const author = req.user?.username;
-
+    // 사용자 정보가 없으면 에러 반환
     if (!userId || !author) {
       return res.status(400).json({ message: MESSAGES_POST.USER_INFO_MISSING });
     }
 
+    // 게시글 생성
     const newPost = await Post.create({ title, content, userId, author });
-
     return res.status(201).json(newPost);
   } catch (error) {
     next(error);
@@ -31,6 +32,7 @@ router.post('/', authMiddleware, async (req: AuthenticatedRequest, res, next) =>
 // 게시글 목록 조회
 router.get('/', async (req, res, next) => {
   try {
+    // 모든 게시글 최신순으로 반환
     const posts = await Post.findAll({ order: [['createdAt', 'DESC']] });
     return res.status(200).json(posts);
   } catch (error) {
@@ -42,7 +44,7 @@ router.get('/', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-
+    // 게시글 상세 정보와 댓글, 추천 포함 반환
     const post = await Post.findOne({
       where: { id },
       include: [
@@ -72,15 +74,16 @@ router.put('/:id', authMiddleware, async (req: AuthenticatedRequest, res, next) 
       return res.status(404).json({ message: MESSAGES_POST.POST_NOT_FOUND });
     }
 
+    // 현재 사용자만 수정 가능
     if (post.userId !== req.user?.id) {
       return res.status(403).json({ message: MESSAGES_POST.PERMISSION_DENIED_UPDATE });
     }
 
+    // 제목과 내용 업데이트
     post.title = title || post.title;
     post.content = content || post.content;
 
     await post.save();
-
     return res.status(200).json(post);
   } catch (error) {
     next(error);
@@ -97,12 +100,12 @@ router.delete('/:id', authMiddleware, async (req: AuthenticatedRequest, res, nex
       return res.status(404).json({ message: MESSAGES_POST.POST_NOT_FOUND });
     }
 
+    // 현재 사용자만 삭제 가능
     if (post.userId !== req.user?.id) {
       return res.status(403).json({ message: MESSAGES_POST.PERMISSION_DENIED_DELETE });
     }
 
     await post.destroy();
-
     return res.status(200).json({ message: MESSAGES_POST.POST_DELETE_COMPLETE });
   } catch (error) {
     next(error);
@@ -115,15 +118,17 @@ router.post('/:id/recommend', authMiddleware, async (req: AuthenticatedRequest, 
     const { id } = req.params;
     const userId = req.user?.id;
 
-    const existingRecommendation = await Recommendation.findOne({
+    // 이미 추천했으면 추천 취소
+    const existingRecommend = await Recommendation.findOne({
       where: { articleId: id, userId },
     });
 
-    if (existingRecommendation) {
-      await existingRecommendation.destroy();
+    if (existingRecommend) {
+      await existingRecommend.destroy();
       return res.status(200).json({ message: MESSAGES_POST.RECOMMENDATION_CANCELLED, recommended: false });
     }
 
+    // 추천 추가
     await Recommendation.create({ articleId: id, userId });
     return res.status(200).json({ message: MESSAGES_POST.RECOMMENDED, recommended: true });
   } catch (error) {
@@ -136,6 +141,7 @@ router.get('/:id/recommend', async (req, res, next) => {
   try {
     const { id } = req.params;
 
+    // 추천 수 반환
     const recommendationCount = await Recommendation.count({
       where: { articleId: id },
     });
@@ -153,6 +159,7 @@ router.post('/:id/comments', authMiddleware, async (req: AuthenticatedRequest, r
     const { content } = req.body;
     const userId = req.user?.id;
 
+    // 댓글 생성
     const newComment = await Comment.create({ articleId: id, userId, content });
     res.status(201).json(newComment);
   } catch (error) {
@@ -165,6 +172,7 @@ router.get('/:id/comments', async (req, res, next) => {
   try {
     const { id } = req.params;
 
+    // 게시글의 댓글 최신순으로 반환
     const comments = await Comment.findAll({
       where: { articleId: id },
       order: [['createdAt', 'DESC']],
@@ -182,6 +190,7 @@ router.delete('/comments/:commentId', authMiddleware, async (req: AuthenticatedR
     const { commentId } = req.params;
     const comment = await Comment.findByPk(commentId);
 
+    // 댓글 작성자만 삭제 가능
     if (!comment || comment.userId !== req.user?.id) {
       return res.status(403).json({ message: MESSAGES_POST.PERMISSION_DENIED_DELETE });
     }

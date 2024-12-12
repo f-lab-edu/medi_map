@@ -12,4 +12,5 @@ export const ERROR_MESSAGES = {
   UPDATE_ERROR: '데이터 업데이트 중 오류가 발생했습니다.',
   API_ERROR: 'API 요청 중 오류가 발생했습니다.',
   DATA_PARSING_ERROR: '데이터 파싱 중 오류가 발생했습니다.',
+  AUTHENTICATION_ERROR: '인증에 실패했습니다.'
 };
