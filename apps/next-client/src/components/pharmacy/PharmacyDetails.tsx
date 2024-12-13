@@ -1,6 +1,7 @@
 import React from 'react';
 import { PharmacyDTO } from '@/dto/PharmacyDTO';
 import { getTodayOperatingHours, getWeeklyOperatingHours, isPharmacyOpenNowToday } from '@/utils/pharmacyUtils';
+import Image from 'next/image';
 
 interface PharmacyDetailsProps {
   pharmacy: PharmacyDTO;
@@ -15,7 +16,9 @@ const PharmacyDetails: React.FC<PharmacyDetailsProps> = ({ pharmacy, onClose }) 
   return (
     <div className="pharmacies_desc">
       <h3>약국 상세</h3>
-      <button onClick={onClose}>닫기</button>
+      <button onClick={onClose}>
+        <Image src="/images/icon_close.png" alt="닫기 버튼" width={30} height={30} className='close_button' />
+      </button>
       <div className="pharm_modal_wrap">
         <div className="pharm_name_wrap">
           <p className="pharm_name">{pharmacy.dutyName.trim()}</p>

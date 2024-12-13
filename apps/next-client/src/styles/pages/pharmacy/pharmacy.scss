@@ -28,7 +28,7 @@
   position: relative;
 
   .map_search {
-    background: var(--sky-blue);
+    background: var(--purple);
     position: absolute;
     bottom: 2rem;
     right: 2rem;
@@ -44,7 +44,7 @@
 
   .load_info_list {
     position: absolute;
-    top: 0;
+    top: 6rem;
     right: 0;
     z-index: 10;
     display: flex;
@@ -64,6 +64,11 @@
         background: var(--btn-color);
         color: #fff;
       }
+
+      &.current_location {
+        background: var(--sky-blue);
+        color: #fff;
+      }
     }
   }
 }
@@ -80,6 +85,7 @@
   .pharmacies_desc {
     margin: 2rem 0 2rem 2rem;
     width: 42.6rem;
+    height: calc(100vh - 12rem);
     border-radius: 0.8rem;
     box-shadow: 0 1rem 0.6rem #18114e1a;
     background: #fff;
@@ -102,7 +108,7 @@
       gap: 1.2rem;
       font-size: 1.5rem;
       letter-spacing: -0.05rem;
-      margin-top: 4rem;
+      margin-top: 2rem;
 
       .pharm_info {
         .open {
