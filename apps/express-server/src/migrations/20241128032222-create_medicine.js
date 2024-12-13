@@ -68,22 +68,22 @@ module.exports = {
     });
 
     await queryInterface.addIndex('Medicine', ['itemName'], {
-      name: 'itemName_index',
+      name: 'Medicine_itemName_index',
     });
 
     await queryInterface.addIndex('Medicine', ['entpName'], {
-      name: 'entpName_index',
+      name: 'Medicine_entpName_index',
     });
 
     await queryInterface.addIndex('Medicine', ['colorClass1', 'drugShape'], {
-      name: 'colorShape_index',
+      name: 'Medicine_colorShape_index',
     });
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.removeIndex('Medicine', 'itemName_index');
-    await queryInterface.removeIndex('Medicine', 'entpName_index');
-    await queryInterface.removeIndex('Medicine', 'colorShape_index');
+    await queryInterface.removeIndex('Medicine', 'Medicine_itemName_index');
+    await queryInterface.removeIndex('Medicine', 'Medicine_entpName_index');
+    await queryInterface.removeIndex('Medicine', 'Medicine_colorShape_index');
 
     await queryInterface.dropTable('Medicine');
   },
