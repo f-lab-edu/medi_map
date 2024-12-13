@@ -49,13 +49,13 @@ export default function useMedicineSearch() {
         // API 호출
         const response = await axios.get(API_URLS.MEDICINE_SEARCH, {
           params: {
-            medicineName: name,
-            companyName: company,
-            color: filterColors,
-            shape: filterShapes,
-            formCodeName: filterForms,
-            page,
-            limit: 10,
+            medicineName: name, // 약물 이름
+            companyName: company, // 회사 이름
+            color: filterColors, // 필터된 색상 목록
+            shape: filterShapes, // 필터된 모양 목록
+            formCodeName: filterForms, // 필터된 제형 목록
+            page, // 페이지 번호
+            limit: 10, // 페이지당 결과 개수
           },
         });
 
