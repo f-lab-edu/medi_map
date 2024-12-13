@@ -42,9 +42,9 @@ export interface MedicineData {
   ITEM_IMAGE?: string; // 약물 이미지 URL
   FORM_CODE_NAME?: string; // 약물 제형 이름
   DRUG_SHAPE?: string; // 약물 모양
-  LENG_LONG?: number; // 약물 길이
-  LENG_SHORT?: number; // 약물 폭
-  THICK?: number; // 약물 두께
+  LENG_LONG?: string; // 약물 길이
+  LENG_SHORT?: string; // 약물 폭
+  THICK?: string; // 약물 두께
 }
 
 export interface MedicineQuery {

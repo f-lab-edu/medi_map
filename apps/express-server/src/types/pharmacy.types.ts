@@ -1,4 +1,4 @@
-export interface PharmacyItem {
+export interface PharmacyAPIItem {
   id: number; // 약국 고유 ID
   dutyName: string; // 약국 이름 (API 응답 이름)
   dutyAddr: string; // 약국 주소

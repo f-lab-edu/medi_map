@@ -1,13 +1,25 @@
 import axios from 'axios';
 import { Pharmacy } from '@/models';
-import { PharmacyItem } from '@/types/pharmacy.types';
+import { PharmacyAPIItem } from '@/types/pharmacy.types';
 import { PharmacyItemDTO } from '@/dto/PharmacyItemDTO';
-import { APIError, DataParsingError, DatabaseError, UpdateError } from '@/error/PharmacyError';
+import { APIError, DataParsingError, DatabaseError, UpdateError } from '@/error/CommonError';
 import { ERROR_MESSAGES } from '@/constants/errors';
 
 const BASE_URL = 'http://apis.data.go.kr/B552657/ErmctInsttInfoInqireService/getParmacyListInfoInqire';
 const API_KEY = process.env.DATA_API_KEY;
 const NUM_OF_ROWS = 1000;
+
+// API 응답 타입 정의
+interface PharmacyAPIResponse {
+  response: {
+    body: {
+      totalCount: string;
+      items?: {
+        item: PharmacyAPIItem[];
+      };
+    };
+  };
+}
 
 // API URL 생성 함수
 function buildUrl(pageNo: number, numOfRows: number = NUM_OF_ROWS): string {
@@ -15,15 +27,15 @@ function buildUrl(pageNo: number, numOfRows: number = NUM_OF_ROWS): string {
 }
 
 // 데이터를 가져와 파싱하는 함수
-async function fetchPageData(pageNo: number): Promise<PharmacyItem[]> {
+async function fetchPageData(pageNo: number): Promise<PharmacyAPIItem[]> {
   const url = buildUrl(pageNo);
 
   try {
-    const { data } = await axios.get(url);
+    const { data } = await axios.get<PharmacyAPIResponse>(url);
 
     // DTO 클래스를 사용한 매핑
     if (!data.response?.body?.items?.item) {
-      throw new DataParsingError(`${ERROR_MESSAGES.DATA_PARSING_ERROR}: 페이지 번호: ${pageNo}`);
+      throw new DataParsingError(`${ERROR_MESSAGES.DATA_PARSING_ERROR}: Page: ${pageNo}`);
     }
 
     return (data.response.body.items.item || []).map(PharmacyItemDTO.fromAPI);
@@ -32,12 +44,12 @@ async function fetchPageData(pageNo: number): Promise<PharmacyItem[]> {
       throw error;
     }
 
-    throw new APIError(`${ERROR_MESSAGES.API_ERROR}: (페이지 번호: ${pageNo}) - ${error.message}`);
+    throw new APIError(`${ERROR_MESSAGES.API_ERROR}: (page: ${pageNo}) - ${error.message}`);
   }
 }
 
 // 약국 데이터를 데이터베이스에 저장
-async function savePharmacyData(items: PharmacyItem[]) {
+async function savePharmacyData(items: PharmacyAPIItem[]) {
   try {
     const upsertPromises = items.map(item =>
       Pharmacy.upsert({
@@ -76,12 +88,12 @@ export async function updatePharmacyData() {
     // 첫 번째 요청으로 총 페이지 수 계산
     const firstUrl = buildUrl(1, 1);
 
-    let firstData;
+    let firstData: PharmacyAPIResponse;
     try {
-      const { data } = await axios.get(firstUrl);
+      const { data } = await axios.get<PharmacyAPIResponse>(firstUrl);
       firstData = data;
     } catch (error) {
-      throw new APIError(`${ERROR_MESSAGES.API_ERROR}: 첫 번째 페이지 요청 실패 - ${error.message}`);
+      throw new APIError(`${ERROR_MESSAGES.API_ERROR}: Failed to fetch the first page - ${error.message}`);
     }
 
     const totalCount = parseInt(firstData.response.body.totalCount, 10);
@@ -103,11 +115,11 @@ export async function updatePharmacyData() {
 
   } catch (error) {
     if (error instanceof APIError) {
-      console.error('API Error:', error.message);
+      console.error(ERROR_MESSAGES.API_ERROR, error.message);
     } else if (error instanceof DataParsingError) {
-      console.error('Data Parsing Error:', error.message);
+      console.error(ERROR_MESSAGES.DATA_PARSING_ERROR, error.message);
     } else if (error instanceof DatabaseError) {
-      console.error('Database Error:', error.message);
+      console.error(ERROR_MESSAGES.DATA_PARSING_ERROR, error.message);
     } else {
       throw new UpdateError(`${ERROR_MESSAGES.UPDATE_ERROR}: ${error.message}`);
     }

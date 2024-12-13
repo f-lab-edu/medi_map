@@ -4,7 +4,7 @@ import { Medicine, MedicineDesc } from '@/models';
 import { sendResponse } from '@/utils/medicineUtils';
 import { buildWhereClause } from '@/utils/queryBuilder';
 import { SEARCH_MESSAGES } from '@/constants/search_messages';
-import { ValidationError, UnexpectedError, DatabaseError } from '@/error/PharmacyError';
+import { ValidationError, UnexpectedError, DatabaseError } from '@/error/CommonError';
 
 const router = express.Router();
 
@@ -59,12 +59,6 @@ router.get('/search', async (req, res) => {
       where: whereClause,
       include: [
         {
-          model: Medicine,
-          as: 'RelatedMedicines',
-          required: false,
-          attributes: ['id', 'itemSeq', 'itemName'],
-        },
-        {
           model: MedicineDesc,
           required: false,
           attributes: ['itemSeq', 'itemName'],
@@ -86,10 +80,12 @@ router.get('/search', async (req, res) => {
       },
     });
   } catch (error) {
-    const err = error instanceof ValidationError ? error : new UnexpectedError();
+    console.error('Search API Error:', error);
+    const err = error instanceof ValidationError ? error : new UnexpectedError(error.message);
     sendResponse(res, err.statusCode, { error: err.message });
   }
 });
+
 
 // 특정 ITEM_SEQ 조인 데이터 조회
 router.get('/:itemSeq', async (req, res) => {

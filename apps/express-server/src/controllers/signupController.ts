@@ -11,7 +11,7 @@ export const signup = async (req: Request, res: Response): Promise<Response> => 
     // 사용자 이메일로 검색
     const existingUser = await findUserByEmail(email);
     if (existingUser) {
-      return res.status(400).json({ message: ERROR_MESSAGES.EMAIL_ALREADY_EXISTS });
+      return res.status(400).json({ message: ERROR_MESSAGES.AUTH.EMAIL_ALREADY_EXISTS });
     }
 
     // 비밀번호 해싱
@@ -27,7 +27,7 @@ export const signup = async (req: Request, res: Response): Promise<Response> => 
   } catch (error) {
     console.error('Signup error:', error);
     return res.status(500).json({
-      message: ERROR_MESSAGES.SIGN_UP_ERROR,
+      message: ERROR_MESSAGES.AUTH.SIGN_UP_ERROR,
       error: (error as Error).message
     });
   }

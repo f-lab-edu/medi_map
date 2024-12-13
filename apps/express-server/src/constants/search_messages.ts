@@ -6,4 +6,5 @@ export const SEARCH_MESSAGES = {
   DATA_FETCH_ERROR: '데이터 조회 중 오류 발생',
   SEARCH_ERROR: '검색 중 오류 발생',
   NO_RESULT_DEDICINE: '해당 의약품 정보를 찾을 수 없습니다.',
+  BUILD_ERROR: '[buildWhereClause] 오류가 발생했습니다'
 };

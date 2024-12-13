@@ -9,16 +9,6 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'itemSeq',
         sourceKey: 'itemSeq',
       });
-
-      Medicine.hasMany(models.Medicine, {
-        as: 'RelatedMedicines',
-        foreignKey: 'relatedMedicineId',
-      });
-
-      Medicine.belongsTo(models.Medicine, {
-        as: 'ParentMedicine',
-        foreignKey: 'relatedMedicineId',
-      });
     }
   }
 
@@ -45,10 +35,6 @@ module.exports = (sequelize, DataTypes) => {
       lengLong: DataTypes.FLOAT,
       lengShort: DataTypes.FLOAT,
       thick: DataTypes.FLOAT,
-      relatedMedicineId: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
     },
     {
       sequelize,
