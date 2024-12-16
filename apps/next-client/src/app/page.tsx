@@ -51,7 +51,7 @@ export default function Home() {
           <div className="banner">
             <div className="top_cont">
               <div className="item">
-                <div className="profile"></div>
+              <Image src="/images/memoji01.png" alt="" width={200} height={200} />
                 <div className="txt_cont">
                   <span className="name">김서연 (29세)</span>
                   <p className="txt">필요한 약물 정보를 빠르게 확인하고 싶어요.</p>
@@ -65,7 +65,7 @@ export default function Home() {
               </div>
 
               <div className="item">
-                <div className="profile"></div>
+              <Image src="/images/memoji02.png" alt="" width={200} height={200} />
                 <div className="txt_cont">
                   <span className="name">이진우 (33세)</span>
                   <p className="txt">지금 영업 중인 약국을 바로 찾아갈 수 있었으면 해요.</p>
@@ -79,7 +79,7 @@ export default function Home() {
 
             <div className="bottom_cont">
               <div className="item">
-                <div className="profile"></div>
+              <Image src="/images/memoji03.png" alt="" width={200} height={200} />
                 <div className="txt_cont">
                   <span className="name">박민정 (31세)</span>
                   <p className="txt">다른 사람들의 건강 경험을 참고하고 싶어요.</p>
@@ -89,7 +89,7 @@ export default function Home() {
               </div>
 
               <div className="item">
-                <div className="profile"></div>
+              <Image src="/images/memoji04.png" alt="" width={200} height={200} />
                 <div className="txt_cont">
                   <span className="name">한지수 (25세)</span>
                   <p className="txt">즐겨찾기한 약물을 빠르게 확인하고 싶어요.</p>
