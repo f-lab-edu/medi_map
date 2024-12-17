@@ -1,0 +1,86 @@
+.mypage {
+  .inner {
+    max-width: 60rem;
+  }
+  h1 {
+    font-size: 5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10rem;
+  }
+  .sub_title {
+    font-size: 2rem;
+    margin-top: 5rem;
+    text-align: left;
+
+    span {
+      font-weight: 600;
+      font-size: 2rem;
+    }
+  }
+  p {
+    font-size: 1.6rem;
+    text-align: center;
+    margin-bottom: 5rem;
+  }
+  input {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 1.8rem;
+    border-radius: 0.7rem;
+    padding: 1rem 2rem;
+    display: flex;
+    margin: 0 auto;
+    justify-content: center;
+    width: 100%;
+    &::placeholder {
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: #a6b1bf;
+    }
+  }
+  button {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 1.7rem;
+    border-radius: 0.7rem;
+    padding: 1rem 3rem;
+    display: flex;
+    cursor: pointer;
+    margin: 0 auto;
+    justify-content: center;
+    width: 100%;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+    background: var(--btn-color);
+
+    &.resign {
+      color: #888;
+      background: #fff;
+      border: none;
+      padding: 0;
+      width: 100%;
+      margin: 0;
+      justify-content: right;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      font-size: 1.5rem;
+    }
+  }
+  .item {
+    margin-bottom: 3rem;
+    &.username {
+      button {
+        width: 18rem;
+      }
+    }
+    &.password {
+      input {
+        margin-bottom: 1.5rem;
+      }
+    }
+  }
+  .item_desc {
+    display: flex;
+    gap: 1rem;
+  }
+}

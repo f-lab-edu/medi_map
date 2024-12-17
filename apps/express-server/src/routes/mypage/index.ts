@@ -51,29 +51,58 @@ router.put('/me/password', authMiddleware, async (req, res) => {
     });
 
     if (!user) {
-      return res.status(404).json({ error: MYPAGE_MESSAGES.USER_NOT_FOUND });
+      return res.status(404).json({
+        code: 'USER_NOT_FOUND',
+        message: MYPAGE_MESSAGES.USER_NOT_FOUND,
+      });
     }
 
     // 소셜 로그인 사용자는 비밀번호 변경 불가
     if (user.provider !== 'credentials') {
-      return res.status(400).json({ error: MYPAGE_MESSAGES.SOCIAL_PASSWORD_ERROR });
+      return res.status(400).json({
+        code: 'SOCIAL_PASSWORD_ERROR',
+        message: MYPAGE_MESSAGES.SOCIAL_PASSWORD_ERROR,
+      });
     }
 
+    // 현재 비밀번호 검증
     if (!(await bcrypt.compare(oldPassword, user.password))) {
-      return res.status(400).json({ error: MYPAGE_MESSAGES.PASSWORD_MISMATCH });
+      return res.status(400).json({
+        code: 'PASSWORD_MISMATCH',
+        message: MYPAGE_MESSAGES.PASSWORD_MISMATCH,
+      });
     }
 
+    // 새 비밀번호와 확인 비밀번호 일치 여부 검증
     if (newPassword !== confirmPassword) {
-      return res.status(400).json({ error: MYPAGE_MESSAGES.PASSWORD_CONFIRMATION_ERROR });
+      return res.status(400).json({
+        code: 'PASSWORD_CONFIRMATION_ERROR',
+        message: MYPAGE_MESSAGES.PASSWORD_CONFIRMATION_ERROR,
+      });
     }
 
+    // 새 비밀번호가 기존 비밀번호와 동일한지 검증
+    if (await bcrypt.compare(newPassword, user.password)) {
+      return res.status(400).json({
+        code: 'PASSWORD_SAME_AS_OLD',
+        message: MYPAGE_MESSAGES.PASSWORD_SAME_AS_OLD,
+      });
+    }
+
+    // 비밀번호 업데이트
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await User.update({ password: hashedPassword }, { where: { id: userId } });
 
-    return res.status(200).json({ message: MYPAGE_MESSAGES.PASSWORD_UPDATE_SUCCESS });
+    return res.status(200).json({
+      code: 'PASSWORD_UPDATE_SUCCESS',
+      message: MYPAGE_MESSAGES.PASSWORD_UPDATE_SUCCESS,
+    });
   } catch (error) {
-    console.error('Error in password update:', error);
-    return res.status(500).json({ error: MYPAGE_MESSAGES.PASSWORD_UPDATE_ERROR });
+    console.error(MYPAGE_MESSAGES.PASSWORD_UPDATE_ERROR, error);
+    return res.status(500).json({
+      code: 'PASSWORD_UPDATE_ERROR',
+      message: MYPAGE_MESSAGES.PASSWORD_UPDATE_ERROR,
+    });
   }
 });
 
