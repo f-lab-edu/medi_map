@@ -1,6 +1,7 @@
 export const ROUTES = {
   AUTH: {
     SIGN_IN: "/auth/login",
+    SESSION: "/api/auth/session",
   },
   HOME: "/",
 };

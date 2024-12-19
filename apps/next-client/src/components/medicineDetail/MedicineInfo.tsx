@@ -4,14 +4,12 @@ import { XMLParser } from 'fast-xml-parser';
 import { MedicineInfoProps, Paragraph, Article, Doc } from '@/dto/MedicineResultDto';
 import { SEARCH_ERROR_MESSAGES } from '@/constants/search_errors';
 
-// Paragraph 태그 내용 렌더링
 const ParagraphContent: React.FC<{ paragraph?: Paragraph }> = ({ paragraph }) => {
   if (!paragraph) return null;
 
   const content = paragraph.cdata || paragraph["#text"] || paragraph.text || '';
   const sanitizedHTML = DOMPurify.sanitize(content);
 
-  // 테이블 태그일 경우, 테이블 컴포넌트로 렌더링
   if (paragraph["@_tagName"] === 'table' && paragraph["#text"]) {
     return (
       <div className="table_container">
@@ -65,27 +63,31 @@ const MedicineInfo: React.FC<MedicineInfoProps> = ({ docData, sectionTitle }) =>
     ? [SECTION.ARTICLE]
     : [];
 
-  return (
-    <div className="medi_desc_bottom">
-      <h3 className="sub_title">{title || sectionTitle}</h3>
-      <ul className="medi_info_list">
-        {articles.map((article: Article, index: number) => (
-          <li key={index}>
-            {article["@_title"] && (
-              <h4 className="medi_sub_title">{article["@_title"]}</h4>
-            )}
-            {Array.isArray(article.PARAGRAPH)
-              ? article.PARAGRAPH.map((paragraph: Paragraph, pIndex: number) => (
-                  <ParagraphContent key={pIndex} paragraph={paragraph} />
-                ))
-              : article.PARAGRAPH && (
-                  <ParagraphContent paragraph={article.PARAGRAPH} />
+    return (
+      <div className="medi_desc_bottom">
+        <h3 className="sub_title">{title || sectionTitle}</h3>
+        {articles.length > 0 ? (
+          <ul className="medi_info_list">
+            {articles.map((article: Article, index: number) => (
+              <li key={index}>
+                {article["@_title"] && (
+                  <h4 className="medi_sub_title">{article["@_title"]}</h4>
                 )}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+                {Array.isArray(article.PARAGRAPH)
+                  ? article.PARAGRAPH.map((paragraph: Paragraph, pIndex: number) => (
+                      <ParagraphContent key={pIndex} paragraph={paragraph} />
+                    ))
+                  : article.PARAGRAPH && (
+                      <ParagraphContent paragraph={article.PARAGRAPH} />
+                    )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="no_info">정보 없음</p>
+        )}
+      </div>
+    );    
 };
 
 export default MedicineInfo;

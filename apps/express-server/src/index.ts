@@ -34,6 +34,7 @@ app.use(ROUTES.API.AUTH, authRoutes);
 app.use(ROUTES.API.PHARMACY, pharmacyRoutes);
 app.use(ROUTES.API.MEDICINE, medicineRoutes);
 app.use(ROUTES.API.MYPAGE, mypageRoutes);
+app.use(ROUTES.API.POST, postRoutes);
 
 // 루트 라우트 추가
 app.get(ROUTES.HOME, (req: Request, res: Response) => {

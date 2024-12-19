@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { updatePharmacyData } from '@/services/pharmacyService';
 import { Pharmacy } from '@/models';
-import { ValidationError, DatabaseError, UpdateError, UnexpectedError } from '@/error/PharmacyError';
+import { ValidationError, DatabaseError, UpdateError, UnexpectedError } from '@/error/CommonError';
 import { ERROR_MESSAGES } from '@/constants/errors';
-import { PharmacyItem } from '@/types/pharmacy.types';
+import { PharmacyAPIItem } from '@/types/pharmacy.types';
 
 const router = Router();
 
@@ -34,7 +34,7 @@ router.get('/', async (req, res) => {
 
   try {
     if (!lat || !lng) {
-      throw new ValidationError(ERROR_MESSAGES.VALIDATION_ERROR);
+      throw new ValidationError(ERROR_MESSAGES.PHARMACY.VALIDATION_ERROR);
     }
 
     const centerLat = parseFloat(lat as string);
@@ -49,7 +49,7 @@ router.get('/', async (req, res) => {
     }
 
     // 반경 내 약국 필터링
-    const filteredPharmacies = pharmacies.filter((pharmacy: PharmacyItem) =>
+    const filteredPharmacies = pharmacies.filter((pharmacy: PharmacyAPIItem) =>
       isWithinRadius(centerLat, centerLng, pharmacy.wgs84Lat, pharmacy.wgs84Lon));
 
     return res.status(200).json(filteredPharmacies);
@@ -68,12 +68,12 @@ router.get('/', async (req, res) => {
 });
 
 // 약국 데이터를 업데이트하는 엔드포인트
-router.post('/update-pharmacy', async (req, res) => {
+router.post('/sync', async (req, res) => {
   try {
     try {
       await updatePharmacyData();
     } catch (error) {
-      throw new UpdateError(ERROR_MESSAGES.PHARMACY_DATA_ERROR);
+      throw new UpdateError(ERROR_MESSAGES.PHARMACY.PHARMACY_DATA_ERROR);
     }
 
     return res.status(200).json({ message: 'Pharmacy data updated successfully!' });

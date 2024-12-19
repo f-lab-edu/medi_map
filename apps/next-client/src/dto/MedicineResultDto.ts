@@ -45,12 +45,16 @@ export interface MedicineResultDto {
   lengLong?: number;        // 약물 길이
   lengShort?: number;       // 약물 폭
   thick?: number;           // 약물 두께
+  createdAt?: string;       // 생성 날짜
+  updatedAt?: string;       // 수정 날짜
+  itemEngName?: string;     // 약물 영문 이름
+  indutyType?: string;      // 산업 유형
+  makeMaterialFlag?: string;// 완제/원료 구분
   storageMethod?: string;   // 저장 방법
   validTerm?: string;       // 유효 기간
   packUnit?: string;        // 포장 단위
+  meterialName?: string;    // 성분 정보
   eeDocData?: DocData;      // 효능 효과 데이터
   udDocData?: DocData;      // 사용상 주의사항 데이터
   nbDocData?: DocData;      // 주의사항 데이터
-  createdAt?: string;       // 생성 날짜
-  updatedAt?: string;       // 수정 날짜
 }

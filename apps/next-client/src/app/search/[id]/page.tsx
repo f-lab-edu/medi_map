@@ -10,6 +10,7 @@ import MedicineInfo from '@/components/medicineDetail/MedicineInfo';
 import '@/styles/pages/search/search.scss';
 import { SEARCH_ERROR_MESSAGES } from '@/constants/search_errors';
 import { API_URLS } from '@/constants/urls';
+import { ScrollToTopButton } from "@/components/common/ScrollToTopButton";
 
 export default function MedicineDetailPage() {
   const { id } = useParams();
@@ -17,7 +18,6 @@ export default function MedicineDetailPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 탭 메뉴 상태
   const [activeTab, setActiveTab] = useState<'all' | 'efficacy' | 'dosage' | 'precautions'>('all');
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function MedicineDetailPage() {
   
     fetchMedicine();
   }, [id]);
-  
+
   if (loading) return <p>로딩 중...</p>;
   if (error) return <p className="error_message">{error}</p>;
 
@@ -46,7 +46,10 @@ export default function MedicineDetailPage() {
 
       {medicine && (
         <div className="medi_bottom_result">
-          <h3 className="name">{medicine.itemName}</h3>
+          <h3 className="name">
+            {medicine.itemName} <br />
+            <span>{medicine.itemEngName}</span>
+          </h3>
           <div className="medi_desc">
             {medicine.itemImage && (
               <Image
@@ -106,13 +109,19 @@ export default function MedicineDetailPage() {
                       <td>{medicine.packUnit}</td>
                     </tr>
                   )}
+                  {medicine.meterialName && (
+                    <tr>
+                      <th>재료명</th>
+                      <td>{medicine.meterialName}</td>
+                    </tr>
+                  )}
                   <tr>
                     <th>전문/일반 구분</th>
                     <td>{medicine.etcOtcName}</td>
                   </tr>
                   <tr>
                     <th>허가 날짜</th>
-                    <td>{medicine.itemPermitDate}</td>
+                    <td>{medicine.itemPermitDate ? new Date(medicine.itemPermitDate).toISOString().split("T")[0] : "N/A"}</td>
                   </tr>
                 </tbody>
               </table>
@@ -166,6 +175,7 @@ export default function MedicineDetailPage() {
       )}
 
       <Link href="/search" className="back_btn">뒤로가기</Link>
+      <ScrollToTopButton offset={200} />
     </div>
   );
 }

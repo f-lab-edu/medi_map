@@ -1,171 +1,249 @@
-import { Medicine } from '@/models';
+import { Medicine, MedicineDesc } from '@/models';
 import axios from 'axios';
 import moment from 'moment';
-import { MedicineData, ApprovalData } from '@/types/medicineTypes';
+import { MedicineData, JoinedMedicine } from '@/types/medicine.types';
+import { ValidationError, DatabaseError, APIError, DataParsingError } from '@/error/CommonError';
+import { ERROR_MESSAGES } from '@/constants/errors';
 
-const MEDI_DATA_API_KEY = process.env.DATA_API_KEY;
+const BASE_URL = 'http://apis.data.go.kr/1471000';
+const API_KEY = process.env.DATA_API_KEY;
+const NUM_OF_ROWS = 100;
+const REQUEST_DELAY = 1000;
 
-// 기본 약물 데이터 저장
-async function saveMedicineData(medicineData: MedicineData): Promise<void> {
-  try {
-    const formattedPermitDate = medicineData.ITEM_PERMIT_DATE
-      ? moment(medicineData.ITEM_PERMIT_DATE, 'YYYYMMDD').format('YYYY-MM-DD')
-      : null;
-
-    // 데이터 저장 또는 업데이트
-    await Medicine.upsert({
-      itemSeq: medicineData.ITEM_SEQ,
-      itemName: medicineData.ITEM_NAME,
-      entpName: medicineData.ENTP_NAME,
-      itemPermitDate: formattedPermitDate,
-      chart: medicineData.CHART,
-      colorClass1: medicineData.COLOR_CLASS1,
-      className: medicineData.CLASS_NAME,
-      etcOtcName: medicineData.ETC_OTC_NAME,
-      itemImage: medicineData.ITEM_IMAGE,
-      formCodeName: medicineData.FORM_CODE_NAME,
-      drugShape: medicineData.DRUG_SHAPE,
-      lengLong: medicineData.LENG_LONG ?? null,
-      lengShort: medicineData.LENG_SHORT ?? null,
-      thick: medicineData.THICK ?? null,
-    });
-
-    console.log(`Successfully saved data for ITEM_SEQ: ${medicineData.ITEM_SEQ}`);
-  } catch (error) {
-    console.error('Error saving Medicine Data:', error.message, medicineData);
-  }
-}
-
-// 세부 추가 정보 업데이트
-async function updateApprovalInfo(itemSeq: number, approvalData: ApprovalData): Promise<void> {
-  console.log(`Updating approval info for ITEM_SEQ: ${itemSeq} with data:`, approvalData);
+// 1. 의약품 공공 데이터 가져오기
+export async function syncMedicines(): Promise<void> {
+  const urlBase = `${BASE_URL}/MdcinGrnIdntfcInfoService01/getMdcinGrnIdntfcInfoList01?ServiceKey=${API_KEY}&type=json&numOfRows=${NUM_OF_ROWS}`;
 
   try {
-    // 추가 정보 관련 데이터 업데이트
-    await Medicine.update(
-      {
-        storageMethod: approvalData.STORAGE_METHOD,
-        validTerm: approvalData.VALID_TERM,
-        packUnit: approvalData.PACK_UNIT,
-        eeDocData: approvalData.EE_DOC_DATA,
-        udDocData: approvalData.UD_DOC_DATA,
-        nbDocData: approvalData.NB_DOC_DATA,
-      },
-      { where: { itemSeq } } // itemSeq 기준으로 업데이트
-    );
-    console.log(`Approval info updated for ITEM_SEQ: ${itemSeq}`);
-  } catch (error) {
-    console.error(`Error updating approval info for ITEM_SEQ: ${itemSeq}:`, error.message);
-  }
-}
+    const initialData = await axios.get(`${urlBase}&pageNo=1`);
+    const totalCount = initialData.data.body?.totalCount;
 
-// 의약품 데이터 저장
-async function fetchAllMedicines(): Promise<void> {
-  const numOfRows = 100; // 한 번에 가져올 데이터 수
-  const urlBase = `http://apis.data.go.kr/1471000/MdcinGrnIdntfcInfoService01/getMdcinGrnIdntfcInfoList01?ServiceKey=${MEDI_DATA_API_KEY}&type=json&numOfRows=${numOfRows}`;
-  let totalCount = 0;
-
-  try {
-    // 첫 번째 요청으로 전체 데이터 수 확인
-    const initialResponse = await axios.get(`${urlBase}&pageNo=1`);
-    totalCount = initialResponse.data.body?.totalCount || 0;
-
-    if (totalCount === 0) {
-      console.warn('No medicines found in the API.');
-      return;
+    if (totalCount === undefined) {
+      throw new DataParsingError(ERROR_MESSAGES.DATA_PARSING_ERROR);
     }
 
-    console.log(`Total medicines to fetch: ${totalCount}`);
-    const totalPages = Math.ceil(totalCount / numOfRows); // 전체 페이지 수 계산
+    const totalPages = Math.ceil(totalCount / NUM_OF_ROWS);
+    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
-    // 각 페이지 순회하며 데이터 저장
-    for (let pageNo = 1; pageNo <= totalPages; pageNo++) {
-      console.log(`Fetching page ${pageNo}/${totalPages}...`);
-      const response = await axios.get(`${urlBase}&pageNo=${pageNo}`);
-      const { items } = response.data.body || {};
+    for (const pageNo of pageNumbers) {
+      try {
+        await new Promise(resolve => setTimeout(resolve, REQUEST_DELAY));
 
-      // 데이터를 배열로 변환
-      const medicines = Array.isArray(items) ? items : items.item ? [items.item] : [];
+        const response = await axios.get(`${urlBase}&pageNo=${pageNo}`);
+        const medicines = response.data.body.items || [];
 
-      // 각 약물 데이터를 저장
-      for (const medicine of medicines) {
-        if (!medicine || !medicine.ITEM_SEQ) {
-          console.error('Invalid medicine data:', JSON.stringify(medicine, null, 2));
-          continue;
-        }
+        const upsertPromises = medicines.map(async (medicine: MedicineData) => {
+          try {
+            if (!medicine?.ITEM_SEQ) {
+              console.warn(`Skipping record with missing ITEM_SEQ on page ${pageNo}`);
+              return;
+            }
 
-        console.log('Saving medicine data:', JSON.stringify(medicine, null, 2));
-        await saveMedicineData(medicine);
+            const formattedPermitDate = medicine.ITEM_PERMIT_DATE
+              ? moment(medicine.ITEM_PERMIT_DATE, 'YYYYMMDD').format('YYYY-MM-DD')
+              : null;
+
+            await Medicine.upsert({
+              itemSeq: medicine.ITEM_SEQ,
+              itemName: medicine.ITEM_NAME,
+              entpName: medicine.ENTP_NAME,
+              itemPermitDate: formattedPermitDate,
+              chart: medicine.CHART,
+              colorClass1: medicine.COLOR_CLASS1,
+              className: medicine.CLASS_NAME,
+              etcOtcName: medicine.ETC_OTC_NAME,
+              itemImage: medicine.ITEM_IMAGE,
+              formCodeName: medicine.FORM_CODE_NAME,
+              drugShape: medicine.DRUG_SHAPE,
+              lengLong: medicine.LENG_LONG ?? null,
+              lengShort: medicine.LENG_SHORT ?? null,
+              thick: medicine.THICK ?? null,
+            });
+          } catch (innerError) {
+            throw new DatabaseError(
+              `${ERROR_MESSAGES.UPDATE_ERROR}: ${medicine.ITEM_SEQ}, ${innerError.message}`
+            );
+          }
+        });
+
+        await Promise.all(upsertPromises);
+      } catch (pageError) {
+        throw new APIError(`${ERROR_MESSAGES.API_ERROR} (Page ${pageNo}): ${pageError.message}`);
       }
     }
 
-    console.log('All medicines have been saved successfully.');
+    console.log('All Medicine data synced successfully.');
+
   } catch (error) {
-    console.error('Error in fetchAllMedicines:', error.message);
-    if (error.response) {
-      console.error('Error response data:', JSON.stringify(error.response.data, null, 2));
+    if (error instanceof APIError) {
+      console.error('API Error:', error.message);
+    } else if (error instanceof DataParsingError) {
+      console.error('Data Parsing Error:', error.message);
+    } else if (error instanceof DatabaseError) {
+      console.error('Database Error:', error.message);
+    } else {
+      console.error(`${ERROR_MESSAGES.MEDICINE.SYNC_MEDICINE_ERROR}: ${error.message}`);
     }
     throw error;
   }
 }
 
-// 승인 정보 업데이트
-async function fetchApprovalInfo(): Promise<void> {
-  console.log('Fetching medicines from database for approval info update');
+// 2. 의약품 공공 상세 데이터 가져오기
+export async function syncApprovals(): Promise<void> {
+  const urlBase = `${BASE_URL}/DrugPrdtPrmsnInfoService06/getDrugPrdtPrmsnDtlInq05?serviceKey=${API_KEY}&type=json&numOfRows=${NUM_OF_ROWS}`;
 
-  const medicines = await Medicine.findAll();
-  const totalMedicines = medicines.length;
-  const pageSize = 100; // 한 페이지에 처리할 데이터 수
-  const totalPages = Math.ceil(totalMedicines / pageSize); // 전체 페이지 수 계산
-  let processedMedicines = 0; // 처리 완료된 데이터 수
+  try {
+    const initialResponse = await axios.get(`${urlBase}&pageNo=1`);
+    const totalCount = initialResponse.data.body?.totalCount;
 
-  console.log(`Fetched ${totalMedicines} medicines from database.`);
-  console.log(`Total pages to process: ${totalPages}`);
-
-  // 각 페이지 순회하며 승인 정보 업데이트
-  for (let pageNo = 1; pageNo <= totalPages; pageNo++) {
-    console.log(`Processing page ${pageNo}/${totalPages}`);
-
-    // 현재 페이지 데이터 추출
-    const pageData = medicines.slice((pageNo - 1) * pageSize, pageNo * pageSize);
-
-    for (const medicine of pageData) {
-      const approvalUrl = `https://apis.data.go.kr/1471000/DrugPrdtPrmsnInfoService06/getDrugPrdtPrmsnDtlInq05?serviceKey=${MEDI_DATA_API_KEY}&type=json&item_seq=${medicine.itemSeq}`;
-
-      try {
-        const response = await axios.get(approvalUrl);
-        const items = response.data.body.items;
-        let approvalData: ApprovalData | null = null;
-
-        // 응답 데이터 확인
-        if (Array.isArray(items)) {
-          approvalData = items[0] as ApprovalData;
-        } else if (items?.item) {
-          approvalData = items.item as ApprovalData;
-        }
-
-        // 승인 데이터가 유효하다면 업데이트
-        if (approvalData) {
-          await updateApprovalInfo(medicine.itemSeq, approvalData);
-        } else {
-          console.warn(`No valid approval data found for ITEM_SEQ: ${medicine.itemSeq}`);
-        }
-      } catch (error) {
-        console.error(`Error fetching approval info for ITEM_SEQ: ${medicine.itemSeq}:`, error.message);
-      }
-
-      processedMedicines++; // 처리된 데이터 수 증가
-      console.log(`Processed ${processedMedicines}/${totalMedicines} medicines.`);
+    if (totalCount === undefined) {
+      throw new DataParsingError(ERROR_MESSAGES.DATA_PARSING_ERROR);
     }
 
-    console.log(`Completed page ${pageNo}. Waiting before next page...`);
-    await new Promise(resolve => setTimeout(resolve, 1000)); // 요청 제한 방지를 위해 대기
-  }
+    const totalPages = Math.ceil(totalCount / NUM_OF_ROWS);
 
-  console.log('All pages have been processed.');
+    for (let pageNo = 1; pageNo <= totalPages; pageNo++) {
+      try {
+        const response = await axios.get(`${urlBase}&pageNo=${pageNo}`);
+        const approvals = response.data.body?.items || [];
+
+        for (const approval of approvals) {
+          try {
+            if (!approval.ITEM_SEQ) {
+              console.warn(`Skipping record with missing ITEM_SEQ on page ${pageNo}`);
+              continue;
+            }
+
+            await MedicineDesc.upsert({
+              itemSeq: approval.ITEM_SEQ,
+              itemName: approval.ITEM_NAME || null,
+              itemEngName: approval.ITEM_ENG_NAME || null,
+              indutyType: approval.INDUTY_TYPE || null,
+              makeMaterialFlag: approval.MAKE_MATERIAL_FLAG || null,
+              storageMethod: approval.STORAGE_METHOD || null,
+              validTerm: approval.VALID_TERM || null,
+              packUnit: approval.PACK_UNIT || null,
+              meterialName: approval.MATERIAL_NAME || null,
+              eeDocData: approval.EE_DOC_DATA ? approval.EE_DOC_DATA : null,
+              udDocData: approval.UD_DOC_DATA ? approval.UD_DOC_DATA : null,
+              nbDocData: approval.NB_DOC_DATA ? approval.NB_DOC_DATA : null,
+            });
+          } catch (innerError) {
+            throw new DatabaseError(
+              `${ERROR_MESSAGES.UPDATE_ERROR}: ${approval.ITEM_SEQ}, ${innerError.message}`
+            );
+          }
+        }
+
+        await new Promise(resolve => setTimeout(resolve, REQUEST_DELAY));
+      } catch (pageError) {
+        throw new APIError(`${ERROR_MESSAGES.API_ERROR} (Page ${pageNo}): ${pageError.message}`);
+      }
+    }
+
+    console.log('All approval data synced successfully.');
+
+  } catch (error) {
+    if (error instanceof APIError) {
+      console.error('API Error:', error.message);
+    } else if (error instanceof DataParsingError) {
+      console.error('Data Parsing Error:', error.message);
+    } else if (error instanceof DatabaseError) {
+      console.error('Database Error:', error.message);
+    } else {
+      console.error(`${ERROR_MESSAGES.MEDICINE.SYNC_APPROVALS_ERROR}: ${error.message}`);
+    }
+
+    throw error;
+  }
 }
 
-export {
-  fetchAllMedicines,
-  fetchApprovalInfo,
-};
+// 3. 특정 의약품의 기본 정보와 상세 정보를 함께 조회
+export async function getJoinedMedicines(itemSeq: string): Promise<JoinedMedicine | null> {
+  try {
+    const medicine = await Medicine.findOne({
+      where: { itemSeq },
+      include: [
+        {
+          model: MedicineDesc,
+          required: false,
+        },
+      ],
+    });
+
+    if (!medicine) {
+      throw new ValidationError(ERROR_MESSAGES.MEDICINE.FETCH_JOINED_MEDICINES_ERROR);
+    }
+
+    const medicineDesc = medicine.MedicineDesc || {};
+
+    return {
+      itemSeq: medicine.itemSeq,
+      itemName: medicine.itemName,
+      entpName: medicine.entpName,
+      itemPermitDate: medicine.itemPermitDate,
+      chart: medicine.chart,
+      colorClass1: medicine.colorClass1,
+      className: medicine.className,
+      etcOtcName: medicine.etcOtcName,
+      itemImage: medicine.itemImage,
+      formCodeName: medicine.formCodeName,
+      drugShape: medicine.drugShape,
+      lengLong: medicine.lengLong,
+      lengShort: medicine.lengShort,
+      thick: medicine.thick,
+      storageMethod: medicineDesc.storageMethod || null,
+      validTerm: medicineDesc.validTerm || null,
+      packUnit: medicineDesc.packUnit || null,
+      eeDocData: medicineDesc.eeDocData || null,
+      udDocData: medicineDesc.udDocData || null,
+      nbDocData: medicineDesc.nbDocData || null,
+    };
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      console.error(`${error.message}`);
+    } else {
+      console.error(`${ERROR_MESSAGES.MEDICINE.FETCH_JOINED_MEDICINES_ERROR}: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
+// 4. 모든 의약품 정보를 페이지네이션 방식으로 조회
+export async function getAllMedicines(page: number, limit: number) {
+  try {
+    const offset = (page - 1) * limit;
+
+    const results = await Medicine.findAndCountAll({
+      include: [
+        {
+          model: MedicineDesc,
+          required: false,
+        },
+      ],
+      limit,
+      offset,
+    });
+
+    if (!results) {
+      throw new ValidationError(ERROR_MESSAGES.MEDICINE.FETCH_ALL_MEDICINES_ERROR);
+    }
+
+    return {
+      data: results.rows,
+      total: results.count,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(results.count / limit),
+        limit,
+      },
+    };
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      console.error(`${error.message}`);
+    } else {
+      console.error(`${ERROR_MESSAGES.MEDICINE.FETCH_ALL_MEDICINES_ERROR}: ${error.message}`);
+    }
+    throw error;
+  }
+}

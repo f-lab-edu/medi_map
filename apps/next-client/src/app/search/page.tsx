@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, ChangeEvent, KeyboardEvent } from "react";
+import { useEffect, KeyboardEvent, ChangeEvent, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import useMedicineSearch from "@/hooks/useMedicineSearch";
@@ -8,22 +8,34 @@ import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 import { SEARCH_ERROR_MESSAGES } from "@/constants/search_errors";
 import { FILTERS, FILTER_ALL } from "@/constants/filters";
 import "@/styles/pages/search/search.scss";
+import { useSearchStore } from "@/store/useSearchStore";
+import { MedicineResultDto } from '@/dto/MedicineResultDto';
+import { ScrollToTopButton } from "@/components/common/ScrollToTopButton";
 
 export default function SearchPage() {
-  const [medicineSearchTerm, setMedicineSearchTerm] = useState<string>("");
-  const [companySearchTerm, setCompanySearchTerm] = useState<string>("");
-  const [selectedColors, setSelectedColors] = useState<string[]>([]);
-  const [selectedShapes, setSelectedShapes] = useState<string[]>([]);
-  const [selectedForms, setSelectedForms] = useState<string[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [isSearchExecuted, setIsSearchExecuted] = useState<boolean>(false);
-  const [warning, setWarning] = useState<string | null>(null);
+  const {
+    medicineSearchTerm,
+    companySearchTerm,
+    selectedColors,
+    selectedShapes,
+    selectedForms,
+    page,
+    isSearchExecuted,
+    warning,
+    setMedicineSearchTerm,
+    setCompanySearchTerm,
+    setSelectedColors,
+    setSelectedShapes,
+    setSelectedForms,
+    setPage,
+    setIsSearchExecuted,
+    setWarning,
+    results,
+  } = useSearchStore();
 
-  // 의약품 검색 관련 hook
-  const { results, loading, error, hasMore, fetchMedicineInfo, resetResults } =
+  const { fetchMedicineInfo, resetResults, loading, error, hasMore } =
     useMedicineSearch();
 
-  // 검색 실행
   const handleSearch = () => {
     if (
       medicineSearchTerm.trim().length < 2 &&
@@ -40,7 +52,6 @@ export default function SearchPage() {
     setPage(1);
     setIsSearchExecuted(true);
 
-    // 검색 API 호출
     fetchMedicineInfo({
       name: medicineSearchTerm.trim(),
       company: companySearchTerm.trim(),
@@ -53,18 +64,20 @@ export default function SearchPage() {
     setWarning(null);
   };
 
-  // 새로운 항목 추가 또는 제거
   const updateFilter = (selectedItems: string[], newItem: string) => {
     if (newItem === FILTER_ALL) {
-      return [FILTER_ALL]; // "전체" 선택 시 다른 선택 해제
+      return [FILTER_ALL];
     }
-    if (selectedItems.includes(newItem)) {
-      return selectedItems.filter((item) => item !== newItem && item !== FILTER_ALL); // 항목 제거
+  
+    const updatedItems = selectedItems.filter((item) => item !== FILTER_ALL);
+  
+    if (updatedItems.includes(newItem)) {
+      return updatedItems.filter((item) => item !== newItem);
     }
-    return [...selectedItems.filter((item) => item !== FILTER_ALL), newItem]; // 새로운 항목 추가
+  
+    return [...updatedItems, newItem];
   };
 
-  // 필터 선택
   const handleColorSelect = (color: string) =>
     setSelectedColors((prev) => updateFilter(prev, color));
 
@@ -73,7 +86,6 @@ export default function SearchPage() {
 
   const handleFormSelect = (form: string) =>
     setSelectedForms((prev) => updateFilter(prev, form));
-
 
   const handleMediChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMedicineSearchTerm(e.target.value);
@@ -89,7 +101,6 @@ export default function SearchPage() {
     }
   };
 
-  // 무한 스크롤 
   const lastElementRef = useInfiniteScroll({
     loading,
     hasMore,
@@ -97,16 +108,16 @@ export default function SearchPage() {
   });
 
   useEffect(() => {
-    if (isSearchExecuted) {
-      fetchMedicineInfo({
-        name: medicineSearchTerm,
-        company: companySearchTerm,
-        color: selectedColors,
-        shape: selectedShapes,
-        form: selectedForms,
-        page,
-      });
-    }
+    if (!isSearchExecuted || page <= 1) return;
+  
+    fetchMedicineInfo({
+      name: medicineSearchTerm,
+      company: companySearchTerm,
+      color: selectedColors,
+      shape: selectedShapes,
+      form: selectedForms,
+      page,
+    });
   }, [page]);
 
   return (
@@ -186,13 +197,9 @@ export default function SearchPage() {
       {loading && <p>로딩 중...</p>}
       {error && <p className="error_message">{error}</p>}
       {warning && <p className="warning_message">{warning}</p>}
-
-      {!loading && isSearchExecuted && results.length === 0 && !warning && (
-        <p className="no_results_message">{SEARCH_ERROR_MESSAGES.NO_RESULTS_FOUND}</p>
-      )}
-
+      
       <ul className="medicine_results">
-        {results.map((item, index) => (
+        {results.map((item: MedicineResultDto, index: number) => (
           <li
             className="medicine_desc"
             key={item.itemSeq}
@@ -219,6 +226,7 @@ export default function SearchPage() {
           </li>
         ))}
       </ul>
+      <ScrollToTopButton offset={200} />
     </div>
   );
 }

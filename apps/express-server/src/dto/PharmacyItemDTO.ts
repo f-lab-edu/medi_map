@@ -1,13 +1,15 @@
 import { PharmacyItem } from '@/models';
+import { PharmacyAPIItem } from '@/types/pharmacy.types';
 
 export class PharmacyItemDTO {
-  static fromAPI(item: any): PharmacyItem {
+  static fromAPI(item: PharmacyAPIItem): PharmacyItem {
     return {
+      id: 0,
       dutyName: item.dutyName,
       dutyAddr: item.dutyAddr,
       dutyTel1: item.dutyTel1 || null,
-      wgs84Lat: parseFloat(item.wgs84Lat),
-      wgs84Lon: parseFloat(item.wgs84Lon),
+      wgs84Lat: item.wgs84Lat || null,
+      wgs84Lon: item.wgs84Lon || null,
       dutyTime1s: item.dutyTime1s || null,
       dutyTime1c: item.dutyTime1c || null,
       dutyTime2s: item.dutyTime2s || null,

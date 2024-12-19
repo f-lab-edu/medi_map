@@ -20,7 +20,7 @@ export const initializeMap = (
     }
 
     const options = { center: new window.kakao.maps.LatLng(location.lat, location.lng), level: 4 };
-    const map = new window.kakao.maps.Map(container, options);
+    const map = new window.kakao.maps.Map(container, options) as kakao.maps.Map;
 
     onLoad(map);
   });

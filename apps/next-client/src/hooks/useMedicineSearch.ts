@@ -1,17 +1,25 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import axios from 'axios';
 import { NoResultsError, ApiRequestError } from '@/error/SearchError';
 import { MedicineResultDto } from '@/dto/MedicineResultDto';
 import { API_URLS } from '@/constants/urls';
 import { FILTER_ALL } from '@/constants/filters';
 import { SEARCH_ERROR_MESSAGES } from '@/constants/search_errors';
+import { useSearchStore } from '@/store/useSearchStore';
 
 export default function useMedicineSearch() {
-  const [results, setResults] = useState<MedicineResultDto[]>([]);
-  const [totalResults, setTotalResults] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [hasMore, setHasMore] = useState<boolean>(true);
+  const {
+    results,
+    setResults,
+    setTotalResults,
+    loading,
+    setLoading,
+    error,
+    setError,
+    hasMore,
+    setHasMore,
+    resetResults
+  } = useSearchStore();
 
   const fetchMedicineInfo = useCallback(
     async ({
@@ -31,13 +39,13 @@ export default function useMedicineSearch() {
     }) => {
       setLoading(true);
       setError(null);
-  
+
       try {
-        // 필터 조건 처리, 빈 배열이거나 "전체"만 포함된 경우 조건 제거
+        // 필터 조건 처리
         const filterColors = color.length === 0 || color.includes(FILTER_ALL) ? undefined : color.join(",");
         const filterShapes = shape.length === 0 || shape.includes(FILTER_ALL) ? undefined : shape.join(",");
         const filterForms = form.length === 0 || form.includes(FILTER_ALL) ? undefined : form.join(",");
-  
+
         // API 호출
         const response = await axios.get(API_URLS.MEDICINE_SEARCH, {
           params: {
@@ -50,23 +58,22 @@ export default function useMedicineSearch() {
             limit: 10, // 페이지당 결과 개수
           },
         });
-  
+
         const newResults: MedicineResultDto[] = Array.isArray(response.data.results)
           ? response.data.results
           : [];
         const newTotal: number = response.data.total || 0;
 
-  
-        setResults((prevResults) => (page === 1 ? newResults : [...prevResults, ...newResults]));
+        setResults(page === 1 ? newResults : [...results, ...newResults]);
         setTotalResults(newTotal);
         setHasMore(newResults.length > 0);
-  
+
         if (newTotal === 0 && page === 1) {
           throw new NoResultsError();
         }
       } catch (error: unknown) {
         console.error(SEARCH_ERROR_MESSAGES.API_REQUEST_ERROR, error);
-  
+
         if (error instanceof NoResultsError) {
           setError(error.message);
         } else {
@@ -76,19 +83,11 @@ export default function useMedicineSearch() {
         setLoading(false);
       }
     },
-    []
+    [results, setLoading, setError, setHasMore, setResults, setTotalResults]
   );
-  
-  const resetResults = () => {
-    setResults([]);
-    setTotalResults(0);
-    setHasMore(true);
-    setError(null);
-  };
 
   return {
     results,
-    totalResults,
     loading,
     error,
     hasMore,

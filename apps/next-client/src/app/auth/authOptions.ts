@@ -1,7 +1,6 @@
 import { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import axios from 'axios';
 import { ROUTES, API_URLS } from '@/constants/urls';
 import { CredError } from '@/error/CredError';
 import { LoginRequestDto } from '@/dto/LoginRequestDto';
@@ -31,7 +30,7 @@ export const authOptions: NextAuthOptions = {
         };
 
         try {
-          const response = await axiosInstance.post('', loginData); 
+          const response = await axiosInstance.post(API_URLS.LOGIN, loginData); 
           const user: LoginResponseDto = response.data;
 
           if (response.status === 200 && user) {

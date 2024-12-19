@@ -1,0 +1,15 @@
+export const MESSAGES_POST = {
+  VALIDATION_ERROR: '유효성 검증에 실패했습니다.',
+  DATABASE_ERROR: '데이터베이스 작업 중 오류가 발생했습니다.',
+  PERMISSION_DENIED_UPDATE: '이 게시글을 수정할 수 있는 권한이 없습니다.',
+  PERMISSION_DENIED_DELETE: '이 게시글을 삭제할 수 있는 권한이 없습니다.',
+  POST_NOT_FOUND: '게시글을 찾을 수 없습니다.',
+  USER_INFO_MISSING: '사용자 ID 또는 작성자 정보가 없습니다.',
+  TITLE_CONTENT_REQUIRED: '제목과 내용은 필수 항목입니다.',
+  FETCH_POSTS_ERROR: '게시글 목록을 불러오는 데 실패했습니다.',
+  SERVER_ERROR: '예기치 못한 서버 오류가 발생했습니다.',
+  POST_DELETE_COMPLETE: '게시글 삭제가 완료되었습니다.',
+  RECOMMENDED: '추천되었습니다.',
+  RECOMMENDATION_CANCELLED: '추천 취소되었습니다.',
+  COMMENT_DELETED: '댓글이 삭제되었습니다.',
+};
