@@ -7,11 +7,12 @@ export const initializeMap = (
   location: { lat: number; lng: number },
   onLoad: (map: kakao.maps.Map) => void
 ) => {
-  if (!window.kakao || !window.kakao.maps) {
+  if (!window.kakao?.maps) {
     console.error(ERROR_MESSAGES.KAKAO_MAP_ERROR);
     return;
   }
 
+  // 카카오 지도 로드
   window.kakao.maps.load(() => {
     const container = document.getElementById(containerId);
     if (!container) {
@@ -34,15 +35,14 @@ export const addMarkers = (
   pharmacies: PharmacyDTO[],
   onPharmacyClick: (pharmacy: PharmacyDTO) => void
 ): kakao.maps.Marker[] => {
-  const markers: kakao.maps.Marker[] = [];
-
-  pharmacies.forEach((pharmacy) => {
+  const markers: kakao.maps.Marker[] = pharmacies.map((pharmacy) => {
     const markerPosition = new kakao.maps.LatLng(pharmacy.wgs84Lat, pharmacy.wgs84Lon);
 
-    const markerImageSrc = '/images/marker.png';
-    const markerImageSize = new kakao.maps.Size(29, 28);
-    const markerImageOption = { offset: new kakao.maps.Point(12, 35) };
-    const markerImage = new kakao.maps.MarkerImage(markerImageSrc, markerImageSize, markerImageOption);
+    const markerImage = new kakao.maps.MarkerImage(
+      '/images/marker.png',
+      new kakao.maps.Size(29, 28),
+      { offset: new kakao.maps.Point(12, 35) }
+    );
 
     const marker = new kakao.maps.Marker({
       map,
@@ -56,12 +56,9 @@ export const addMarkers = (
     });
 
     kakao.maps.event.addListener(marker, 'click', () => {
-      if (currentOpenInfoWindow && currentOpenInfoWindow !== infoWindow) {
-        currentOpenInfoWindow.close();
-      }
+      if (currentOpenInfoWindow) currentOpenInfoWindow.close();
 
       if (currentOpenInfoWindow === infoWindow) {
-        infoWindow.close();
         currentOpenInfoWindow = null;
       } else {
         infoWindow.open(map, marker);
@@ -71,7 +68,7 @@ export const addMarkers = (
       onPharmacyClick(pharmacy);
     });
 
-    markers.push(marker);
+    return marker;
   });
 
   return markers;

@@ -2,6 +2,7 @@ declare global {
   interface Window {
     kakao: typeof kakao;
     markers: kakao.maps.Marker[];
+    currentOpenInfoWindow: kakao.maps.InfoWindow | null;
   }
 }
 
