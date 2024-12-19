@@ -20,9 +20,9 @@ export default function Header() {
         </h1>
         <div className="right_cont">
           <ul className="menu_cont">
-            <li><Link href="/pharmacy">약국 찾아보기🔍</Link></li>
-            <li><Link href="/search">약 정보 검색💊</Link></li>
-            <li><Link href="/community">건강 이야기🗨️</Link></li>
+            <li><Link href="/search">약 정보 검색</Link></li>
+            <li><Link href="/pharmacy">약국 찾아보기</Link></li>
+            <li><Link href="/community">건강 이야기</Link></li>
           </ul>
           <ul className="auth_cont">
             {session ? (

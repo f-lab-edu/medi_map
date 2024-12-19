@@ -27,6 +27,8 @@ export const initializeMap = (
 };
 
 // 약국 마커 추가 함수
+let currentOpenInfoWindow: kakao.maps.InfoWindow | null = null; 
+
 export const addMarkers = (
   map: kakao.maps.Map,
   pharmacies: PharmacyDTO[],
@@ -37,13 +39,11 @@ export const addMarkers = (
   pharmacies.forEach((pharmacy) => {
     const markerPosition = new kakao.maps.LatLng(pharmacy.wgs84Lat, pharmacy.wgs84Lon);
 
-    // 마커 이미지 설정
     const markerImageSrc = '/images/marker.png';
     const markerImageSize = new kakao.maps.Size(29, 28);
     const markerImageOption = { offset: new kakao.maps.Point(12, 35) };
     const markerImage = new kakao.maps.MarkerImage(markerImageSrc, markerImageSize, markerImageOption);
 
-    // 마커 생성
     const marker = new kakao.maps.Marker({
       map,
       position: markerPosition,
@@ -51,16 +51,25 @@ export const addMarkers = (
       image: markerImage,
     });
 
-    // InfoWindow 생성
     const infoWindow = new kakao.maps.InfoWindow({
       content: `<div class='info_name'><p>${pharmacy.dutyName}</p></div>`,
     });
 
-    kakao.maps.event.addListener(marker, 'mouseover', () => infoWindow.open(map, marker));
-    
-    kakao.maps.event.addListener(marker, 'mouseout', () => infoWindow.close());
+    kakao.maps.event.addListener(marker, 'click', () => {
+      if (currentOpenInfoWindow && currentOpenInfoWindow !== infoWindow) {
+        currentOpenInfoWindow.close();
+      }
 
-    kakao.maps.event.addListener(marker, 'click', () => onPharmacyClick(pharmacy));
+      if (currentOpenInfoWindow === infoWindow) {
+        infoWindow.close();
+        currentOpenInfoWindow = null;
+      } else {
+        infoWindow.open(map, marker);
+        currentOpenInfoWindow = infoWindow;
+      }
+
+      onPharmacyClick(pharmacy);
+    });
 
     markers.push(marker);
   });
