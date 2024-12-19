@@ -1,9 +1,10 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import authRoutes from '@/routes/auth/index';
-import pharmacyRoutes from '@/routes/parmacy/index';
+import pharmacyRoutes from '@/routes/pharmacy/index';
 import medicineRoutes from '@/routes/medicine/index';
 import mypageRoutes from '@/routes/mypage/index';
+import postRoutes from '@/routes/post/index';
 import { PORT } from '@/app-constants/constants';
 import { checkEnvVariables } from '@/config/env';
 import { ROUTES } from '@/constants/urls';
