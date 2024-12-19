@@ -5,6 +5,7 @@ export const ERROR_MESSAGES = {
   DATA_PARSING_ERROR: '데이터 파싱 중 오류가 발생했습니다.',
   VALIDATION_ERROR: '요청한 데이터가 유효하지 않습니다.',
   SERVER_ERROR: '서버 오류가 발생했습니다.',
+  AUTHENTICATION_ERROR: '인증에 실패했습니다.',
 
   AUTH: {
     EMAIL_ALREADY_EXISTS: '이미 존재하는 이메일입니다.',
@@ -24,4 +25,5 @@ export const ERROR_MESSAGES = {
     FETCH_JOINED_MEDICINES_ERROR: '의약품 기본 정보와 상세 정보를 조회하는 중 오류가 발생했습니다.',
     FETCH_ALL_MEDICINES_ERROR: '모든 의약품 데이터를 페이지네이션 방식으로 조회하는 중 오류가 발생했습니다.',
   }
+  
 };

@@ -27,7 +27,7 @@ export const loginWithCredentials = async (email: string, password: string) => {
 
 export const loginWithGoogle = async () => {
   try {
-    const result = await signIn('google', { callbackUrl: ROUTES.HOME });
+    const result = await signIn('google', { redirect: false, callbackUrl: ROUTES.HOME });
 
     if (!result) {
       throw new LoginError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
@@ -48,5 +48,5 @@ const handleLoginError = (error: unknown) => {
     throw error;
   }
 
-  throw new LoginError();
+  throw new LoginError(ERROR_MESSAGES.LOGIN_ERROR);
 };
