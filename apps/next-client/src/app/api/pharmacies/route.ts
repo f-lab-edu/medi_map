@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PharmacyDataError } from '@/error/PharmaciesError';
+import { PharmacyDataError } from '@/error/PharmacyError';
 import { ERROR_MESSAGES } from '@/constants/errors';
 
 export async function GET(req: NextRequest) {
