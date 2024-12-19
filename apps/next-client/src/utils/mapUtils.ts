@@ -12,7 +12,7 @@ export const initializeMap = (
     return;
   }
 
-  // 카카오 지도 로드
+  // 카카오 지도 로드 
   window.kakao.maps.load(() => {
     const container = document.getElementById(containerId);
     if (!container) {
