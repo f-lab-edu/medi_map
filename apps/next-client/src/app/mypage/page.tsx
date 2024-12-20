@@ -3,13 +3,15 @@
 import React, { useEffect, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
-import { API_URLS } from '@/constants/urls';
+import { API_URLS , ROUTES } from '@/constants/urls';
 import '@/styles/pages/mypage/edit.scss';
 import { FetchUsernameError, UpdateNicknameError, UpdatePasswordError, DeleteAccountError } from '@/error/MypageError';
 import { ALERT_MESSAGES } from '@/constants/alert_message';
+import Cookies from 'js-cookie';
+import { signOut } from 'next-auth/react';
 
 const getAuthHeader = () => {
-  const token = localStorage.getItem("accessToken");
+  const token = Cookies.get("accessToken");
   if (!token) {
     throw new Error(ALERT_MESSAGES.ERROR.NO_TOKEN);
   }
@@ -108,10 +110,13 @@ export default function MyPage() {
         await axios.delete(`${API_URLS.MYPAGE}`, {
           headers: getAuthHeader(),
         });
-
+  
         alert(ALERT_MESSAGES.SUCCESS.ACCOUNT_DELETE);
-        localStorage.removeItem("accessToken");
-        router.push("/");
+  
+        Cookies.remove("accessToken");
+        await signOut({ redirect: false });
+  
+        router.push(ROUTES.AUTH.SIGN_IN);
       } catch (error) {
         const errorMessage =
           error instanceof AxiosError && error.response?.data?.error;
@@ -120,6 +125,7 @@ export default function MyPage() {
       }
     }
   };
+  
 
   return (
     <div>

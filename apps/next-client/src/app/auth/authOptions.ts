@@ -1,7 +1,7 @@
 import { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { ROUTES, API_URLS } from '@/constants/urls';
+import {API_URLS } from '@/constants/urls';
 import { CredError } from '@/error/CredError';
 import { LoginRequestDto } from '@/dto/LoginRequestDto';
 import { LoginResponseDto } from '@/dto/LoginResponseDto';
@@ -30,16 +30,20 @@ export const authOptions: NextAuthOptions = {
         };
 
         try {
-          const response = await axiosInstance.post(API_URLS.LOGIN, loginData); 
-          const user: LoginResponseDto = response.data;
+          const response = await axiosInstance.post(API_URLS.LOGIN, loginData);
+          const { token, user: userData } = response.data as LoginResponseDto;
 
-          if (response.status === 200 && user) {
-            return { id: user.email, email: user.email, accessToken: user.token };
+          if (response.status === 200 && userData) {
+            return {
+              id: userData.id,
+              email: userData.email,
+              accessToken: token
+            };
           } else {
-            throw new CredError(ERROR_MESSAGES.LOGIN_FAILED); 
+            throw new CredError(ERROR_MESSAGES.LOGIN_FAILED);
           }
         } catch {
-          throw new CredError(ERROR_MESSAGES.LOGIN_FAILED); 
+          throw new CredError(ERROR_MESSAGES.LOGIN_FAILED);
         }
       },
     }),
@@ -47,6 +51,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        token.id = user.id;
         token.email = user.email;
         token.accessToken = user.accessToken;
       }
@@ -54,13 +59,13 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
+        session.user.id = token.id;
         session.user.email = token.email;
         session.user.accessToken = token.accessToken;
       }
       return session;
-    }    
+    },
   },
-  
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: 'jwt',

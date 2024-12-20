@@ -90,7 +90,7 @@
 
         &.pink {
           background: #e91e63;
-          color: #fc9e9e;
+          color: #fff;
         }
 
         &.red {
@@ -404,4 +404,15 @@
       background-color: #0056b3;
     }
   }
+}
+
+.top_btn {
+  background: var(--btn-color);
+  border-radius: 50%;
+  width: 5rem;
+  height: 5rem;
+  color: #fff;
+  position: fixed;
+  bottom: 3rem;
+  right: 3rem;
 }

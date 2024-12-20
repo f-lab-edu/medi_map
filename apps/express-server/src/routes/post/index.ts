@@ -184,6 +184,38 @@ router.get('/:id/comments', async (req, res, next) => {
   }
 });
 
+// 댓글 수정
+router.put('/comments/:commentId', authMiddleware, async (req: AuthenticatedRequest, res, next) => {
+  try {
+    const { commentId } = req.params;
+    const { content } = req.body;
+
+    if (!content || content.trim() === '') {
+      return res.status(400).json({ message: MESSAGES_POST.COMMENT_CONTENT_REQUIRED });
+    }
+
+    const comment = await Comment.findByPk(commentId);
+
+    if (!comment) {
+      return res.status(404).json({ message: MESSAGES_POST.COMMENT_NOT_FOUND });
+    }
+
+    // 댓글 작성자만 수정 가능
+    if (comment.userId !== req.user?.id) {
+      return res.status(403).json({ message: MESSAGES_POST.PERMISSION_DENIED_UPDATE });
+    }
+
+    // 댓글 내용 수정
+    comment.content = content;
+    await comment.save();
+
+    res.status(200).json({ message: MESSAGES_POST.COMMENT_UPDATED, comment });
+  } catch (error) {
+    next(error);
+  }
+});
+
+
 // 댓글 삭제
 router.delete('/comments/:commentId', authMiddleware, async (req: AuthenticatedRequest, res, next) => {
   try {
