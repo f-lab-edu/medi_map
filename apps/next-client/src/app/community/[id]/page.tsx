@@ -8,6 +8,7 @@ import { API_URLS } from '@/constants/urls';
 import '@/styles/pages/community/community.scss';
 import { Params, Post, Comment } from '@/types/post';
 import { FaThumbsUp, FaRegThumbsUp } from "react-icons/fa6";
+import Link from 'next/link';
 
 export default function PostDetailPage({ params }: { params: Params }) {
   const { id } = params;
@@ -180,25 +181,27 @@ export default function PostDetailPage({ params }: { params: Params }) {
   return (
     <div className="post_detail">
       <h2 className='post_title'>{post.title}</h2>
-      <p className='post_desc'>{post.content}</p>
-
+      
        {/* 게시글 수정/삭제 버튼 (작성자만 표시) */}
        {post.userId === userId && (
         <div className="post_actions">
-          <button onClick={() => router.push(`/community/${id}/edit`)}>수정</button>
-          <button onClick={handleDeletePost} className="delete_button">삭제</button>
+          <button className='common_button edit_button' onClick={() => router.push(`/community/${id}/edit`)}>수정</button>
+          <button className='common_button delete_button' onClick={handleDeletePost} >삭제</button>
         </div>
       )}
+      <p className='post_desc'>{post.content}</p>
+
 
       <div className="post_actions">
+      <Link href="/community">목록으로</Link> 
         <button onClick={toggleRecommendation} className="recommend_button">
           {isRecommended ? (
-            <FaThumbsUp size={24} color="black" />
+            <FaThumbsUp size={24} />
           ) : (
-            <FaRegThumbsUp size={24} color="gray" />
+            <FaRegThumbsUp size={24} />
           )}
         </button>
-        <span>{recommendationCount}명이 추천했습니다.</span>
+        <span>{recommendationCount}</span>
       </div>
 
       <div className="comment">
@@ -225,24 +228,28 @@ export default function PostDetailPage({ params }: { params: Params }) {
                     onChange={(e) => setEditedComment(e.target.value)}
                   />
                   <div className="button_box">
-                  <button className='modify' onClick={() => handleEditComment(comment.id)}>수정 완료</button>
-                  <button className='cancel' onClick={() => setEditingCommentId(null)}>취소</button>
+                  <button className='common_button cancel_button' onClick={() => setEditingCommentId(null)}>취소</button>
+                  <button className='common_button save_button' onClick={() => handleEditComment(comment.id)}>등록</button>
                   </div>
                 </div>
               ) : (
                 <div className="comment_item">
+                  <div className="top_cont">
+                    <p>{comment.author}</p>
+                    <span className='date'>{new Date(post.createdAt).toLocaleString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
+                  </div>
                   <div className="comment_desc">
                   <p>{comment.content}</p>
-                  <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                  
                   </div>
                   {comment.userId === userId && (
                     <div className="comment_actions">
-                      <button className='edit_button'
+                      <button className='common_button edit_button'
                         onClick={() => startEditingComment(comment.id, comment.content)}
                       >
                         수정
                       </button>
-                      <button className='delete_button' onClick={() => handleDeleteComment(comment.id)}>삭제</button>
+                      <button className='common_button delete_button' onClick={() => handleDeleteComment(comment.id)}>삭제</button>
                     </div>
                   )}
                 </div>

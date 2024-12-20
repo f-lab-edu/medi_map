@@ -5,8 +5,15 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Comment extends Model {
     static associate(models) {
-      Comment.belongsTo(models.Post, { foreignKey: 'articleId', as: 'post' });
-      Comment.belongsTo(models.User, { foreignKey: 'userId', as: 'author' });
+      Comment.belongsTo(models.Post, {
+        foreignKey: 'articleId',
+        as: 'post',
+      });
+
+      Comment.belongsTo(models.User, {
+        foreignKey: 'userId',
+        as: 'user',
+      });
     }
   }
 
@@ -19,6 +26,8 @@ module.exports = (sequelize, DataTypes) => {
           model: 'Posts',
           key: 'id',
         },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
       userId: {
         type: DataTypes.INTEGER,
@@ -27,10 +36,19 @@ module.exports = (sequelize, DataTypes) => {
           model: 'Users',
           key: 'id',
         },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      },
+      author: {
+        type: DataTypes.STRING,
+        allowNull: false,
       },
       content: {
         type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
       },
     },
     {

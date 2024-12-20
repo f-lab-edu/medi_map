@@ -1,5 +1,5 @@
 import express from 'express';
-import { Post, Comment, Recommendation } from '@/models';
+import { Post, Comment, Recommendation, User } from '@/models';
 import { authMiddleware, AuthenticatedRequest } from '@/middleware/authMiddleware';
 import { MESSAGES_POST } from '@/constants/post_messages';
 
@@ -153,19 +153,32 @@ router.get('/:id/recommend', async (req, res, next) => {
 });
 
 // 댓글 추가
-router.post('/:id/comments', authMiddleware, async (req: AuthenticatedRequest, res, next) => {
+router.post('/:id/comments', authMiddleware, async (req, res, next) => {
   try {
     const { id } = req.params;
     const { content } = req.body;
     const userId = req.user?.id;
 
+    // 작성자의 username 조회
+    const user = await User.findByPk(userId, { attributes: ['username'] });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
     // 댓글 생성
-    const newComment = await Comment.create({ articleId: id, userId, content });
+    const newComment = await Comment.create({
+      articleId: id,
+      userId,
+      author: user.username, // 작성자의 username 저장
+      content,
+    });
+
     res.status(201).json(newComment);
   } catch (error) {
     next(error);
   }
 });
+
 
 // 댓글 조회
 router.get('/:id/comments', async (req, res, next) => {

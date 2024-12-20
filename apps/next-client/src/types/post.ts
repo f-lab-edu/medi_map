@@ -17,5 +17,6 @@ export type Comment = {
   content: string;
   userId: string;
   createdAt: string;
+  author: string;
 };
 
