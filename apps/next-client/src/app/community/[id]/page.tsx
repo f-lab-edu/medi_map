@@ -23,8 +23,8 @@ export default function PostDetailPage({ params }: { params: Params }) {
   const { data: session } = useSession(); // 세션에서 사용자 정보 가져오기
   const router = useRouter();
 
-  const userId = session?.user?.id; // 로그인한 사용자 ID
-  const accessToken = session?.user?.accessToken; // Access Token
+  const userId = session?.user?.id; 
+  const accessToken = session?.user?.accessToken; // Access Token을 세션으로부터 가져옴
 
   useEffect(() => {
     fetchPost();
@@ -191,9 +191,8 @@ export default function PostDetailPage({ params }: { params: Params }) {
       )}
       <p className='post_desc'>{post.content}</p>
 
-
       <div className="post_actions">
-      <Link href="/community">목록으로</Link> 
+        <Link href="/community">목록으로</Link> 
         <button onClick={toggleRecommendation} className="recommend_button">
           {isRecommended ? (
             <FaThumbsUp size={24} />
@@ -205,59 +204,58 @@ export default function PostDetailPage({ params }: { params: Params }) {
       </div>
 
       <div className="comment">
-      <h2>댓글</h2>
-      <div className="comment_section">
-        {/* 댓글 작성 */}
-        <div className="add_comment">
-          <textarea
-            placeholder="댓글을 입력하세요"
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-          />
-          <button onClick={handleAddComment}>댓글 추가</button>
-        </div>
+        <h2>댓글</h2>
+        <div className="comment_section">
+          {/* 댓글 작성 */}
+          <div className="add_comment">
+            <textarea
+              placeholder="댓글을 입력하세요"
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+            />
+            <button onClick={handleAddComment}>댓글 추가</button>
+          </div>
 
-        {/* 댓글 목록 */}
-        <ul className="comments_list">
-          {comments.map((comment) => (
-            <li key={comment.id}>
-              {editingCommentId === comment.id ? (
-                <div className="edit_comment">
-                  <textarea
-                    value={editedComment}
-                    onChange={(e) => setEditedComment(e.target.value)}
-                  />
-                  <div className="button_box">
-                  <button className='common_button cancel_button' onClick={() => setEditingCommentId(null)}>취소</button>
-                  <button className='common_button save_button' onClick={() => handleEditComment(comment.id)}>등록</button>
-                  </div>
-                </div>
-              ) : (
-                <div className="comment_item">
-                  <div className="top_cont">
-                    <p>{comment.author}</p>
-                    <span className='date'>{new Date(post.createdAt).toLocaleString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
-                  </div>
-                  <div className="comment_desc">
-                  <p>{comment.content}</p>
-                  
-                  </div>
-                  {comment.userId === userId && (
-                    <div className="comment_actions">
-                      <button className='common_button edit_button'
-                        onClick={() => startEditingComment(comment.id, comment.content)}
-                      >
-                        수정
-                      </button>
-                      <button className='common_button delete_button' onClick={() => handleDeleteComment(comment.id)}>삭제</button>
+          {/* 댓글 목록 */}
+          <ul className="comments_list">
+            {comments.map((comment) => (
+              <li key={comment.id}>
+                {editingCommentId === comment.id ? (
+                  <div className="edit_comment">
+                    <textarea
+                      value={editedComment}
+                      onChange={(e) => setEditedComment(e.target.value)}
+                    />
+                    <div className="button_box">
+                      <button className='common_button cancel_button' onClick={() => setEditingCommentId(null)}>취소</button>
+                      <button className='common_button save_button' onClick={() => handleEditComment(comment.id)}>등록</button>
                     </div>
-                  )}
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
+                  </div>
+                ) : (
+                  <div className="comment_item">
+                    <div className="top_cont">
+                      <p>{comment.author}</p>
+                      <span className='date'>{new Date(post.createdAt).toLocaleString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
+                    </div>
+                    <div className="comment_desc">
+                      <p>{comment.content}</p>
+                    </div>
+                    {comment.userId === userId && (
+                      <div className="comment_actions">
+                        <button className='common_button edit_button'
+                          onClick={() => startEditingComment(comment.id, comment.content)}
+                        >
+                          수정
+                        </button>
+                        <button className='common_button delete_button' onClick={() => handleDeleteComment(comment.id)}>삭제</button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );

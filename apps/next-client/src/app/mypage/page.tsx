@@ -4,21 +4,24 @@ import React, { useEffect, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { API_URLS , ROUTES } from '@/constants/urls';
+import { useSession } from 'next-auth/react'; // useSession 추가
 import '@/styles/pages/mypage/edit.scss';
 import { FetchUsernameError, UpdateNicknameError, UpdatePasswordError, DeleteAccountError } from '@/error/MypageError';
 import { ALERT_MESSAGES } from '@/constants/alert_message';
 import Cookies from 'js-cookie';
 import { signOut } from 'next-auth/react';
 
-const getAuthHeader = () => {
-  const token = Cookies.get("accessToken");
-  if (!token) {
-    throw new Error(ALERT_MESSAGES.ERROR.NO_TOKEN);
-  }
-  return { Authorization: `Bearer ${token}` };
-};
 
 export default function MyPage() {
+  const { data: session } = useSession();
+
+  const getAuthHeader = () => {
+    if (!session || !session.user || !session.user.accessToken) {
+      throw new Error("No token in session");
+    }
+    return { Authorization: `Bearer ${session.user.accessToken}` };
+  };
+
   const [username, setUsername] = useState("");
   const [nickname, setNickname] = useState("");
   const [oldPassword, setOldPassword] = useState("");

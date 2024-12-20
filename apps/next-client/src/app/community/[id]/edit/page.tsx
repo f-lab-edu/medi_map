@@ -14,8 +14,8 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true);
 
   const { data: session } = useSession();
-  
   const router = useRouter();
+  
   const userId = session?.user?.id;
   const accessToken = session?.user?.accessToken;
 

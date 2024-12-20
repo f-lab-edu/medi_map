@@ -2,15 +2,27 @@
 
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
-import { ROUTES } from '@/constants/urls';
+import { ROUTES , API_URLS } from '@/constants/urls';
 import Cookies from 'js-cookie';
+import axios from 'axios';
 
 export default function Header() {
   const { data: session } = useSession();
 
-  const handleLogout = () => {
-    Cookies.remove('accessToken');
-    signOut({ callbackUrl: ROUTES.AUTH.SIGN_IN });
+  const handleLogout = async () => {
+    try {
+      const refreshToken = Cookies.get('refreshToken'); // 쿠키에서 리프레시 토큰 가져오기
+      if (refreshToken) {
+        // 백엔드로 로그아웃 요청
+        await axios.post(API_URLS.LOGOUT, { refreshToken });
+        Cookies.remove('refreshToken'); // 쿠키에서 리프레시 토큰 제거
+      }
+
+      Cookies.remove('accessToken'); // 액세스 토큰도 제거
+      signOut({ callbackUrl: ROUTES.AUTH.SIGN_IN });
+    } catch (error) {
+      console.error('Failed to logout:', error);
+    }
   };
 
   return (

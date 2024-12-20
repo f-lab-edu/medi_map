@@ -9,8 +9,6 @@ import '@/styles/pages/community/community.scss';
 import { Post } from '@/types/post';
 
 // 게시글 타입 정의
-
-
 export default function CommunityList() {
   const [posts, setPosts] = useState<Post[]>([]); // 타입 명시
   const { data: session } = useSession(); // NextAuth 세션 사용
