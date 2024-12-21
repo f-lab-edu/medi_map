@@ -11,20 +11,14 @@ export default function Header() {
 
   const handleLogout = async () => {
     try {
-      const refreshToken = Cookies.get('refreshToken'); // 쿠키에서 리프레시 토큰 가져오기
-      if (refreshToken) {
-        // 백엔드로 로그아웃 요청
-        await axios.post(API_URLS.LOGOUT, { refreshToken });
-        Cookies.remove('refreshToken'); // 쿠키에서 리프레시 토큰 제거
-      }
-
-      Cookies.remove('accessToken'); // 액세스 토큰도 제거
+      await axios.post(API_URLS.LOGOUT, { userId: session?.user.id });
+      Cookies.remove('accessToken');
       signOut({ callbackUrl: ROUTES.AUTH.SIGN_IN });
     } catch (error) {
       console.error('Failed to logout:', error);
     }
   };
-
+  
   return (
     <header id="header">
       <div className="inner">

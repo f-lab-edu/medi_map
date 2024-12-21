@@ -1,18 +1,23 @@
-// controllers/logoutController.ts
 import { Request, Response } from 'express';
-import { removeRefreshToken } from '@/services/refreshTokenService';
+import { removeRefreshTokens } from '@/services/refreshTokenService';
+import { AUTH_MESSAGES } from '@/constants/auth_message';
 
 export const logout = async (req: Request, res: Response): Promise<Response> => {
-  const { refreshToken } = req.body;
-  if (!refreshToken) {
-    return res.status(400).json({ message: 'Refresh token is required' });
+  const { userId } = req.body;
+
+  if (!userId) {
+    console.error('Logout error: userId is missing.');
+    return res.status(400).json({ message: AUTH_MESSAGES.AUTHENTICATION_ERROR });
   }
 
-  // Refresh Token 삭제
-  await removeRefreshToken(refreshToken);
+  try {
+    await removeRefreshTokens(userId);
 
-  // 클라이언트 쿠키에 Refresh Token이 있었다면 쿠키 제거 명령(옵션)
-  res.clearCookie('refreshToken');
+    res.clearCookie('refreshToken');
 
-  return res.status(200).json({ message: 'Logged out successfully' });
+    return res.status(200).json({ message: AUTH_MESSAGES.LOGGED_OUT_SUCCESSFULLY });
+  } catch (error) {
+    console.error('Logout error:', error);
+    return res.status(500).json({ message: AUTH_MESSAGES.SERVER_ERROR });
+  }
 };

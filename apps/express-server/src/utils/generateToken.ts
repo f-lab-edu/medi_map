@@ -1,12 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '@/app-constants/constants';
 
-const REFRESH_SECRET = process.env.REFRESH_SECRET || 'some_refresh_secret';
-
-// 테스트용으로 짧게 설정한 액세스 토큰 만료 시간
+const REFRESH_SECRET = process.env.REFRESH_SECRET;
 const ACCESS_TOKEN_EXPIRES_IN = '1h';
-
-// 리프레시 토큰의 기본 만료 기간
 const REFRESH_TOKEN_EXPIRES_IN = '7d';
 
 // 액세스 토큰 생성 함수

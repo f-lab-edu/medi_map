@@ -7,13 +7,6 @@ export const ERROR_MESSAGES = {
   SERVER_ERROR: '서버 오류가 발생했습니다.',
   AUTHENTICATION_ERROR: '인증에 실패했습니다.',
 
-  AUTH: {
-    EMAIL_ALREADY_EXISTS: '이미 존재하는 이메일입니다.',
-    SIGN_UP_ERROR: '회원가입 중 오류가 발생했습니다.',
-    SERVER_ERROR: '서버 오류가 발생했습니다.',
-    EMAIL_OR_PASSWORD_INCORRECT: '이메일이나 비밀번호를 다시 확인해주세요.',
-  },
-
   PHARMACY: {
     PHARMACY_DATA_ERROR: '약국 데이터를 불러오는 중 오류가 발생했습니다.',
     VALIDATION_ERROR: '위도와 경도가 필요합니다.',
@@ -25,5 +18,4 @@ export const ERROR_MESSAGES = {
     FETCH_JOINED_MEDICINES_ERROR: '의약품 기본 정보와 상세 정보를 조회하는 중 오류가 발생했습니다.',
     FETCH_ALL_MEDICINES_ERROR: '모든 의약품 데이터를 페이지네이션 방식으로 조회하는 중 오류가 발생했습니다.',
   }
-  
 };
