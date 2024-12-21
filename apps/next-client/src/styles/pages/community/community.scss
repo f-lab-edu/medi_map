@@ -228,3 +228,26 @@
   background: var(--btn-color);
   color: #fff;
 }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  font-size: 2rem;
+  gap: 2rem;
+  margin-top: 5rem;
+
+  button {
+    width: 3.5rem;
+    height: 3.5rem;
+
+    &.active {
+      color: #fff;
+      background: var(--btn-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+  }
+}

@@ -10,19 +10,27 @@ import { ALERT_MESSAGES } from '@/constants/alert_message';
 
 export default function CommunityList() {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const postsPerPage = 10;
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    fetchPosts(currentPage);
+  }, [currentPage]);
 
-  const fetchPosts = async () => {
+  const fetchPosts = async (page: number = 1) => {
     try {
-      const response = await axios.get<Post[]>(`${API_URLS.POSTS}`);
-      setPosts(response.data);
+      const response = await axios.get(`${API_URLS.POSTS}?page=${page}&limit=${postsPerPage}`);
+      setPosts(response.data.posts);
+      setTotalPages(response.data.totalPages);
     } catch (error) {
       console.error('Error fetching posts:', error);
       alert(ALERT_MESSAGES.ERROR.POST.FETCH_POSTS);
     }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -50,7 +58,7 @@ export default function CommunityList() {
             <tbody>
               {posts.map((post, index) => (
                 <tr key={post.id}>
-                  <td>{index + 1}</td>
+                  <td>{index + 1 + (currentPage - 1) * postsPerPage}</td>
                   <td>
                     <Link href={`/community/${post.id}`}>
                       {post.title}
@@ -63,6 +71,32 @@ export default function CommunityList() {
             </tbody>
           </table>
         )}
+      </div>
+
+      <div className="pagination">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => handlePageChange(currentPage - 1)}
+        >
+          &lt; 
+        </button>
+
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index + 1}
+            className={index + 1 === currentPage ? 'active' : ''}
+            onClick={() => handlePageChange(index + 1)}
+          >
+            {index + 1}
+          </button>
+        ))}
+
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => handlePageChange(currentPage + 1)}
+        >
+          &gt;
+        </button>
       </div>
     </div>
   );

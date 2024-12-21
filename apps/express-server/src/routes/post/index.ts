@@ -32,13 +32,26 @@ router.post('/', authMiddleware, async (req: AuthenticatedRequest, res, next) =>
 // 게시글 목록 조회
 router.get('/', async (req, res, next) => {
   try {
-    // 모든 게시글 최신순으로 반환
-    const posts = await Post.findAll({ order: [['createdAt', 'DESC']] });
-    return res.status(200).json(posts);
+    const page = parseInt(String(req.query.page), 10) || 1;
+    const limit = parseInt(String(req.query.limit), 10) || 10;
+    const offset = (page - 1) * limit;
+
+    // 게시글 데이터 가져오기
+    const { count, rows: posts } = await Post.findAndCountAll({
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+    });
+
+    // 총 페이지 수 계산
+    const totalPages = Math.ceil(count / limit);
+
+    res.status(200).json({ totalItems: count, totalPages, currentPage: page, posts });
   } catch (error) {
     next(new Error(MESSAGES_POST.FETCH_POSTS_ERROR));
   }
 });
+
 
 // 게시글 상세 조회
 router.get('/:id', async (req, res, next) => {
