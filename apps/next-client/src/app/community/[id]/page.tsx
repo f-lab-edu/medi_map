@@ -9,22 +9,23 @@ import '@/styles/pages/community/community.scss';
 import { Params, Post, Comment } from '@/types/post';
 import { FaThumbsUp, FaRegThumbsUp } from "react-icons/fa6";
 import Link from 'next/link';
+import { ALERT_MESSAGES } from '@/constants/alert_message';
 
 export default function PostDetailPage({ params }: { params: Params }) {
   const { id } = params;
   const [post, setPost] = useState<Post | null>(null);
-  const [comments, setComments] = useState<Comment[]>([]); // 댓글 목록
-  const [newComment, setNewComment] = useState(''); // 새 댓글 내용
-  const [editingCommentId, setEditingCommentId] = useState<number | null>(null); // 수정 중인 댓글 ID
-  const [editedComment, setEditedComment] = useState(''); // 수정된 댓글 내용
-  const [isRecommended, setIsRecommended] = useState(false); // 추천 상태
-  const [recommendationCount, setRecommendationCount] = useState(0); // 추천 수
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newComment, setNewComment] = useState('');
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [editedComment, setEditedComment] = useState('');
+  const [isRecommended, setIsRecommended] = useState(false);
+  const [recommendationCount, setRecommendationCount] = useState(0); 
 
-  const { data: session } = useSession(); // 세션에서 사용자 정보 가져오기
+  const { data: session } = useSession();
   const router = useRouter();
 
   const userId = session?.user?.id; 
-  const accessToken = session?.user?.accessToken; // Access Token을 세션으로부터 가져옴
+  const accessToken = session?.user?.accessToken;
 
   useEffect(() => {
     fetchPost();
@@ -39,24 +40,24 @@ export default function PostDetailPage({ params }: { params: Params }) {
       setPost(response.data);
     } catch (error) {
       console.error('Error fetching post:', error);
-      alert('게시글을 불러오는 중 문제가 발생했습니다.');
+      alert(ALERT_MESSAGES.ERROR.POST.FETCH_POSTS);
     }
   };
 
   // 게시글 삭제
   const handleDeletePost = async () => {
     try {
-      if (!window.confirm('정말 삭제하시겠습니까?')) return;
+      if (!window.confirm(ALERT_MESSAGES.CONFIRM.CHECK_DELETE)) return;
 
       await axios.delete(`${API_URLS.POSTS}/${id}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
-      alert('게시글이 삭제되었습니다.');
-      router.push('/community'); // 삭제 후 목록 페이지로 이동
+      alert(ALERT_MESSAGES.SUCCESS.POST.POST_DELETE);
+      router.push('/community');
     } catch (error) {
       console.error('Error deleting post:', error);
-      alert('게시글 삭제 중 문제가 발생했습니다.');
+      alert(ALERT_MESSAGES.ERROR.POST.POST_DELETE_ERROR);
     }
   };
 
@@ -67,7 +68,7 @@ export default function PostDetailPage({ params }: { params: Params }) {
       setComments(response.data);
     } catch (error) {
       console.error('Error fetching comments:', error);
-      alert('댓글을 불러오는 중 문제가 발생했습니다.');
+      alert(ALERT_MESSAGES.ERROR.COMMENT.FETCH_COMMENTS);
     }
   };
 
@@ -75,7 +76,7 @@ export default function PostDetailPage({ params }: { params: Params }) {
   const handleAddComment = async () => {
     try {
       if (!newComment.trim()) {
-        alert('댓글 내용을 입력해주세요.');
+        alert(ALERT_MESSAGES.ERROR.COMMENT.COMMENT_EMPTY_FIELDS);
         return;
       }
 
@@ -85,28 +86,28 @@ export default function PostDetailPage({ params }: { params: Params }) {
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
 
-      setNewComment(''); // 댓글 입력창 초기화
-      fetchComments(); // 댓글 목록 새로고침
+      setNewComment('');
+      fetchComments();
     } catch (error) {
       console.error('Error adding comment:', error);
-      alert('댓글 추가 중 문제가 발생했습니다.');
+      alert(ALERT_MESSAGES.ERROR.COMMENT.COMMENT_ADD_ERROR);
     }
   };
 
   // 댓글 삭제
   const handleDeleteComment = async (commentId: number) => {
     try {
-      if (!window.confirm('정말 삭제하시겠습니까?')) return;
+      if (!window.confirm(ALERT_MESSAGES.CONFIRM.CHECK_DELETE)) return;
 
       await axios.delete(`${API_URLS.POSTS}/comments/${commentId}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
-      alert('댓글이 삭제되었습니다.');
-      fetchComments(); // 댓글 목록 새로고침
+      alert(ALERT_MESSAGES.SUCCESS.COMMENT.COMMENT_DELETE);
+      fetchComments();
     } catch (error) {
       console.error('Error deleting comment:', error);
-      alert('댓글 삭제 중 문제가 발생했습니다.');
+      alert(ALERT_MESSAGES.ERROR.COMMENT.COMMENT_DELETE_ERROR);
     }
   };
 
@@ -120,7 +121,7 @@ export default function PostDetailPage({ params }: { params: Params }) {
   const handleEditComment = async (commentId: number) => {
     try {
       if (!editedComment.trim()) {
-        alert('댓글 내용을 입력해주세요.');
+        alert(ALERT_MESSAGES.ERROR.COMMENT.COMMENT_EMPTY_FIELDS);
         return;
       }
 
@@ -130,17 +131,15 @@ export default function PostDetailPage({ params }: { params: Params }) {
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
 
-      alert('댓글이 수정되었습니다.');
+      alert(ALERT_MESSAGES.SUCCESS.COMMENT.COMMENT_EDIT);
 
-      // 수정 모드 해제 및 상태 초기화
       setEditingCommentId(null);
       setEditedComment('');
 
-      // 댓글 목록 새로고침
       fetchComments();
     } catch (error) {
       console.error('Error editing comment:', error);
-      alert('댓글 수정 중 문제가 발생했습니다.');
+      alert(ALERT_MESSAGES.ERROR.COMMENT.COMMENT_EDIT_ERROR);
     }
   };
 
@@ -148,8 +147,8 @@ export default function PostDetailPage({ params }: { params: Params }) {
   const fetchRecommendation = async () => {
     try {
       const response = await axios.get(`${API_URLS.POSTS}/${id}/recommend`);
-      setIsRecommended(response.data.recommended); // 추천 여부
-      setRecommendationCount(response.data.recommendationCount); // 추천 수
+      setIsRecommended(response.data.recommended);
+      setRecommendationCount(response.data.recommendationCount); 
     } catch (error) {
       console.error('Error fetching recommendation:', error);
     }
@@ -164,13 +163,13 @@ export default function PostDetailPage({ params }: { params: Params }) {
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
 
-      setIsRecommended(response.data.recommended); // 추천 여부 업데이트
+      setIsRecommended(response.data.recommended);
       setRecommendationCount((prev) =>
         response.data.recommended ? prev + 1 : prev - 1
-      ); // 추천 수 업데이트
+      );
     } catch (error) {
       console.error('Error toggling recommendation:', error);
-      alert('추천 중 문제가 발생했습니다.');
+      alert(ALERT_MESSAGES.ERROR.UNKNOWN_ERROR);
     }
   };
 
@@ -182,7 +181,6 @@ export default function PostDetailPage({ params }: { params: Params }) {
     <div className="post_detail">
       <h2 className='post_title'>{post.title}</h2>
       
-       {/* 게시글 수정/삭제 버튼 (작성자만 표시) */}
        {post.userId === userId && (
         <div className="post_actions">
           <button className='common_button edit_button' onClick={() => router.push(`/community/${id}/edit`)}>수정</button>
@@ -206,7 +204,6 @@ export default function PostDetailPage({ params }: { params: Params }) {
       <div className="comment">
         <h2>댓글</h2>
         <div className="comment_section">
-          {/* 댓글 작성 */}
           <div className="add_comment">
             <textarea
               placeholder="댓글을 입력하세요"
@@ -216,7 +213,6 @@ export default function PostDetailPage({ params }: { params: Params }) {
             <button onClick={handleAddComment}>댓글 추가</button>
           </div>
 
-          {/* 댓글 목록 */}
           <ul className="comments_list">
             {comments.map((comment) => (
               <li key={comment.id}>
