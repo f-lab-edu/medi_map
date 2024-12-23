@@ -5,6 +5,7 @@ export const ROUTES = {
     MEDICINE: '/api/medicine',
     MYPAGE: '/api/users',
     POST: '/api/posts',
+    HEALTH: '/api/health',
   },
   HOME: '/',
 };

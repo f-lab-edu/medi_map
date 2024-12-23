@@ -8,4 +8,5 @@ export const AUTH_MESSAGES = {
   AUTHENTICATION_ERROR: '인증에 실패했습니다.',
   LOGGED_OUT: '로그아웃되었습니다.',
   INVALID_REQUEST: '잘못된 요청입니다.',
+  SIGNUP_SUCCESS: '회원가입이 성공적으로 완료되었습니다.',
 };

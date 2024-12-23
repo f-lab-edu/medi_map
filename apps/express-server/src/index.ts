@@ -5,6 +5,7 @@ import pharmacyRoutes from '@/routes/pharmacy/index';
 import medicineRoutes from '@/routes/medicine/index';
 import mypageRoutes from '@/routes/mypage/index';
 import postRoutes from '@/routes/post/index';
+import healthRoutes from '@/routes/health/index';
 import { PORT } from '@/app-constants/constants';
 import { checkEnvVariables } from '@/config/env';
 import { ROUTES } from '@/constants/urls';
@@ -37,6 +38,7 @@ app.use(ROUTES.API.PHARMACY, pharmacyRoutes);
 app.use(ROUTES.API.MEDICINE, medicineRoutes);
 app.use(ROUTES.API.MYPAGE, mypageRoutes);
 app.use(ROUTES.API.POST, postRoutes);
+app.use(ROUTES.API.HEALTH, healthRoutes);
 
 // 루트 라우트 추가
 app.get(ROUTES.HOME, (req: Request, res: Response) => {
