@@ -1,0 +1,253 @@
+[class^='community_'] {
+  .inner {
+    padding: 20rem 0;
+    max-width: 128rem;
+  }
+}
+.community {
+  .inner {
+    padding: 20rem 0;
+    max-width: 128rem;
+  }
+  h1 {
+    font-size: 5rem;
+    font-weight: bold;
+    text-align: center;
+  }
+  .sub_title {
+    font-size: 2rem;
+    margin-top: 2rem;
+    text-align: center;
+  }
+  .create_post {
+    display: flex;
+    justify-content: end;
+    button {
+      background: var(--btn-color);
+      color: #fff;
+      padding: 1rem 2rem;
+      border-radius: 1rem;
+      font-size: 1.5rem;
+    }
+  }
+  .post_list {
+    margin-top: 2rem;
+  }
+  .post_table {
+    width: 100%;
+    border-top: 1px solid #ccc;
+
+    thead {
+      display: none;
+    }
+
+    th {
+      padding: 1.5rem 2rem;
+      background: #f5f5f5;
+      font-weight: bold;
+    }
+
+    tr {
+      border-bottom: 1px solid #ccc;
+      td {
+        padding: 2.2rem 2rem;
+        &:nth-of-type(1) {
+          width: 6%;
+          color: #555;
+        }
+        &:nth-of-type(3) {
+          width: 10%;
+          color: #555;
+        }
+        &:nth-of-type(4) {
+          width: 10%;
+          color: #555;
+        }
+
+        a {
+          font-size: 1.8rem;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
+
+.post_detail {
+  .post_title {
+    font-weight: bold;
+    text-align: center;
+    font-size: 4rem;
+    margin-bottom: 5rem;
+  }
+  .post_desc {
+    font-size: 1.8rem;
+    padding: 5rem 0;
+    margin: 0;
+  }
+
+  .post_actions {
+    display: flex;
+    justify-content: end;
+    margin-top: 2rem;
+    gap: 1rem;
+    span {
+      color: #333;
+    }
+    a {
+      background: var(--sky-blue);
+      border-radius: 1rem;
+      padding: 0.2rem 2rem;
+      color: #fff;
+    }
+    .recommend_button {
+      position: relative;
+      top: -3px;
+    }
+  }
+  .comment {
+    margin-top: 2rem;
+    border-top: 1px solid #ccc;
+    padding-top: 4rem;
+  }
+  .comment_section {
+    .add_comment {
+      textarea {
+        width: 100%;
+        height: 10rem;
+        border: 1px solid #ccc;
+        border-radius: 1rem;
+        padding: 1rem;
+        margin-top: 2rem;
+        font-size: 1.5rem;
+        resize: none;
+      }
+      button {
+        background: var(--btn-color);
+        color: #fff;
+        padding: 1rem 2rem;
+        border-radius: 1rem;
+        font-size: 1.5rem;
+        margin-top: 1rem;
+        width: 100%;
+      }
+    }
+  }
+
+  .comments_list {
+    padding: 0;
+    margin-top: 5rem;
+
+    li {
+      border-bottom: 1px solid #ccc;
+      padding: 1.2rem 0;
+      position: relative;
+
+      &:first-child {
+        border-top: 1px solid #ccc;
+      }
+    }
+    .edit_comment {
+      textarea {
+        width: 100%;
+        height: 10rem;
+        border: 1px solid #ccc;
+        border-radius: 1rem;
+        padding: 1rem;
+        margin-top: 2rem;
+        resize: none;
+      }
+      .button_box {
+        display: flex;
+        justify-content: end;
+        gap: 1rem;
+        margin-top: 1rem;
+        width: auto;
+      }
+      button {
+        border-radius: 1rem;
+        padding: 0.2rem 2rem;
+
+        &.save {
+          background: var(--btn-color);
+          color: #fff;
+        }
+
+        &.cancel {
+          background: #fff;
+          border: 1px solid var(--btn-color);
+          color: var(--btn-color);
+        }
+      }
+    }
+
+    .comment_item {
+      .comment_desc {
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem 0;
+      }
+
+      .top_cont {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+
+        .date {
+          font-size: 1.4rem;
+          color: #555;
+        }
+      }
+
+      p {
+        margin: 0;
+      }
+      .comment_actions {
+        display: flex;
+        justify-content: end;
+        position: absolute;
+        top: 1.4rem;
+        right: 0;
+      }
+    }
+  }
+}
+
+.common_button {
+  border-radius: 1rem;
+  padding: 0.2rem 2rem;
+}
+.edit_button,
+.cancel_button {
+  border: 1px solid var(--btn-color);
+  margin-right: 1rem;
+  color: var(--btn-color);
+}
+.delete_button,
+.save_button {
+  background: var(--btn-color);
+  color: #fff;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  font-size: 2rem;
+  gap: 2rem;
+  margin-top: 5rem;
+
+  button {
+    width: 3.5rem;
+    height: 3.5rem;
+
+    &.active {
+      color: #fff;
+      background: var(--btn-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+  }
+}

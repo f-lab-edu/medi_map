@@ -19,10 +19,21 @@
 
   h1 {
     margin: 0;
+    display: flex;
+    align-items: center;
+    position: relative;
+
     a {
       font-size: 2rem;
       font-weight: bold;
       margin: 0;
+    }
+
+    img {
+      width: 6.5rem;
+      position: absolute;
+      right: -4rem;
+      z-index: -1;
     }
   }
 

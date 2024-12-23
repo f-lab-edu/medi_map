@@ -1,5 +1,5 @@
 import express from 'express';
-import { Post, Comment, Recommendation } from '@/models';
+import { Post, Comment, Recommendation, User } from '@/models';
 import { authMiddleware, AuthenticatedRequest } from '@/middleware/authMiddleware';
 import { MESSAGES_POST } from '@/constants/post_messages';
 
@@ -32,13 +32,26 @@ router.post('/', authMiddleware, async (req: AuthenticatedRequest, res, next) =>
 // 게시글 목록 조회
 router.get('/', async (req, res, next) => {
   try {
-    // 모든 게시글 최신순으로 반환
-    const posts = await Post.findAll({ order: [['createdAt', 'DESC']] });
-    return res.status(200).json(posts);
+    const page = parseInt(String(req.query.page), 10) || 1;
+    const limit = parseInt(String(req.query.limit), 10) || 10;
+    const offset = (page - 1) * limit;
+
+    // 게시글 데이터 가져오기
+    const { count, rows: posts } = await Post.findAndCountAll({
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+    });
+
+    // 총 페이지 수 계산
+    const totalPages = Math.ceil(count / limit);
+
+    res.status(200).json({ totalItems: count, totalPages, currentPage: page, posts });
   } catch (error) {
     next(new Error(MESSAGES_POST.FETCH_POSTS_ERROR));
   }
 });
+
 
 // 게시글 상세 조회
 router.get('/:id', async (req, res, next) => {
@@ -153,19 +166,32 @@ router.get('/:id/recommend', async (req, res, next) => {
 });
 
 // 댓글 추가
-router.post('/:id/comments', authMiddleware, async (req: AuthenticatedRequest, res, next) => {
+router.post('/:id/comments', authMiddleware, async (req, res, next) => {
   try {
     const { id } = req.params;
     const { content } = req.body;
     const userId = req.user?.id;
 
+    // 작성자의 username 조회
+    const user = await User.findByPk(userId, { attributes: ['username'] });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
     // 댓글 생성
-    const newComment = await Comment.create({ articleId: id, userId, content });
+    const newComment = await Comment.create({
+      articleId: id,
+      userId,
+      author: user.username, // 작성자의 username 저장
+      content,
+    });
+
     res.status(201).json(newComment);
   } catch (error) {
     next(error);
   }
 });
+
 
 // 댓글 조회
 router.get('/:id/comments', async (req, res, next) => {
@@ -183,6 +209,38 @@ router.get('/:id/comments', async (req, res, next) => {
     next(error);
   }
 });
+
+// 댓글 수정
+router.put('/comments/:commentId', authMiddleware, async (req: AuthenticatedRequest, res, next) => {
+  try {
+    const { commentId } = req.params;
+    const { content } = req.body;
+
+    if (!content || content.trim() === '') {
+      return res.status(400).json({ message: MESSAGES_POST.COMMENT_CONTENT_REQUIRED });
+    }
+
+    const comment = await Comment.findByPk(commentId);
+
+    if (!comment) {
+      return res.status(404).json({ message: MESSAGES_POST.COMMENT_NOT_FOUND });
+    }
+
+    // 댓글 작성자만 수정 가능
+    if (comment.userId !== req.user?.id) {
+      return res.status(403).json({ message: MESSAGES_POST.PERMISSION_DENIED_UPDATE });
+    }
+
+    // 댓글 내용 수정
+    comment.content = content;
+    await comment.save();
+
+    res.status(200).json({ message: MESSAGES_POST.COMMENT_UPDATED, comment });
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 // 댓글 삭제
 router.delete('/comments/:commentId', authMiddleware, async (req: AuthenticatedRequest, res, next) => {
