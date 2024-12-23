@@ -8,7 +8,7 @@ import { ERROR_MESSAGES } from '@/constants/errors';
 const BASE_URL = 'http://apis.data.go.kr/1471000';
 const API_KEY = process.env.DATA_API_KEY;
 const NUM_OF_ROWS = 100;
-const REQUEST_DELAY = 1000;
+const REQUEST_DELAY = 500;
 
 // 1. 의약품 공공 데이터 가져오기
 export async function syncMedicines(): Promise<void> {
