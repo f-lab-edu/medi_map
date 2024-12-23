@@ -12,4 +12,7 @@ export const MESSAGES_POST = {
   RECOMMENDED: '추천되었습니다.',
   RECOMMENDATION_CANCELLED: '추천 취소되었습니다.',
   COMMENT_DELETED: '댓글이 삭제되었습니다.',
+  COMMENT_CONTENT_REQUIRED: '댓글 내용은 필수 항목입니다.',
+  COMMENT_NOT_FOUND: '댓글을 찾을 수 없습니다.',
+  COMMENT_UPDATED: '댓글이 수정되었습니다.',
 };

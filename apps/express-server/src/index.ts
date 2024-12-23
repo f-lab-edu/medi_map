@@ -24,6 +24,7 @@ app.use(cors(corsOptions));
 // 로깅 미들웨어
 app.use((req: Request, res: Response, next: NextFunction) => {
   console.log('Request Origin:', req.headers.origin);
+  console.log(`[Request Log] Method: ${req.method}, URL: ${req.url}`);
   next();
 });
 

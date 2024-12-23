@@ -3,8 +3,10 @@ import { JWT as DefaultJWT } from "next-auth/jwt";
 
 declare module "next-auth" {
   interface User extends DefaultUser {
+    id: string;
     email: string;
     accessToken: string;
+    refreshToken: string;
   }
 
   interface Session extends DefaultSession {
@@ -13,17 +15,25 @@ declare module "next-auth" {
 
   interface Session {
     user: {
+      id: string;
       email: string;
       accessToken: string;
+      refreshToken: string;
     } & DefaultSession["user"];
   }
 }
 
+interface JwtToken {
+  id: string;
+  email: string;
+  accessToken: string;
+  refreshToken: string;
+  accessTokenExpires: number;
+  error?: string;
+}
+
 declare module "next-auth/jwt" {
-  interface JWT extends DefaultJWT {
-    email: string;
-    accessToken: string;
-  }
+  interface JWT extends DefaultJWT, JwtToken {} // JwtToken과 DefaultJWT 병합
 }
 
 declare global {

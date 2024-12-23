@@ -3,20 +3,25 @@
 import React, { useEffect, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
-import { API_URLS } from '@/constants/urls';
+import { API_URLS , ROUTES } from '@/constants/urls';
+import { useSession } from 'next-auth/react'; // useSession 추가
 import '@/styles/pages/mypage/edit.scss';
 import { FetchUsernameError, UpdateNicknameError, UpdatePasswordError, DeleteAccountError } from '@/error/MypageError';
 import { ALERT_MESSAGES } from '@/constants/alert_message';
+import Cookies from 'js-cookie';
+import { signOut } from 'next-auth/react';
 
-const getAuthHeader = () => {
-  const token = localStorage.getItem("accessToken");
-  if (!token) {
-    throw new Error(ALERT_MESSAGES.ERROR.NO_TOKEN);
-  }
-  return { Authorization: `Bearer ${token}` };
-};
 
 export default function MyPage() {
+  const { data: session } = useSession();
+
+  const getAuthHeader = () => {
+    if (!session || !session.user || !session.user.accessToken) {
+      throw new Error("No token in session");
+    }
+    return { Authorization: `Bearer ${session.user.accessToken}` };
+  };
+
   const [username, setUsername] = useState("");
   const [nickname, setNickname] = useState("");
   const [oldPassword, setOldPassword] = useState("");
@@ -108,10 +113,13 @@ export default function MyPage() {
         await axios.delete(`${API_URLS.MYPAGE}`, {
           headers: getAuthHeader(),
         });
-
+  
         alert(ALERT_MESSAGES.SUCCESS.ACCOUNT_DELETE);
-        localStorage.removeItem("accessToken");
-        router.push("/");
+  
+        Cookies.remove("accessToken");
+        await signOut({ redirect: false });
+  
+        router.push(ROUTES.AUTH.SIGN_IN);
       } catch (error) {
         const errorMessage =
           error instanceof AxiosError && error.response?.data?.error;
@@ -120,6 +128,7 @@ export default function MyPage() {
       }
     }
   };
+  
 
   return (
     <div>
