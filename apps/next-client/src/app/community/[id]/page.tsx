@@ -231,7 +231,7 @@ export default function PostDetailPage({ params }: { params: Params }) {
                   <div className="comment_item">
                     <div className="top_cont">
                       <p>{comment.author}</p>
-                      <span className='date'>{new Date(post.createdAt).toLocaleString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
+                      <span className='date'>{new Date(comment.createdAt).toLocaleString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
                     </div>
                     <div className="comment_desc">
                       <p>{comment.content}</p>

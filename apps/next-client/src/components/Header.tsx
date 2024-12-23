@@ -24,6 +24,7 @@ export default function Header() {
       <div className="inner">
         <h1>
           <Link href="/">MediMap+</Link>
+          <img src="/images/icon-medicine.webp" alt="" />
         </h1>
         <div className="right_cont">
           <ul className="menu_cont">
