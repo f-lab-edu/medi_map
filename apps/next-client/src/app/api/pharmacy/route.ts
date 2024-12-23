@@ -39,8 +39,8 @@ async function fetchAllPharmacies(lat: string, lng: string) {
   const numOfRows = 1000;
   const totalPages = Math.ceil(totalCount / numOfRows);
 
-  // 병렬로 모든 페이지의 데이터를 가져오기
-  const requests = Array.from({ length: totalPages }, (_, index) => {
+  // 병렬로 모든 페이지 데이터를 가져오기
+  const pageFetchPromises = Array.from({ length: totalPages }, (_, index) => {
     const pageNo = index + 1;
     const url = buildPharmacyApiUrl(lat, lng, pageNo, numOfRows);
     return fetch(url).then((response) => {
@@ -51,14 +51,14 @@ async function fetchAllPharmacies(lat: string, lng: string) {
     });
   });
 
-  const results = await Promise.all(requests);
+  const allPagesData = await Promise.all(pageFetchPromises);
 
-  // 모든 페이지의 데이터를 합치기
-  const pharmacies: PharmacyDTO[] = results.flatMap((data) => {
-    return data.response?.body?.items?.item || [];
+  // 모든 페이지 데이터 합치기
+  const allPharmacies: PharmacyDTO[] = allPagesData.flatMap((pageData) => {
+    return pageData.response?.body?.items?.item || [];
   });
 
-  return pharmacies.filter((pharmacy) =>
+  return allPharmacies.filter((pharmacy) =>
     isWithinRadius(pharmacy, parseFloat(lat), parseFloat(lng), 2500)
   );
 }

@@ -33,27 +33,29 @@ export const useLoginActions = ({ email, password, setError }: AuthActionsParams
         return;
       }
 
-      const result = await loginWithCredentials(email, password);
+      const loginResponse = await loginWithCredentials(email, password);
 
-      if (result?.error) {
-        setError(result.error);
+      if (loginResponse?.error) {
+        setError(loginResponse.error);
       }
-    } catch (err: unknown) {
+    } catch (error: unknown) {
+      console.error(ERROR_MESSAGES.LOGIN_FAILED, error);
       setError(ERROR_MESSAGES.LOGIN_FAILED);
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
-      const result = await loginWithGoogle();
-  
-      if (result?.error && !result?.url) {
+      const googleLoginResponse = await loginWithGoogle();
+
+      if (googleLoginResponse?.error && !googleLoginResponse?.url) {
         setError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
       }
-    } catch (err: unknown) {
-      console.error(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR, err);
+    } catch (error: unknown) {
+      console.error(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR, error);
+      setError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
     }
   };
-  
+
   return { handleLogin, handleGoogleLogin };
 };

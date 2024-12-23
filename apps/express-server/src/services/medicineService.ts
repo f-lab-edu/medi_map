@@ -214,7 +214,7 @@ export async function getAllMedicines(page: number, limit: number) {
   try {
     const offset = (page - 1) * limit;
 
-    const results = await Medicine.findAndCountAll({
+    const medicineQueryResult = await Medicine.findAndCountAll({
       include: [
         {
           model: MedicineDesc,
@@ -225,16 +225,16 @@ export async function getAllMedicines(page: number, limit: number) {
       offset,
     });
 
-    if (!results) {
+    if (!medicineQueryResult) {
       throw new ValidationError(ERROR_MESSAGES.MEDICINE.FETCH_ALL_MEDICINES_ERROR);
     }
 
     return {
-      data: results.rows,
-      total: results.count,
+      data: medicineQueryResult.rows,
+      total: medicineQueryResult.count,
       pagination: {
         currentPage: page,
-        totalPages: Math.ceil(results.count / limit),
+        totalPages: Math.ceil(medicineQueryResult.count / limit),
         limit,
       },
     };

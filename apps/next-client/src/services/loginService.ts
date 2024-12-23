@@ -5,21 +5,21 @@ import { LoginError } from '@/error/AuthError';
 
 export const loginWithCredentials = async (email: string, password: string) => {
   try {
-    const result = await signIn('credentials', {
+    const loginResponse = await signIn('credentials', {
       redirect: false,
       email,
       password,
     });
 
-    if (!result) {
+    if (!loginResponse) {
       throw new LoginError(ERROR_MESSAGES.LOGIN_ERROR);
     }
 
-    if (result.error) {
-      throw new LoginError(result.error || ERROR_MESSAGES.LOGIN_ERROR);
+    if (loginResponse.error) {
+      throw new LoginError(loginResponse.error || ERROR_MESSAGES.LOGIN_ERROR);
     }
 
-    return result;
+    return loginResponse;
   } catch (error: unknown) {
     handleLoginError(error);
   }
@@ -27,17 +27,17 @@ export const loginWithCredentials = async (email: string, password: string) => {
 
 export const loginWithGoogle = async () => {
   try {
-    const result = await signIn('google', { redirect: false, callbackUrl: ROUTES.HOME });
+    const loginResponse = await signIn('google', { redirect: false, callbackUrl: ROUTES.HOME });
 
-    if (!result) {
+    if (!loginResponse) {
       throw new LoginError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
     }
 
-    if (result.error) {
+    if (loginResponse.error) {
       throw new LoginError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
     }
 
-    return result;
+    return loginResponse;
   } catch (error: unknown) {
     handleLoginError(error);
   }
