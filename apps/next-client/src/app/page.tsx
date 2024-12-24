@@ -8,7 +8,7 @@ export default function Home() {
     <div>
       <section className='sec01'>
         <div className="video_cont">
-          <video src="videos/main_vid3.mp4" autoPlay loop muted playsInline className='main_video'></video>
+          <video src="/videos/main_vid3.mp4" autoPlay loop muted playsInline className='main_video'></video>
           
           <div className="txt_box">
             <h2 className='title'>MadiMap+</h2>

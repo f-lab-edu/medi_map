@@ -5,48 +5,36 @@ import { LoginError } from '@/error/AuthError';
 
 export const loginWithCredentials = async (email: string, password: string) => {
   try {
-    const loginResponse = await signIn('credentials', {
+    const result = await signIn('credentials', {
       redirect: false,
       email,
       password,
     });
 
-    if (!loginResponse) {
-      throw new LoginError(ERROR_MESSAGES.LOGIN_ERROR);
+    if (!result || result.error) {
+      console.error('Login with credentials failed:', result?.error || ERROR_MESSAGES.LOGIN_ERROR);
+      throw new LoginError(result?.error || ERROR_MESSAGES.LOGIN_ERROR);
     }
 
-    if (loginResponse.error) {
-      throw new LoginError(loginResponse.error || ERROR_MESSAGES.LOGIN_ERROR);
-    }
-
-    return loginResponse;
-  } catch (error: unknown) {
-    handleLoginError(error);
+    return result;
+  } catch (error) {
+    console.error('Unexpected error during login with credentials:', error);
+    throw error;
   }
 };
 
 export const loginWithGoogle = async () => {
   try {
-    const loginResponse = await signIn('google', { redirect: false, callbackUrl: ROUTES.HOME });
+    const result = await signIn('google', { redirect: false, callbackUrl: ROUTES.HOME });
 
-    if (!loginResponse) {
-      throw new LoginError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
+    if (!result || result.error) {
+      console.error('Login with Google failed:', result?.error || ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
+      throw new LoginError(result?.error || ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
     }
 
-    if (loginResponse.error) {
-      throw new LoginError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
-    }
-
-    return loginResponse;
-  } catch (error: unknown) {
-    handleLoginError(error);
-  }
-};
-
-const handleLoginError = (error: unknown) => {
-  if (error instanceof LoginError) {
+    return result;
+  } catch (error) {
+    console.error('Unexpected error during login with Google:', error);
     throw error;
   }
-
-  throw new LoginError(ERROR_MESSAGES.LOGIN_ERROR);
 };

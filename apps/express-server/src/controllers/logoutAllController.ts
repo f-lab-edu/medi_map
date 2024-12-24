@@ -6,6 +6,8 @@ import { AUTH_MESSAGES } from '@/constants/auth_message';
 export const logoutAllSessions = async (req: Request, res: Response): Promise<Response> => {
   const userId = req.user?.id;
 
+  console.log('Received userId:', req.body.userId);
+
   // 인증되지 않은 경우
   if (!userId) {
     console.error('Logout all sessions error: User not authenticated.');
