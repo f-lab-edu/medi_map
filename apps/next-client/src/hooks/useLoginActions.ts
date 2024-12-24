@@ -26,17 +26,17 @@ export const useLoginActions = ({ email, password, setError }: AuthActionsParams
     }
   }, [status, session, router]);
 
-  const handleLogin = async () => {
+  const handleLogin  = async () => {
     try {
       if (!email || !password) {
         setError(ERROR_MESSAGES.LOGIN_FAILED);
         return;
       }
 
-      const result = await loginWithCredentials(email, password);
+      const authResult = await loginWithCredentials(email, password);
 
-      if (result?.error) {
-        setError(result.error);
+      if (authResult?.error) {
+        setError(authResult.error);
       }
     } catch (err: unknown) {
       setError(ERROR_MESSAGES.LOGIN_FAILED);
@@ -45,9 +45,9 @@ export const useLoginActions = ({ email, password, setError }: AuthActionsParams
 
   const handleGoogleLogin = async () => {
     try {
-      const result = await loginWithGoogle();
+      const authResult = await loginWithGoogle();
   
-      if (result?.error && !result?.url) {
+      if (authResult?.error && !authResult?.url) {
         setError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
       }
     } catch (err: unknown) {
@@ -55,5 +55,5 @@ export const useLoginActions = ({ email, password, setError }: AuthActionsParams
     }
   };
   
-  return { handleLogin, handleGoogleLogin };
+  return { handleLogin , handleGoogleLogin };
 };

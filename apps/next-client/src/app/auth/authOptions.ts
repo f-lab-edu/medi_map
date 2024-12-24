@@ -6,11 +6,9 @@ import { axiosInstance } from '@/services/axiosInstance';
 import { ERROR_MESSAGES } from '@/constants/errors';
 import { API_URLS } from '@/constants/urls';
 import { CredError } from '@/error/CredError';
-import { LoginRequestDto } from '@/dto/LoginRequestDto';
-import { LoginResponseDto } from '@/dto/LoginResponseDto';
 import { refreshAccessToken } from '@/utils/authUtils';
 
-const ACCESS_TOKEN_EXPIRES_IN = 60 * 60 * 1000;
+const ACCESS_TOKEN_EXPIRES_IN = 60 * 60 * 1000; // 1시간 만료
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -29,24 +27,21 @@ export const authOptions: NextAuthOptions = {
           throw new CredError(ERROR_MESSAGES.INVALID_CREDENTIAL);
         }
 
-        const loginData: LoginRequestDto = {
-          email: credentials.email,
-          password: credentials.password,
-        };
-
         try {
-          const { data, status } = await axiosInstance.post(API_URLS.LOGIN, loginData);
-          const { token, refreshToken, user: userData } = data as LoginResponseDto;
+          const { data, status } = await axiosInstance.post(API_URLS.LOGIN, {
+            email: credentials.email,
+            password: credentials.password,
+          });
 
-          if (status === 200 && userData && token && refreshToken) {
+          const { token, refreshToken, user } = data;
+          if (status === 200 && user && token && refreshToken) {
             return {
-              id: userData.id,
-              email: userData.email,
+              id: user.id,
+              email: user.email,
               accessToken: token,
-              refreshToken: refreshToken,
+              refreshToken,
             };
           }
-
           throw new CredError(ERROR_MESSAGES.LOGIN_FAILED);
         } catch (error) {
           throw new CredError(ERROR_MESSAGES.LOGIN_FAILED);
@@ -56,7 +51,23 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
+    async signIn({ user, account, profile }) {
+      if (account?.provider === 'google' && profile) {
+        try {
+          await axiosInstance.post(API_URLS.GOOGLE_LOGIN, {
+            googleId: profile.sub,
+            email: profile.email,
+            username: profile.name,
+          });
+          return true;
+        } catch (error) {
+          console.error('Google login failed:', error);
+          return false;
+        }
+      }
+      return true;
+    },      
+    async jwt({ token, user, account, profile }) {
       if (user) {
         return {
           ...token,
@@ -68,21 +79,24 @@ export const authOptions: NextAuthOptions = {
         };
       }
 
-      if (Date.now() > token.accessTokenExpires) {
-        return refreshAccessToken(token as JWT);
+      // Access Token 갱신 로직 추가
+      if (token.refreshToken) {
+        if (token.accessTokenExpires && Date.now() > token.accessTokenExpires) {
+          return refreshAccessToken(token as JWT);
+        }
       }
 
       return token;
     },
 
     async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id!;
-        session.user.email = token.email!;
-        session.user.accessToken = token.accessToken!;
-        session.user.refreshToken = token.refreshToken!;
-      }
-
+      session.user = {
+        id: token.id as string,
+        email: token.email as string,
+        accessToken: token.accessToken as string,
+        refreshToken: token.refreshToken as string | null,
+        googleId: token.googleId as string | null,
+      };
       return session;
     },
   },

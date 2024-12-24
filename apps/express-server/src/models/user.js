@@ -30,8 +30,14 @@ module.exports = (sequelize, DataTypes) => {
       },
       password: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         field: 'password',
+      },
+      googleId: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: true,
+        field: 'googleId',
       },
       createdAt: {
         type: DataTypes.DATE,

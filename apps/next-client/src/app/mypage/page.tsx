@@ -33,19 +33,21 @@ export default function MyPage() {
   useEffect(() => {
     const fetchUsername = async () => {
       try {
+        if (!session || !session.user || !session.user.accessToken) {
+          throw new Error("No valid access token.");
+        }
+  
         const response = await axios.get(`${API_URLS.MYPAGE}/username`, {
-          headers: getAuthHeader(),
+          headers: { Authorization: `Bearer ${session.user.accessToken}` },
         });
         setUsername(response.data.username);
       } catch (error) {
-        const errorMessage =
-          error instanceof AxiosError && error.response?.data?.error;
-        console.error(new FetchUsernameError(errorMessage));
+        console.error("FetchUsernameError:", error.message || error);
         alert(ALERT_MESSAGES.ERROR.FETCH_USERNAME);
       }
     };
     fetchUsername();
-  }, []);
+  }, [session]);
 
   // 닉네임 변경
   const handleNicknameChange = async () => {
@@ -121,14 +123,11 @@ export default function MyPage() {
   
         router.push(ROUTES.AUTH.SIGN_IN);
       } catch (error) {
-        const errorMessage =
-          error instanceof AxiosError && error.response?.data?.error;
-        console.error(new DeleteAccountError(errorMessage));
+        console.error("DeleteAccountError:", error.message || error);
         alert(ALERT_MESSAGES.ERROR.DELETE_ACCOUNT);
       }
     }
   };
-  
 
   return (
     <div>

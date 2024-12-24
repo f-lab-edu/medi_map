@@ -12,11 +12,16 @@ export default function Header() {
 
   const handleLogout = async () => {
     try {
-      await axios.post(API_URLS.LOGOUT, { userId: session?.user.id });
+      if (session?.user.id) {
+        await axios.post(API_URLS.LOGOUT, {
+          userId: session.user.id,
+        });
+      }
       Cookies.remove('accessToken');
       signOut({ callbackUrl: ROUTES.AUTH.SIGN_IN });
     } catch (error) {
       console.error('Failed to logout:', error);
+      signOut({ callbackUrl: ROUTES.AUTH.SIGN_IN });
     }
   };
   

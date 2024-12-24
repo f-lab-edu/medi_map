@@ -23,8 +23,14 @@ module.exports = {
       },
       password: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
         field: 'password',
+      },
+      googleId: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        unique: true,
+        field: 'googleId',
       },
       createdAt: {
         allowNull: false,
