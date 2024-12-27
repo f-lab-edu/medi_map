@@ -6,6 +6,7 @@ import { signOut, useSession } from 'next-auth/react';
 import { ROUTES , API_URLS } from '@/constants/urls';
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import Image from 'next/image';
 
 export default function Header() {
   const { data: session } = useSession();
@@ -30,7 +31,7 @@ export default function Header() {
       <div className="inner">
         <h1>
           <Link href="/">MediMap+</Link>
-          <img src="/images/icon-medicine.webp" alt="" />
+          <Image src="/images/icon-medicine.webp" alt="logo" width={500} height={300} />;
         </h1>
         <div className="right_cont">
           <ul className="menu_cont">
