@@ -39,6 +39,12 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
         field: 'googleId',
       },
+      provider: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'credentials',
+        field: 'provider',
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,

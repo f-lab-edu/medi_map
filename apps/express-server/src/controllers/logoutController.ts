@@ -28,10 +28,8 @@ export const logout = async (req: Request, res: Response): Promise<Response> => 
       return res.status(404).json({ message: AUTH_MESSAGES.USER_NOT_FOUND });
     }
 
-    // Refresh Token 삭제 (소셜 유저라면 Refresh Token이 없을 수도 있음)
     await removeRefreshTokens(user.id);
 
-    // 쿠키 삭제
     res.clearCookie('refreshToken');
 
     return res.status(200).json({ message: AUTH_MESSAGES.LOGGED_OUT_SUCCESSFULLY });
