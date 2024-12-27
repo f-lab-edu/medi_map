@@ -51,7 +51,7 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ account, profile }) {
       if (account?.provider === 'google' && profile) {
         try {
           await axiosInstance.post(API_URLS.GOOGLE_LOGIN, {
@@ -67,7 +67,7 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },      
-    async jwt({ token, user, account, profile }) {
+    async jwt({ token, user }) {
       if (user) {
         return {
           ...token,
@@ -79,7 +79,6 @@ export const authOptions: NextAuthOptions = {
         };
       }
 
-      // Access Token 갱신 로직 추가
       if (token.refreshToken) {
         if (token.accessTokenExpires && Date.now() > token.accessTokenExpires) {
           return refreshAccessToken(token as JWT);
@@ -94,8 +93,8 @@ export const authOptions: NextAuthOptions = {
         id: token.id as string,
         email: token.email as string,
         accessToken: token.accessToken as string,
-        refreshToken: token.refreshToken as string | null,
-        googleId: token.googleId as string | null,
+        refreshToken: token.refreshToken as string | '',
+        googleId: token.googleId as string | '',
       };
       return session;
     },
