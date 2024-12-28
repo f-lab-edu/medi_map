@@ -187,7 +187,11 @@ export default function PostDetailPage({ params }: { params: Params }) {
           <button className='common_button delete_button' onClick={handleDeletePost} >삭제</button>
         </div>
       )}
-      <p className='post_desc'>{post.content}</p>
+      {/* <p className='post_desc'>{post.content}</p> */}
+      <div
+        className="post_desc"
+        dangerouslySetInnerHTML={{ __html: post.content }}
+      />
 
       <div className="post_actions">
         <Link href="/community">목록으로</Link> 

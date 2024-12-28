@@ -6,6 +6,7 @@ export const ALERT_MESSAGES = {
 
     POST : {
       POST_DELETE: '게시글이 성공적으로 삭제되었습니다.',
+      POST_CREATE: '게시글이 성공적으로 게시되었습니다.'
     },
 
     COMMENT: {

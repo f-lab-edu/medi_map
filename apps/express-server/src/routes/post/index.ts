@@ -1,14 +1,24 @@
 import express from 'express';
+import { JSDOM } from 'jsdom';
+import DOMPurify from 'dompurify';
 import { Post, Comment, Recommendation, User } from '@/models';
 import { authMiddleware, AuthenticatedRequest } from '@/middleware/authMiddleware';
 import { MESSAGES_POST } from '@/constants/post_messages';
 
 const router = express.Router();
 
+const window = new JSDOM('').window;
+const DOMPurifyInstance = DOMPurify(window);
+
+function sanitizeHTML(html: string) {
+  return DOMPurifyInstance.sanitize(html);
+}
+
 // 게시글 생성
 router.post('/', authMiddleware, async (req: AuthenticatedRequest, res, next) => {
   try {
-    const { title, content } = req.body;
+    let { title, content } = req.body;
+
     // 제목과 내용이 없으면 에러 반환
     if (!title || !content) {
       return res.status(400).json({ message: MESSAGES_POST.TITLE_CONTENT_REQUIRED });
@@ -16,18 +26,25 @@ router.post('/', authMiddleware, async (req: AuthenticatedRequest, res, next) =>
 
     const userId = req.user?.id;
     const author = req.user?.username;
+
     // 사용자 정보가 없으면 에러 반환
     if (!userId || !author) {
       return res.status(400).json({ message: MESSAGES_POST.USER_INFO_MISSING });
     }
 
+    // HTML 데이터 정화
+    title = sanitizeHTML(title);
+    content = sanitizeHTML(content);
+
     // 게시글 생성
     const newPost = await Post.create({ title, content, userId, author });
     return res.status(201).json(newPost);
   } catch (error) {
+    console.error('Error creating post:', error);
     next(error);
   }
 });
+
 
 // 게시글 목록 조회
 router.get('/', async (req, res, next) => {
@@ -172,8 +189,9 @@ router.post('/:id/comments', authMiddleware, async (req, res, next) => {
     const { content } = req.body;
     const userId = req.user?.id;
 
-    // 작성자의 username 조회
     const user = await User.findByPk(userId, { attributes: ['username'] });
+    console.log('user: ', user);
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -182,16 +200,16 @@ router.post('/:id/comments', authMiddleware, async (req, res, next) => {
     const newComment = await Comment.create({
       articleId: id,
       userId,
-      author: user.username, // 작성자의 username 저장
+      author: user.username,
       content,
     });
 
     res.status(201).json(newComment);
   } catch (error) {
+    console.error('Error creating comment:', error);
     next(error);
   }
 });
-
 
 // 댓글 조회
 router.get('/:id/comments', async (req, res, next) => {

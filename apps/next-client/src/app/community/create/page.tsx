@@ -6,6 +6,8 @@ import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 import { API_URLS } from '@/constants/urls';
 import '@/styles/pages/community/community.scss';
+import 'react-quill/dist/quill.snow.css'; // Quill 기본 스타일
+import ReactQuill from 'react-quill'; // React-Quill import
 import { ALERT_MESSAGES } from '@/constants/alert_message';
 
 export default function CreatePost() {
@@ -19,6 +21,8 @@ export default function CreatePost() {
         return;
       }
 
+      console.log('New Post Data:', newPost); // 디버깅용 로그
+
       await axios.post(
         `${API_URLS.POSTS}`,
         newPost,
@@ -27,7 +31,7 @@ export default function CreatePost() {
         }
       );
 
-      alert(ALERT_MESSAGES.ERROR.POST.POST_CREATE);
+      alert(ALERT_MESSAGES.SUCCESS.POST.POST_CREATE); // 수정된 메시지
       router.push('/community');
     } catch (error) {
       console.error('Error creating post:', error);
@@ -47,10 +51,11 @@ export default function CreatePost() {
         />
       </div>
       <div className="form-group">
-        <textarea
+        <ReactQuill
+          theme="snow"
           placeholder="내용을 입력하세요"
           value={newPost.content}
-          onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
+          onChange={(value) => setNewPost({ ...newPost, content: value })}
         />
       </div>
       <button onClick={handleCreatePost}>작성하기</button>

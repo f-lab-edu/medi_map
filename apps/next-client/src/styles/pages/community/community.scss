@@ -81,9 +81,11 @@
     margin-bottom: 5rem;
   }
   .post_desc {
-    font-size: 1.8rem;
-    padding: 5rem 0;
-    margin: 0;
+    p {
+      font-size: 1.8rem;
+      padding: 5rem 0;
+      margin: 0;
+    }
   }
 
   .post_actions {
