@@ -1,10 +1,12 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import path from 'path';
 import authRoutes from '@/routes/auth/index';
 import pharmacyRoutes from '@/routes/pharmacy/index';
 import medicineRoutes from '@/routes/medicine/index';
 import mypageRoutes from '@/routes/mypage/index';
 import postRoutes from '@/routes/post/index';
+import uploadRoutes from '@/routes/uploads/index';
 import { PORT } from '@/app-constants/constants';
 import { checkEnvVariables } from '@/config/env';
 import { ROUTES } from '@/constants/urls';
@@ -36,6 +38,11 @@ app.use(ROUTES.API.PHARMACY, pharmacyRoutes);
 app.use(ROUTES.API.MEDICINE, medicineRoutes);
 app.use(ROUTES.API.MYPAGE, mypageRoutes);
 app.use(ROUTES.API.POST, postRoutes);
+app.use(ROUTES.API.UPLOADS, uploadRoutes);
+app.use('/uploads/images', express.static(path.join(__dirname, './uploads/images')));
+
+console.log('Static file directory:', path.join(__dirname, './uploads/images'));
+
 
 // 루트 라우트 추가
 app.get(ROUTES.HOME, (req: Request, res: Response) => {
