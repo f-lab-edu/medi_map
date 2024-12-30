@@ -111,11 +111,35 @@ router.delete('/me', authMiddleware, async (req, res) => {
   const userId = req.user.id;
 
   try {
+    // 사용자 정보 확인
+    const user = await User.findByPk(userId, {
+      attributes: ['id', 'provider', 'googleId', 'username'],
+      raw: true,
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        code: 'USER_NOT_FOUND',
+        message: MYPAGE_MESSAGES.USER_NOT_FOUND,
+      });
+    }
+
+    // 사용자 삭제
     await User.destroy({ where: { id: userId } });
-    return res.status(200).json({ message: MYPAGE_MESSAGES.DELETE_ACCOUNT_SUCCESS });
+    console.log(`회원탈퇴 성공: userId = ${userId}, username = ${user.username}`);
+
+    return res.status(200).json({
+      code: 'DELETE_ACCOUNT_SUCCESS',
+      message: `${user.username}님의 계정이 성공적으로 삭제되었습니다.`,
+    });
   } catch (error) {
-    return res.status(500).json({ error: MYPAGE_MESSAGES.DELETE_ACCOUNT_ERROR });
+    console.error('Error deleting user account:', error);
+    return res.status(500).json({
+      code: 'DELETE_ACCOUNT_ERROR',
+      message: MYPAGE_MESSAGES.DELETE_ACCOUNT_ERROR,
+    });
   }
 });
+
 
 export default router;

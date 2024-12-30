@@ -27,3 +27,16 @@ export const findUserByEmail = async (email: string) => {
     throw error;
   }
 };
+
+// Google ID로 사용자 찾기 함수
+export const findUserByGoogleId = async (googleId: string) => {
+  try {
+    const user = await User.findOne({
+      where: { googleId },
+    });
+    return user;
+  } catch (error) {
+    console.error('Error finding user by Google ID:', error);
+    throw error;
+  }
+};

@@ -16,5 +16,6 @@ export const API_URLS = {
   MEDICINE_SEARCH: `${process.env.NEXT_PUBLIC_LOCAL_BACKEND_URL}/api/medicine/search`,
   MYPAGE: `${process.env.NEXT_PUBLIC_LOCAL_BACKEND_URL}/api/users/me`,
   POSTS: `${process.env.NEXT_PUBLIC_LOCAL_BACKEND_URL}/api/posts`,
-  UPLOADS: `${process.env.NEXT_PUBLIC_LOCAL_BACKEND_URL}/api/uploads`
+  UPLOADS: `${process.env.NEXT_PUBLIC_LOCAL_BACKEND_URL}/api/uploads`,
+  GOOGLE_LOGIN: `${process.env.NEXT_PUBLIC_LOCAL_BACKEND_URL}/api/auth/google-login`
 };

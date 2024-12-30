@@ -1,23 +1,37 @@
+
 'use client';
 
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
-import { ROUTES } from '@/constants/urls';
+import { ROUTES , API_URLS } from '@/constants/urls';
 import Cookies from 'js-cookie';
+import axios from 'axios';
+import Image from 'next/image';
 
 export default function Header() {
   const { data: session } = useSession();
 
-  const handleLogout = () => {
-    Cookies.remove('accessToken');
-    signOut({ callbackUrl: ROUTES.AUTH.SIGN_IN });
+  const handleLogout = async () => {
+    try {
+      if (session?.user.id) {
+        await axios.post(API_URLS.LOGOUT, {
+          userId: session.user.id,
+        });
+      }
+      Cookies.remove('accessToken');
+      signOut({ callbackUrl: ROUTES.AUTH.SIGN_IN });
+    } catch (error) {
+      console.error('Failed to logout:', error);
+      signOut({ callbackUrl: ROUTES.AUTH.SIGN_IN });
+    }
   };
-
+  
   return (
     <header id="header">
       <div className="inner">
         <h1>
           <Link href="/">MediMap+</Link>
+          <Image src="/images/icon-medicine.webp" alt="logo" width={500} height={300} />
         </h1>
         <div className="right_cont">
           <ul className="menu_cont">
