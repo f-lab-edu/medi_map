@@ -13,4 +13,5 @@ export const ERROR_MESSAGES = {
   KAKAO_MAP_ERROR: "카카오 지도를 불러오는 중 오류가 발생했습니다.",
   NETWORK_ERROR: "네트워크 연결에 문제가 있습니다. 잠시 후 다시 시도해 주세요.",
   GENERIC_ERROR: "오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+  EDITOR_NOT_INITIALIZED: "Quill 에디터 인스턴스가 아직 초기화되지 않았습니다.",
 };

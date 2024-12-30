@@ -21,7 +21,7 @@
   }
   .create_post {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     button {
       background: var(--btn-color);
       color: #fff;
@@ -90,7 +90,7 @@
 
   .post_actions {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     margin-top: 2rem;
     gap: 1rem;
     span {
@@ -161,7 +161,7 @@
       }
       .button_box {
         display: flex;
-        justify-content: end;
+        justify-content: flex-end;
         gap: 1rem;
         margin-top: 1rem;
         width: auto;
@@ -206,7 +206,7 @@
       }
       .comment_actions {
         display: flex;
-        justify-content: end;
+        justify-content: flex-end;
         position: absolute;
         top: 1.4rem;
         right: 0;
