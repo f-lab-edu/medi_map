@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
@@ -19,22 +19,16 @@ export default function PostDetailPage({ params }: { params: Params }) {
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editedComment, setEditedComment] = useState('');
   const [isRecommended, setIsRecommended] = useState(false);
-  const [recommendationCount, setRecommendationCount] = useState(0); 
+  const [recommendationCount, setRecommendationCount] = useState(0);
 
   const { data: session } = useSession();
   const router = useRouter();
 
-  const userId = session?.user?.id; 
+  const userId = session?.user?.id;
   const accessToken = session?.user?.accessToken;
 
-  useEffect(() => {
-    fetchPost();
-    fetchComments();
-    fetchRecommendation();
-  }, [id]);
-
   // 게시글 정보 가져오기
-  const fetchPost = async () => {
+  const fetchPost = useCallback(async () => {
     try {
       const response = await axios.get(`${API_URLS.POSTS}/${id}`);
       setPost(response.data);
@@ -42,7 +36,35 @@ export default function PostDetailPage({ params }: { params: Params }) {
       console.error('Error fetching post:', error);
       alert(ALERT_MESSAGES.ERROR.POST.FETCH_POSTS);
     }
-  };
+  }, [id]);
+
+  // 댓글 목록 가져오기
+  const fetchComments = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API_URLS.POSTS}/${id}/comments`);
+      setComments(response.data);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+      alert(ALERT_MESSAGES.ERROR.COMMENT.FETCH_COMMENTS);
+    }
+  }, [id]);
+
+  // 추천 정보 가져오기
+  const fetchRecommendation = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API_URLS.POSTS}/${id}/recommend`);
+      setIsRecommended(response.data.recommended);
+      setRecommendationCount(response.data.recommendationCount);
+    } catch (error) {
+      console.error('Error fetching recommendation:', error);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    fetchPost();
+    fetchComments();
+    fetchRecommendation();
+  }, [fetchPost, fetchComments, fetchRecommendation]);
 
   // 게시글 삭제
   const handleDeletePost = async () => {
@@ -58,17 +80,6 @@ export default function PostDetailPage({ params }: { params: Params }) {
     } catch (error) {
       console.error('Error deleting post:', error);
       alert(ALERT_MESSAGES.ERROR.POST.POST_DELETE_ERROR);
-    }
-  };
-
-  // 댓글 목록 가져오기
-  const fetchComments = async () => {
-    try {
-      const response = await axios.get(`${API_URLS.POSTS}/${id}/comments`);
-      setComments(response.data);
-    } catch (error) {
-      console.error('Error fetching comments:', error);
-      alert(ALERT_MESSAGES.ERROR.COMMENT.FETCH_COMMENTS);
     }
   };
 
@@ -135,22 +146,10 @@ export default function PostDetailPage({ params }: { params: Params }) {
 
       setEditingCommentId(null);
       setEditedComment('');
-
       fetchComments();
     } catch (error) {
       console.error('Error editing comment:', error);
       alert(ALERT_MESSAGES.ERROR.COMMENT.COMMENT_EDIT_ERROR);
-    }
-  };
-
-  // 추천 정보 가져오기
-  const fetchRecommendation = async () => {
-    try {
-      const response = await axios.get(`${API_URLS.POSTS}/${id}/recommend`);
-      setIsRecommended(response.data.recommended);
-      setRecommendationCount(response.data.recommendationCount); 
-    } catch (error) {
-      console.error('Error fetching recommendation:', error);
     }
   };
 
@@ -179,28 +178,27 @@ export default function PostDetailPage({ params }: { params: Params }) {
 
   return (
     <div className="post_detail">
-      <h2 className='post_title'>{post.title}</h2>
-      
-       {post.userId === userId && (
+      <h2 className="post_title">{post.title}</h2>
+
+      {post.userId === userId && (
         <div className="post_actions">
-          <button className='common_button edit_button' onClick={() => router.push(`/community/${id}/edit`)}>수정</button>
-          <button className='common_button delete_button' onClick={handleDeletePost} >삭제</button>
+          <button className="common_button edit_button" onClick={() => router.push(`/community/${id}/edit`)}>
+            수정
+          </button>
+          <button className="common_button delete_button" onClick={handleDeletePost}>
+            삭제
+          </button>
         </div>
       )}
-      {/* <p className='post_desc'>{post.content}</p> */}
       <div
         className="post_desc"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
 
       <div className="post_actions">
-        <Link href="/community">목록으로</Link> 
+        <Link href="/community">목록으로</Link>
         <button onClick={toggleRecommendation} className="recommend_button">
-          {isRecommended ? (
-            <FaThumbsUp size={24} />
-          ) : (
-            <FaRegThumbsUp size={24} />
-          )}
+          {isRecommended ? <FaThumbsUp size={24} /> : <FaRegThumbsUp size={24} />}
         </button>
         <span>{recommendationCount}</span>
       </div>
@@ -227,27 +225,40 @@ export default function PostDetailPage({ params }: { params: Params }) {
                       onChange={(e) => setEditedComment(e.target.value)}
                     />
                     <div className="button_box">
-                      <button className='common_button cancel_button' onClick={() => setEditingCommentId(null)}>취소</button>
-                      <button className='common_button save_button' onClick={() => handleEditComment(comment.id)}>등록</button>
+                      <button className="common_button cancel_button" onClick={() => setEditingCommentId(null)}>
+                        취소
+                      </button>
+                      <button className="common_button save_button" onClick={() => handleEditComment(comment.id)}>
+                        등록
+                      </button>
                     </div>
                   </div>
                 ) : (
                   <div className="comment_item">
                     <div className="top_cont">
                       <p>{comment.author}</p>
-                      <span className='date'>{new Date(comment.createdAt).toLocaleString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
+                      <span className="date">
+                        {new Date(comment.createdAt).toLocaleString('ko-KR', {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: false,
+                        })}
+                      </span>
                     </div>
                     <div className="comment_desc">
                       <p>{comment.content}</p>
                     </div>
                     {comment.userId === userId && (
                       <div className="comment_actions">
-                        <button className='common_button edit_button'
-                          onClick={() => startEditingComment(comment.id, comment.content)}
-                        >
+                        <button className="common_button edit_button" onClick={() => startEditingComment(comment.id, comment.content)}>
                           수정
                         </button>
-                        <button className='common_button delete_button' onClick={() => handleDeleteComment(comment.id)}>삭제</button>
+                        <button className="common_button delete_button" onClick={() => handleDeleteComment(comment.id)}>
+                          삭제
+                        </button>
                       </div>
                     )}
                   </div>

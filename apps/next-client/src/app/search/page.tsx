@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, KeyboardEvent, ChangeEvent, useState } from "react";
+import { useEffect, KeyboardEvent, ChangeEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import useMedicineSearch from "@/hooks/useMedicineSearch";
@@ -9,7 +9,7 @@ import { SEARCH_ERROR_MESSAGES } from "@/constants/search_errors";
 import { FILTERS, FILTER_ALL } from "@/constants/filters";
 import "@/styles/pages/search/search.scss";
 import { useSearchStore } from "@/store/useSearchStore";
-import { MedicineResultDto } from '@/dto/MedicineResultDto';
+import { MedicineResultDto } from "@/dto/MedicineResultDto";
 import { ScrollToTopButton } from "@/components/common/ScrollToTopButton";
 
 export default function SearchPage() {
@@ -68,13 +68,13 @@ export default function SearchPage() {
     if (newItem === FILTER_ALL) {
       return [FILTER_ALL];
     }
-  
+
     const updatedItems = selectedItems.filter((item) => item !== FILTER_ALL);
-  
+
     if (updatedItems.includes(newItem)) {
       return updatedItems.filter((item) => item !== newItem);
     }
-  
+
     return [...updatedItems, newItem];
   };
 
@@ -109,7 +109,7 @@ export default function SearchPage() {
 
   useEffect(() => {
     if (!isSearchExecuted || page <= 1) return;
-  
+
     fetchMedicineInfo({
       name: medicineSearchTerm,
       company: companySearchTerm,
@@ -118,8 +118,17 @@ export default function SearchPage() {
       form: selectedForms,
       page,
     });
-  }, [page]);
-
+  }, [
+    isSearchExecuted,
+    page,
+    fetchMedicineInfo,
+    medicineSearchTerm,
+    companySearchTerm,
+    selectedColors,
+    selectedShapes,
+    selectedForms,
+  ]);
+  
   return (
     <div className="medicine_search">
       <h2 className="title">의약품 정보</h2>
@@ -197,7 +206,7 @@ export default function SearchPage() {
       {loading && <p>로딩 중...</p>}
       {error && <p className="error_message">{error}</p>}
       {warning && <p className="warning_message">{warning}</p>}
-      
+
       <ul className="medicine_results">
         {results.map((item: MedicineResultDto, index: number) => (
           <li

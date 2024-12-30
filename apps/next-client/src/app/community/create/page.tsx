@@ -1,30 +1,27 @@
 "use client";
 
-import React, { useRef, useState, useCallback, useMemo } from "react";
-import ReactQuill from "react-quill";
-import type Quill from "quill";
+import React, { useState, useCallback, useMemo } from "react";
+import dynamic from "next/dynamic";
+import type Quill from "quill"; 
+
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import { API_URLS } from '@/constants/urls';
+import { API_URLS } from "@/constants/urls";
 import "react-quill/dist/quill.snow.css";
 import "@/styles/pages/community/community.scss";
-import { ALERT_MESSAGES } from '@/constants/alert_message';
+import { ALERT_MESSAGES } from "@/constants/alert_message";
 
-type ReactQuillInstance = ReactQuill & {
-  getEditor?: () => Quill;
-};
+// ReactQuill 동적 로드 (SSR 비활성화)
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 export default function CreatePost() {
   const router = useRouter();
-  const [newPost, setNewPost] = useState({
-    title: "",
-    content: "",
-  });
-  const quillRef = useRef<ReactQuillInstance | null>(null);
+  const [newPost, setNewPost] = useState({ title: "", content: "" });
+  
+  function handleImageUpload(this: { quill: Quill }) {
+    const editor = this.quill;
 
-  // 이미지 업로드 및 에디터 삽입 핸들러
-  const handleImageUpload = useCallback(() => {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
@@ -37,6 +34,7 @@ export default function CreatePost() {
           const formData = new FormData();
           formData.append("image", file);
 
+          // 업로드 요청
           const response = await axios.post(API_URLS.UPLOADS, formData, {
             headers: {
               "Content-Type": "multipart/form-data",
@@ -44,13 +42,8 @@ export default function CreatePost() {
             },
           });
 
+          // 에디터 인스턴스에 이미지 삽입
           const imageUrl = response.data.url;
-          const editor = quillRef.current?.getEditor?.();
-          if (!editor) {
-            console.error("Quill editor instance not found.");
-            return;
-          }
-
           const range = editor.getSelection(true);
           editor.insertEmbed(range.index, "image", imageUrl);
           editor.setSelection(range.index + 1);
@@ -60,7 +53,7 @@ export default function CreatePost() {
         }
       }
     };
-  }, []);
+  }
 
   // Quill 모듈 설정
   const modules = useMemo(() => {
@@ -76,15 +69,16 @@ export default function CreatePost() {
             { indent: "-1" },
             { indent: "+1" },
           ],
-          ["link", "image"], // 이미지 버튼 추가
+          ["link", "image"],
           ["clean"],
         ],
         handlers: {
+          // 함수 핸들러 등록
           image: handleImageUpload,
         },
       },
     };
-  }, [handleImageUpload]);
+  }, []);
 
   // Quill에서 지원하는 포맷
   const formats = useMemo(
@@ -141,11 +135,10 @@ export default function CreatePost() {
       </div>
       <div className="form-group">
         <ReactQuill
-          ref={quillRef}
           theme="snow"
+          placeholder="내용을 입력하세요"
           modules={modules}
           formats={formats}
-          placeholder="내용을 입력하세요"
           value={newPost.content}
           onChange={(val) =>
             setNewPost((prev) => ({ ...prev, content: val }))
