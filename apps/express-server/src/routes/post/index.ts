@@ -4,6 +4,7 @@ import DOMPurify from 'dompurify';
 import { Post, Comment, Recommendation, User } from '@/models';
 import { authMiddleware, AuthenticatedRequest } from '@/middleware/authMiddleware';
 import { MESSAGES_POST } from '@/constants/post_messages';
+import { Op } from 'sequelize';
 
 const router = express.Router();
 
@@ -53,8 +54,21 @@ router.get('/', async (req, res, next) => {
     const limit = parseInt(String(req.query.limit), 10) || 10;
     const offset = (page - 1) * limit;
 
+    // 사용자가 입력한 검색어
+    const searchTerm = req.query.search || '';
+
+    // 검색 조건 객체
+    const whereCondition: any = {};
+
+    if (searchTerm) {
+      whereCondition.title = {
+        [Op.like]: `%${searchTerm}%`,
+      };
+    }
+
     // 게시글 데이터 가져오기
     const { count, rows: posts } = await Post.findAndCountAll({
+      where: whereCondition,
       order: [['createdAt', 'DESC']],
       limit,
       offset,
@@ -63,7 +77,12 @@ router.get('/', async (req, res, next) => {
 
     const totalPages = Math.ceil(count / limit);
 
-    res.status(200).json({ totalItems: count, totalPages, currentPage: page, posts });
+    res.status(200).json({
+      totalItems: count,
+      totalPages,
+      currentPage: page,
+      posts
+    });
   } catch (error) {
     next(error);
   }

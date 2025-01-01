@@ -39,8 +39,8 @@ export const addMarkers = (
   pharmacies.forEach((pharmacy) => {
     const markerPosition = new kakao.maps.LatLng(pharmacy.wgs84Lat, pharmacy.wgs84Lon);
 
-    const markerImageSrc = '/images/marker.png';
-    const markerImageSize = new kakao.maps.Size(29, 28);
+    const markerImageSrc = '/images/map_ico.png';
+    const markerImageSize = new kakao.maps.Size(50, 75);
     const markerImageOption = { offset: new kakao.maps.Point(12, 35) };
     const markerImage = new kakao.maps.MarkerImage(markerImageSrc, markerImageSize, markerImageOption);
 

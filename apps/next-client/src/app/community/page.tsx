@@ -74,8 +74,13 @@ export default function CommunityList() {
           name="search"
           value={searchTerm}
           className="inp-text"
-          placeholder="검색어를 입력하세요."
+          placeholder="제목을 입력해주세요."
           onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleSearch();
+            }
+          }}
         />
         <button className="btn-search" type="button" onClick={handleSearch}>
           <span className="dn">검색</span>

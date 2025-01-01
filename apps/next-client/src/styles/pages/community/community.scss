@@ -29,7 +29,6 @@
     input {
       width: calc(100% - 28px);
       border: none;
-      font-size: 1.7rem;
     }
     button {
       float: right;
@@ -85,7 +84,6 @@
       border-bottom: 1px solid #ccc;
       td {
         padding: 2.3rem 3rem;
-        font-size: 1.6rem;
 
         &:nth-of-type(1) {
           width: 6%;
@@ -105,6 +103,7 @@
         }
         &.title {
           cursor: pointer;
+          font-size: 1.7rem;
         }
         .comment {
           color: var(--btn-color);
