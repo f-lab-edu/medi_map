@@ -88,38 +88,34 @@ export default function MyPage() {
         { oldPassword, newPassword, confirmPassword },
         { headers: getAuthHeader() }
       );
-
+  
       alert(ALERT_MESSAGES.SUCCESS.PASSWORD_UPDATE);
       setOldPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (error) {
       let errorMessage = ALERT_MESSAGES.ERROR.UPDATE_PASSWORD;
-
+  
       if (error instanceof AxiosError && error.response?.data?.code) {
         const errorCode = error.response.data.code;
-
-        switch (errorCode) {
-          case "PASSWORD_MISMATCH":
-            errorMessage = ALERT_MESSAGES.ERROR.PASSWORD_MISMATCH;
-            break;
-          case "PASSWORD_CONFIRMATION_ERROR":
-            errorMessage = ALERT_MESSAGES.ERROR.PASSWORD_CONFIRMATION_ERROR;
-            break;
-          case "PASSWORD_SAME_AS_OLD":
-            errorMessage = ALERT_MESSAGES.ERROR.PASSWORD_SAME_AS_OLD;
-            break;
-          default:
-            errorMessage =
-              error.response.data.message || ALERT_MESSAGES.ERROR.UNKNOWN_ERROR;
+  
+        if (errorCode === "PASSWORD_MISMATCH") {
+          errorMessage = ALERT_MESSAGES.ERROR.PASSWORD_MISMATCH;
+        } else if (errorCode === "PASSWORD_CONFIRMATION_ERROR") {
+          errorMessage = ALERT_MESSAGES.ERROR.PASSWORD_CONFIRMATION_ERROR;
+        } else if (errorCode === "PASSWORD_SAME_AS_OLD") {
+          errorMessage = ALERT_MESSAGES.ERROR.PASSWORD_SAME_AS_OLD;
+        } else {
+          errorMessage =
+            error.response.data.message || ALERT_MESSAGES.ERROR.UNKNOWN_ERROR;
         }
       }
-
+  
       console.error(new UpdatePasswordError(errorMessage));
       alert(errorMessage);
     }
   };
-
+  
   // 회원탈퇴
   const handleDeleteAccount = async () => {
     if (window.confirm(ALERT_MESSAGES.CONFIRM.ACCOUNT_DELETE)) {
@@ -129,7 +125,7 @@ export default function MyPage() {
         });
 
         alert(ALERT_MESSAGES.SUCCESS.ACCOUNT_DELETE);
-        Cookies.remove("accessToken"); // 쿠키에서 토큰 삭제
+        Cookies.remove("accessToken");
         router.push("/");
       } catch (error) {
         const errorMessage =
