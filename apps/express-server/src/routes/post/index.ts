@@ -1,10 +1,10 @@
 import express from 'express';
 import { JSDOM } from 'jsdom';
 import DOMPurify from 'dompurify';
+import { Op, WhereOptions } from 'sequelize';
 import { Post, Comment, Recommendation, User } from '@/models';
 import { authMiddleware, AuthenticatedRequest } from '@/middleware/authMiddleware';
 import { MESSAGES_POST } from '@/constants/post_messages';
-import { Op } from 'sequelize';
 
 const router = express.Router();
 
@@ -57,8 +57,8 @@ router.get('/', async (req, res, next) => {
     // 사용자가 입력한 검색어
     const searchTerm = req.query.search || '';
 
-    // 검색 조건 객체
-    const whereCondition: any = {};
+    // 검색 조건 객체 (명시적 타입 지정)
+    const whereCondition: WhereOptions = {};
 
     if (searchTerm) {
       whereCondition.title = {
@@ -81,7 +81,7 @@ router.get('/', async (req, res, next) => {
       totalItems: count,
       totalPages,
       currentPage: page,
-      posts
+      posts,
     });
   } catch (error) {
     next(error);
