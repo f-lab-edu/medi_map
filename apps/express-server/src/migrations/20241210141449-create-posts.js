@@ -32,6 +32,14 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
+      commentCount: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        validate: {
+          min: 0,
+        },
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

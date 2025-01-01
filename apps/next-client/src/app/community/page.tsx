@@ -100,7 +100,7 @@ export default function CommunityList() {
                   <td>{index + 1 + (currentPage - 1) * postsPerPage}</td>
                   <td className="title" onClick={() => handlePostClick(post.id)}>
                     {post.title}
-                    <span className="comment">(0)</span>
+                    <span className="comment">({post.commentCount || 0})</span>
                   </td>
                   <td className="date">{new Date(post.createdAt).toLocaleDateString()}</td>
                   <td className="author">{post.author}</td>

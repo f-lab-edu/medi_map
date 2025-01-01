@@ -10,6 +10,7 @@ const router = express.Router();
 const window = new JSDOM('').window;
 const DOMPurifyInstance = DOMPurify(window);
 
+// HTML을 정화하는 함수
 function sanitizeHTML(html: string) {
   return DOMPurifyInstance.sanitize(html);
 }
@@ -45,7 +46,6 @@ router.post('/', authMiddleware, async (req: AuthenticatedRequest, res, next) =>
   }
 });
 
-
 // 게시글 목록 조회
 router.get('/', async (req, res, next) => {
   try {
@@ -58,22 +58,22 @@ router.get('/', async (req, res, next) => {
       order: [['createdAt', 'DESC']],
       limit,
       offset,
+      attributes: ['id', 'title', 'createdAt', 'author', 'commentCount'],
     });
 
-    // 총 페이지 수 계산
     const totalPages = Math.ceil(count / limit);
 
     res.status(200).json({ totalItems: count, totalPages, currentPage: page, posts });
   } catch (error) {
-    next(new Error(MESSAGES_POST.FETCH_POSTS_ERROR));
+    next(error);
   }
 });
-
 
 // 게시글 상세 조회
 router.get('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
+
     // 게시글 상세 정보와 댓글, 추천 포함 반환
     const post = await Post.findOne({
       where: { id },
@@ -190,10 +190,8 @@ router.post('/:id/comments', authMiddleware, async (req, res, next) => {
     const userId = req.user?.id;
 
     const user = await User.findByPk(userId, { attributes: ['username'] });
-    console.log('user: ', user);
-
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: MESSAGES_POST.USER_INFO_MISSING });
     }
 
     // 댓글 생성
@@ -204,9 +202,11 @@ router.post('/:id/comments', authMiddleware, async (req, res, next) => {
       content,
     });
 
+    // 댓글 수 증가
+    await Post.increment('commentCount', { where: { id } });
+
     res.status(201).json(newComment);
   } catch (error) {
-    console.error('Error creating comment:', error);
     next(error);
   }
 });
@@ -259,19 +259,29 @@ router.put('/comments/:commentId', authMiddleware, async (req: AuthenticatedRequ
   }
 });
 
-
 // 댓글 삭제
-router.delete('/comments/:commentId', authMiddleware, async (req: AuthenticatedRequest, res, next) => {
+router.delete('/comments/:commentId', authMiddleware, async (req, res, next) => {
   try {
     const { commentId } = req.params;
-    const comment = await Comment.findByPk(commentId);
 
-    // 댓글 작성자만 삭제 가능
-    if (!comment || comment.userId !== req.user?.id) {
-      return res.status(403).json({ message: MESSAGES_POST.PERMISSION_DENIED_DELETE });
+    const comment = await Comment.findByPk(commentId);
+    if (!comment) {
+      return res.status(404).json({ message: MESSAGES_POST.FETCH_POSTS_ERROR });
     }
 
+    const post = await Post.findByPk(comment.articleId);
+    if (!post) {
+      return res.status(404).json({ message: MESSAGES_POST.POST_NOT_FOUND });
+    }
+
+    // 댓글 삭제
     await comment.destroy();
+
+    // 댓글 수 감소 (0 이하로 내려가지 않도록 조건 추가)
+    if (post.commentCount > 0) {
+      await Post.decrement('commentCount', { where: { id: post.id } });
+    }
+
     res.status(200).json({ message: MESSAGES_POST.COMMENT_DELETED });
   } catch (error) {
     next(error);
