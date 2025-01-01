@@ -196,7 +196,7 @@ export default function PostDetailPage({ params }: { params: Params }) {
       />
 
       <div className="post_actions">
-        <Link href="/community">목록으로</Link>
+        <Link className='list_button' href="/community">목록으로</Link>
         <button onClick={toggleRecommendation} className="recommend_button">
           {isRecommended ? <FaThumbsUp size={24} /> : <FaRegThumbsUp size={24} />}
         </button>
