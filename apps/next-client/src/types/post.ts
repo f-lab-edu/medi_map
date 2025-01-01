@@ -9,6 +9,7 @@ export type Post = {
   userId: string;
   createdAt: string;
   author: string;
+  commentCount: string;
 };
 
 export type Comment = {
