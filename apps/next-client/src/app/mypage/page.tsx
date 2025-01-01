@@ -1,16 +1,16 @@
-
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import axios, { AxiosError } from 'axios';
-import { useRouter } from 'next/navigation';
-import { API_URLS } from '@/constants/urls';
-import '@/styles/pages/mypage/edit.scss';
-import { FetchUsernameError, UpdateNicknameError, UpdatePasswordError, DeleteAccountError } from '@/error/MypageError';
-import { ALERT_MESSAGES } from '@/constants/alert_message';
+import React, { useEffect, useState } from "react";
+import axios, { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
+import { API_URLS } from "@/constants/urls";
+import "@/styles/pages/mypage/edit.scss";
+import { FetchUsernameError, UpdateNicknameError, UpdatePasswordError, DeleteAccountError } from "@/error/MypageError";
+import { ALERT_MESSAGES } from "@/constants/alert_message";
+import Cookies from "js-cookie";
 
 const getAuthHeader = () => {
-  const token = localStorage.getItem("accessToken");
+  const token = Cookies.get("accessToken");
   if (!token) {
     throw new Error(ALERT_MESSAGES.ERROR.NO_TOKEN);
   }
@@ -23,8 +23,26 @@ export default function MyPage() {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] = useState(""); 
   const router = useRouter();
+
+  // 이메일 조회
+  useEffect(() => {
+    const fetchEmail = async () => {
+      try {
+        const response = await axios.get(`${API_URLS.MYPAGE}/email`, {
+          headers: getAuthHeader(),
+        });
+        setEmail(response.data.email);
+      } catch (error) {
+        console.error("Error fetching email:", error);
+        alert(ALERT_MESSAGES.ERROR.FETCH_EMAIL);
+      }
+    };
   
+    fetchEmail();
+  }, []);  
+
   // 닉네임 조회
   useEffect(() => {
     const fetchUsername = async () => {
@@ -111,7 +129,7 @@ export default function MyPage() {
         });
 
         alert(ALERT_MESSAGES.SUCCESS.ACCOUNT_DELETE);
-        localStorage.removeItem("accessToken");
+        Cookies.remove("accessToken"); // 쿠키에서 토큰 삭제
         router.push("/");
       } catch (error) {
         const errorMessage =
@@ -126,21 +144,48 @@ export default function MyPage() {
     <div>
       <h1 className="title">마이페이지</h1>
       <p className="sub_title">
-        <span>{username}</span>님 안녕하세요!😊🍀
+        <span>{username}</span>님 안녕하세요! 오늘도 좋은 하루 되세요🍀
       </p>
+
+      <div className="item username">
+        <h3>이메일</h3>
+        <div className="item_desc">
+          <input
+            type="text"
+            placeholder="내 현재 이메일"
+            value={email}
+            readOnly
+          />
+        </div>
+      </div>
 
       <div className="item username">
         <h3>닉네임 변경</h3>
         <div className="item_desc">
-          <input type="text" placeholder="새로운 닉네임" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+          <input
+            type="text"
+            placeholder="새로운 닉네임"
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+          />
           <button onClick={handleNicknameChange}>닉네임 변경</button>
         </div>
       </div>
 
       <div className="item password">
         <h3>비밀번호 변경</h3>
-        <input type="password" placeholder="현재 비밀번호" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-        <input type="password" placeholder="새 비밀번호" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+        <input
+          type="password"
+          placeholder="현재 비밀번호"
+          value={oldPassword}
+          onChange={(e) => setOldPassword(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="새 비밀번호"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+        />
         <input
           type="password"
           placeholder="새 비밀번호 확인"

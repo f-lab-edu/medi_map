@@ -11,4 +11,5 @@ export const MYPAGE_MESSAGES = {
   DELETE_ACCOUNT_SUCCESS: '회원탈퇴가 완료되었습니다.',
   DELETE_ACCOUNT_ERROR: '회원탈퇴 중 오류가 발생했습니다.',
   USERNAME_FETCH_ERROR: '사용자 이름 조회 중 오류가 발생했습니다.',
+  EMAIL_FETCH_ERROR: '이메일을 조회하는 중 오류가 발생했습니다.',
 };

@@ -26,6 +26,7 @@ export const ALERT_MESSAGES = {
     PASSWORD_SAME_AS_OLD: '현재 비밀번호와 새 비밀번호가 같을 수 없습니다.',
     NO_TOKEN: '인증 토큰이 없습니다. 다시 로그인해주세요.',
     UNKNOWN_ERROR: '알 수 없는 오류가 발생했습니다.',
+    FETCH_EMAIL: '이메일 조회 중 오류가 발생했습니다.',
     
     POST : {
       FETCH_POSTS: '게시글을 불러오는 중 문제가 발생했습니다.',

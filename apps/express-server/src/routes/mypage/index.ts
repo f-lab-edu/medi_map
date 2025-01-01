@@ -141,5 +141,25 @@ router.delete('/me', authMiddleware, async (req, res) => {
   }
 });
 
+// 이메일 조회
+router.get('/me/email', authMiddleware, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const user = await User.findByPk(userId, {
+      attributes: ['email'],
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: MYPAGE_MESSAGES.USER_NOT_FOUND });
+    }
+
+    return res.status(200).json({ email: user.email });
+  } catch (error) {
+    console.error('Error fetching email:', error);
+    return res.status(500).json({ error: MYPAGE_MESSAGES.EMAIL_FETCH_ERROR });
+  }
+});
+
 
 export default router;
