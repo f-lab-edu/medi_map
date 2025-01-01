@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
+import { signOut } from 'next-auth/react';
 import { useRouter } from "next/navigation";
-import { API_URLS } from "@/constants/urls";
+import { ROUTES, API_URLS } from "@/constants/urls";
 import "@/styles/pages/mypage/edit.scss";
 import { FetchUsernameError, UpdateNicknameError, UpdatePasswordError, DeleteAccountError } from "@/error/MypageError";
 import { ALERT_MESSAGES } from "@/constants/alert_message";
@@ -120,13 +121,19 @@ export default function MyPage() {
   const handleDeleteAccount = async () => {
     if (window.confirm(ALERT_MESSAGES.CONFIRM.ACCOUNT_DELETE)) {
       try {
+        // 회원탈퇴 API 호출
         await axios.delete(`${API_URLS.MYPAGE}`, {
           headers: getAuthHeader(),
         });
-
-        alert(ALERT_MESSAGES.SUCCESS.ACCOUNT_DELETE);
+  
         Cookies.remove("accessToken");
-        router.push("/");
+  
+        await signOut({ callbackUrl: ROUTES.HOME });
+  
+        // 성공 메시지 출력
+        alert(ALERT_MESSAGES.SUCCESS.ACCOUNT_DELETE);
+  
+        router.push(ROUTES.HOME);
       } catch (error) {
         const errorMessage =
           error instanceof AxiosError && error.response?.data?.error;
@@ -134,7 +141,7 @@ export default function MyPage() {
         alert(ALERT_MESSAGES.ERROR.DELETE_ACCOUNT);
       }
     }
-  };
+  };  
 
   return (
     <div>

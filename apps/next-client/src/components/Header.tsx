@@ -1,15 +1,14 @@
-
 'use client';
 
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
-import { ROUTES , API_URLS } from '@/constants/urls';
+import { ROUTES, API_URLS } from '@/constants/urls';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import Image from 'next/image';
 
 export default function Header() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   const handleLogout = async () => {
     try {
@@ -19,13 +18,14 @@ export default function Header() {
         });
       }
       Cookies.remove('accessToken');
+
       signOut({ callbackUrl: ROUTES.AUTH.SIGN_IN });
     } catch (error) {
       console.error('Failed to logout:', error);
       signOut({ callbackUrl: ROUTES.AUTH.SIGN_IN });
     }
   };
-  
+
   return (
     <header id="header">
       <div className="inner">
@@ -40,7 +40,7 @@ export default function Header() {
             <li><Link href="/community">건강 이야기</Link></li>
           </ul>
           <ul className="auth_cont">
-            {session ? (
+            {status === "authenticated" ? ( // 세션 상태 확인
               <>
                 <li>
                   <button onClick={handleLogout}>로그아웃</button>
