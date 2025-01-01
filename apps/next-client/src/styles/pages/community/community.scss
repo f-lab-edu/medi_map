@@ -99,6 +99,9 @@
           width: 10%;
           color: #555;
         }
+        &.title {
+          cursor: pointer;
+        }
         .comment {
           color: var(--btn-color);
           font-size: 1.7rem;
