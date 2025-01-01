@@ -146,7 +146,9 @@ export default function CreatePost() {
           }
         />
       </div>
-      <button className="creat_button" onClick={handleCreatePost}>작성하기</button>
+      <div className="actions">
+        <button className="create_button" onClick={handleCreatePost}>작성하기</button>
+      </div>
     </div>
   );
 }

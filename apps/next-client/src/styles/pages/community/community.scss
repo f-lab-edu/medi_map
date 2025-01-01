@@ -119,6 +119,21 @@
       }
     }
   }
+
+  .form_group {
+    margin-bottom: 2rem;
+    input {
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      padding: 1rem;
+    }
+    .quill {
+      .ql-container {
+        height: 50rem;
+      }
+    }
+  }
 }
 
 .post_detail {
@@ -314,31 +329,25 @@
   }
 }
 
-.community_create {
-  .form_group {
-    margin-bottom: 2rem;
-    input {
-      width: 100%;
-      border: 1px solid #ccc;
-      border-radius: 0.5rem;
-      padding: 1rem;
-    }
-    .quill {
-      .ql-container {
-        height: 50rem;
-      }
-    }
+.actions {
+  display: flex;
+  gap: 2rem;
+  button {
+    border-radius: 0.5rem;
+    padding: 1rem;
+    font-size: 1.8rem;
+    text-align: center;
+    width: 15rem;
   }
-}
-
-.creat_button {
-  background: var(--btn-color);
-  color: #fff;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  font-size: 1.8rem;
-  text-align: center;
-  width: 15rem;
+  .create_button {
+    background: var(--btn-color);
+    color: #fff;
+  }
+  .delete_button {
+    color: var(--btn-color);
+    background: #fff;
+    border: 1px solid var(--btn-color);
+  }
 }
 
 .list_button {

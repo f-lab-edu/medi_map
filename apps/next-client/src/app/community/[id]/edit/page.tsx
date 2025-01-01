@@ -1,11 +1,15 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import { API_URLS } from '@/constants/urls';
 import '@/styles/pages/community/community.scss';
+
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+import 'react-quill/dist/quill.snow.css';
 
 export default function EditPostPage({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -15,18 +19,16 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
 
   const { data: session } = useSession();
   const router = useRouter();
-  
+
   const userId = session?.user?.id;
   const accessToken = session?.user?.accessToken;
 
-  // 게시글 정보 가져오기
   useEffect(() => {
     const fetchPost = async () => {
       try {
         const response = await axios.get(`${API_URLS.POSTS}/${id}`);
         const post = response.data;
 
-        // 작성자가 아닌 경우 접근 제한
         if (post.userId !== userId) {
           alert('수정 권한이 없습니다.');
           router.push('/community');
@@ -47,7 +49,43 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     fetchPost();
   }, [id, userId, router]);
 
-  // 게시글 수정
+  const modules = useMemo(() => {
+    return {
+      toolbar: [
+        [{ header: '1' }, { header: '2' }, { font: [] }],
+        [{ size: [] }],
+        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+        [
+          { list: 'ordered' },
+          { list: 'bullet' },
+          { indent: '-1' },
+          { indent: '+1' },
+        ],
+        ['link', 'image'],
+        ['clean'],
+      ],
+    };
+  }, []);
+
+  const formats = useMemo(
+    () => [
+      'header',
+      'font',
+      'size',
+      'bold',
+      'italic',
+      'underline',
+      'strike',
+      'blockquote',
+      'list',
+      'bullet',
+      'indent',
+      'link',
+      'image',
+    ],
+    []
+  );
+
   const handleUpdatePost = async () => {
     try {
       if (!title.trim() || !content.trim()) {
@@ -69,7 +107,6 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     }
   };
 
-  // 게시글 삭제
   const handleDeletePost = async () => {
     try {
       if (!window.confirm('정말 삭제하시겠습니까?')) return;
@@ -91,31 +128,33 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="edit-post">
-      <h1>게시글 수정</h1>
-      <div className="edit-form">
-        <label htmlFor="title">제목</label>
+    <div className="community edit_post">
+      <h1>커뮤니티</h1>
+      <p className="sub_title">자유롭게 건강에 관련 지식을 공유해봅시다!</p>
+      <div className="form_group">
         <input
           id="title"
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-
-        <label htmlFor="content">내용</label>
-        <textarea
-          id="content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
+      </div>
+     <div className="form_group">
+      <ReactQuill
+            theme="snow"
+            modules={modules}
+            formats={formats}
+            value={content}
+            onChange={(val) => setContent(val)}
+          />
+      </div>
 
         <div className="actions">
-          <button onClick={handleUpdatePost}>수정 완료</button>
-          <button onClick={handleDeletePost} className="delete-button">
+          <button  onClick={handleUpdatePost} className='create_button'>수정 완료</button>
+          <button onClick={handleDeletePost} className="delete_button">
             삭제
           </button>
         </div>
-      </div>
     </div>
   );
 }
