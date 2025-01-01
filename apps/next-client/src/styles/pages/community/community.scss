@@ -1,6 +1,6 @@
 [class^='community_'] {
   .inner {
-    padding: 20rem 0;
+    padding: 18rem 0;
     max-width: 128rem;
   }
 }
@@ -15,8 +15,8 @@
     text-align: center;
   }
   .sub_title {
-    font-size: 2rem;
-    margin: 2rem 0 10rem;
+    font-size: 1.8rem;
+    margin: 1rem 0 10rem;
     text-align: center;
   }
   .search_box {
@@ -92,12 +92,16 @@
           color: #555;
         }
         &.date {
-          width: 14%;
+          width: 10%;
           color: #555;
+          padding: 2.3rem 1rem;
+          text-align: center;
         }
         &.author {
           width: 10%;
           color: #555;
+          padding: 2.3rem 1rem;
+          text-align: center;
         }
         &.title {
           cursor: pointer;
@@ -292,7 +296,20 @@
 
     &.arrow {
       border: 1px solid #ddd;
-      margin: 0 1rem;
+      margin: 0 3rem;
+      cursor: pointer;
+
+      &.left {
+        img {
+          transform: rotate(180deg);
+        }
+      }
+    }
+
+    &.blind {
+      img {
+        opacity: 0.1;
+      }
     }
 
     &.active {
@@ -302,4 +319,31 @@
       position: relative;
     }
   }
+}
+
+.community_create {
+  .form_group {
+    margin-bottom: 2rem;
+    input {
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      padding: 1rem;
+    }
+    .quill {
+      .ql-container {
+        height: 50rem;
+      }
+    }
+  }
+}
+
+.creat_button {
+  background: var(--btn-color);
+  color: #fff;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  font-size: 1.8rem;
+  text-align: center;
+  width: 15rem;
 }

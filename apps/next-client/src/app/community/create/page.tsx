@@ -121,9 +121,10 @@ export default function CreatePost() {
   }, [newPost, router]);
 
   return (
-    <div className="create-post">
-      <h1>글쓰기</h1>
-      <div className="form-group">
+    <div className="community create_post">
+      <h1>커뮤니티</h1>
+      <p className="sub_title">자유롭게 건강에 관련 지식을 공유해봅시다!</p>
+      <div className="form_group">
         <input
           type="text"
           placeholder="제목을 입력하세요"
@@ -133,7 +134,7 @@ export default function CreatePost() {
           }
         />
       </div>
-      <div className="form-group">
+      <div className="form_group">
         <ReactQuill
           theme="snow"
           placeholder="내용을 입력하세요"
@@ -145,7 +146,7 @@ export default function CreatePost() {
           }
         />
       </div>
-      <button onClick={handleCreatePost}>작성하기</button>
+      <button className="creat_button" onClick={handleCreatePost}>작성하기</button>
     </div>
   );
 }

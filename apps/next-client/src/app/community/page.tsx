@@ -9,6 +9,7 @@ import { API_URLS } from '@/constants/urls';
 import '@/styles/pages/community/community.scss';
 import { Post } from '@/types/post';
 import { ALERT_MESSAGES } from '@/constants/alert_message';
+import Image from 'next/image';
 
 export default function CommunityList() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -97,7 +98,7 @@ export default function CommunityList() {
             <tbody>
               {posts.map((post, index) => (
                 <tr key={post.id}>
-                  <td>{index + 1 + (currentPage - 1) * postsPerPage}</td>
+                  <td>{totalPages * postsPerPage - (index + (currentPage - 1) * postsPerPage)}</td>
                   <td className="title" onClick={() => handlePostClick(post.id)}>
                     {post.title}
                     <span className="comment">({post.commentCount || 0})</span>
@@ -119,11 +120,11 @@ export default function CommunityList() {
 
       <div className="pagination">
         <button
-          className="arrow"
+          className={`arrow left ${currentPage === 1 ? 'blind' : ''}`}
           disabled={currentPage === 1}
           onClick={() => handlePageChange(currentPage - 1)}
         >
-          &lt;
+          <Image src="/images/icon_right_arrow.png" alt="arrow_button" width={6} height={9} />
         </button>
 
         {Array.from({ length: totalPages }, (_, index) => (
@@ -137,11 +138,11 @@ export default function CommunityList() {
         ))}
 
         <button
-          className="arrow"
+          className={`arrow right ${currentPage === totalPages ? 'blind' : ''}`}
           disabled={currentPage === totalPages}
           onClick={() => handlePageChange(currentPage + 1)}
         >
-          <img src="images/icon_right_arrow.png" alt="" />
+          <Image src="/images/icon_right_arrow.png" alt="arrow_button" width={6} height={9} />
         </button>
       </div>
     </div>
