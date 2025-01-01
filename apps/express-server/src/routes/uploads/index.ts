@@ -33,7 +33,7 @@ router.post('/', upload.single('image'), (req: Request, res: Response) => {
       path: req.file.path,
     };
 
-    const imageUrl = `${req.protocol}://${req.get('host')}/uploads/images/${req.file.filename}`;
+    const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
 
     return res.status(200).json({
       message: 'File uploaded successfully',
