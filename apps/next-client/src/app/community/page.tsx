@@ -12,6 +12,7 @@ export default function CommunityList() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
   const postsPerPage = 10;
 
   useEffect(() => {
@@ -20,7 +21,9 @@ export default function CommunityList() {
 
   const fetchPosts = async (page: number = 1) => {
     try {
-      const response = await axios.get(`${API_URLS.POSTS}?page=${page}&limit=${postsPerPage}`);
+      const response = await axios.get(
+        `${API_URLS.POSTS}?page=${page}&limit=${postsPerPage}&search=${searchTerm}`
+      );
       setPosts(response.data.posts);
       setTotalPages(response.data.totalPages);
     } catch (error) {
@@ -33,18 +36,35 @@ export default function CommunityList() {
     setCurrentPage(page);
   };
 
+  const handleSearch = () => {
+    setCurrentPage(1);
+    fetchPosts(1);
+  };
+
   return (
     <div className="community">
       <h1>커뮤니티</h1>
-      <p className='sub_title'>자유롭게 건강에 관련 지식을 공유해봅시다!</p>
+      <p className="sub_title">자유롭게 건강에 관련 지식을 공유해봅시다!</p>
 
-      <Link href="/community/create" className='create_post'>
-        <button>글쓰기</button>
-      </Link>
+      <div className="search_box">
+        <input
+          type="text"
+          title="검색어를 입력하세요."
+          id="search"
+          name="search"
+          value={searchTerm}
+          className="inp-text"
+          placeholder="검색어를 입력하세요."
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <button className="btn-search" type="button" onClick={handleSearch}>
+          <span className="dn">검색</span>
+        </button>
+      </div>
 
       <div className="post_list">
         {posts.length === 0 ? (
-          <p>게시글이 없습니다.</p>
+          <p className='empty'>게시글이 없습니다.</p>
         ) : (
           <table className="post_table">
             <thead>
@@ -59,13 +79,12 @@ export default function CommunityList() {
               {posts.map((post, index) => (
                 <tr key={post.id}>
                   <td>{index + 1 + (currentPage - 1) * postsPerPage}</td>
-                  <td>
-                    <Link href={`/community/${post.id}`}>
-                      {post.title}
-                    </Link>
+                  <td className='title'>
+                    <Link href={`/community/${post.id}`}>{post.title}</Link>
+                    <span className='comment'>(0)</span>
                   </td>
-                  <td>{new Date(post.createdAt).toLocaleDateString()}</td>
-                  <td>{post.author}</td>
+                  <td className='date'>{new Date(post.createdAt).toLocaleDateString()}</td>
+                  <td className='author'>{post.author}</td>
                 </tr>
               ))}
             </tbody>
@@ -73,12 +92,16 @@ export default function CommunityList() {
         )}
       </div>
 
+      <Link href="/community/create" className="create_post">
+        <button>글쓰기</button>
+      </Link>
+
       <div className="pagination">
-        <button
+        <button className='arrow'
           disabled={currentPage === 1}
           onClick={() => handlePageChange(currentPage - 1)}
         >
-          &lt; 
+          &lt;
         </button>
 
         {Array.from({ length: totalPages }, (_, index) => (
@@ -91,11 +114,11 @@ export default function CommunityList() {
           </button>
         ))}
 
-        <button
+        <button className='arrow'
           disabled={currentPage === totalPages}
           onClick={() => handlePageChange(currentPage + 1)}
         >
-          &gt;
+          <img src="images/icon_right_arrow.png" alt="" />
         </button>
       </div>
     </div>

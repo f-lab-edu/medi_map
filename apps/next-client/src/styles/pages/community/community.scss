@@ -7,7 +7,7 @@
 .community {
   .inner {
     padding: 20rem 0;
-    max-width: 128rem;
+    max-width: 120rem;
   }
   h1 {
     font-size: 5rem;
@@ -16,8 +16,34 @@
   }
   .sub_title {
     font-size: 2rem;
-    margin-top: 2rem;
+    margin: 2rem 0 10rem;
     text-align: center;
+  }
+  .search_box {
+    width: 58rem;
+    border-bottom: 3px solid #000;
+    padding-bottom: 6px;
+    margin-bottom: 4rem;
+    display: flex;
+    align-items: center;
+    input {
+      width: calc(100% - 28px);
+      border: none;
+      font-size: 1.7rem;
+    }
+    button {
+      float: right;
+      padding: 6px 0 6px 6px;
+
+      &::before {
+        content: '';
+        display: inline-block;
+        width: 22px;
+        height: 22px;
+        background: url(/images/icon_search.png) no-repeat center center;
+        vertical-align: top;
+      }
+    }
   }
   .create_post {
     display: flex;
@@ -25,17 +51,25 @@
     button {
       background: var(--btn-color);
       color: #fff;
-      padding: 1rem 2rem;
-      border-radius: 1rem;
-      font-size: 1.5rem;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      font-size: 1.8rem;
+      text-align: center;
+      width: 15rem;
     }
   }
   .post_list {
     margin-top: 2rem;
+
+    .empty {
+      text-align: center;
+      font-size: 1.7rem;
+    }
   }
   .post_table {
     width: 100%;
     border-top: 1px solid #ccc;
+    margin-bottom: 5rem;
 
     thead {
       display: none;
@@ -50,23 +84,30 @@
     tr {
       border-bottom: 1px solid #ccc;
       td {
-        padding: 2.2rem 2rem;
+        padding: 2.3rem 3rem;
+        font-size: 1.6rem;
+
         &:nth-of-type(1) {
           width: 6%;
           color: #555;
         }
-        &:nth-of-type(3) {
+        &.date {
+          width: 14%;
+          color: #555;
+        }
+        &.author {
           width: 10%;
           color: #555;
         }
-        &:nth-of-type(4) {
-          width: 10%;
-          color: #555;
+        .comment {
+          color: var(--btn-color);
+          font-size: 1.7rem;
+          margin-left: 1rem;
         }
 
         a {
-          font-size: 1.8rem;
-          font-weight: 500;
+          font-size: 1.7rem;
+          font-weight: 700;
         }
       }
     }
@@ -234,21 +275,27 @@
 .pagination {
   display: flex;
   justify-content: center;
-  font-size: 2rem;
-  gap: 2rem;
+  gap: 1rem;
   margin-top: 5rem;
 
   button {
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 4rem;
+    height: 4rem;
+    font-size: 1.6rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.arrow {
+      border: 1px solid #ddd;
+      margin: 0 1rem;
+    }
 
     &.active {
       color: #fff;
       background: var(--btn-color);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      border: none;
       position: relative;
     }
   }
