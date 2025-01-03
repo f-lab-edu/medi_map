@@ -4,7 +4,7 @@ import { loginWithCredentials, loginWithGoogle } from '@/services/loginService';
 import { ERROR_MESSAGES } from '@/constants/errors';
 import { ROUTES } from '@/constants/urls';
 import { useSession } from 'next-auth/react';
-import Cookies from 'js-cookie';
+import { setSessionCookies } from '@/utils/sessionCookies';
 
 interface AuthActionsParams {
   email: string;
@@ -17,28 +17,25 @@ export const useLoginActions = ({ email, password, setError }: AuthActionsParams
   const { data: session, status } = useSession();
 
   useEffect(() => {
-    if (status === 'authenticated' && session?.user?.accessToken) {
-      Cookies.set('accessToken', session.user.accessToken, {
-        secure: true,
-        sameSite: 'Strict',
-      });
+    if (status === 'authenticated' && session?.user) {
+      setSessionCookies(session.user);
       router.push(ROUTES.HOME);
     }
   }, [status, session, router]);
 
-  const handleLogin  = async () => {
-    try {
-      if (!email || !password) {
-        setError(ERROR_MESSAGES.LOGIN_FAILED);
-        return;
-      }
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setError(ERROR_MESSAGES.LOGIN_FAILED);
+      return;
+    }
 
+    try {
       const authResult = await loginWithCredentials(email, password);
 
       if (authResult?.error) {
         setError(authResult.error);
       }
-    } catch (err: unknown) {
+    } catch (err) {
       setError(ERROR_MESSAGES.LOGIN_FAILED);
     }
   };
@@ -46,14 +43,14 @@ export const useLoginActions = ({ email, password, setError }: AuthActionsParams
   const handleGoogleLogin = async () => {
     try {
       const authResult = await loginWithGoogle();
-  
+
       if (authResult?.error && !authResult?.url) {
         setError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
       }
-    } catch (err: unknown) {
+    } catch (err) {
       console.error(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR, err);
     }
   };
-  
-  return { handleLogin , handleGoogleLogin };
+
+  return { handleLogin, handleGoogleLogin };
 };

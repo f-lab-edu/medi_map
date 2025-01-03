@@ -44,6 +44,7 @@ export const authOptions: NextAuthOptions = {
           }
           throw new CredError(ERROR_MESSAGES.LOGIN_FAILED);
         } catch (error) {
+          console.error('Login failed:', error);
           throw new CredError(ERROR_MESSAGES.LOGIN_FAILED);
         }
       },
@@ -54,11 +55,16 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile }) {
       if (account?.provider === 'google' && profile) {
         try {
-          await axiosInstance.post(API_URLS.GOOGLE_LOGIN, {
+          const response = await axiosInstance.post(API_URLS.GOOGLE_LOGIN, {
             googleId: profile.sub,
             email: profile.email,
             username: profile.name,
           });
+
+          if (response.data.accessToken && response.data.refreshToken) {
+            account.access_token = response.data.accessToken;
+            account.refresh_token = response.data.refreshToken;
+          }
           return true;
         } catch (error) {
           console.error('Google login failed:', error);
@@ -66,39 +72,46 @@ export const authOptions: NextAuthOptions = {
         }
       }
       return true;
-    },      
+    },
     async jwt({ token, user, account, profile }) {
-      if (user) {
-        return {
-          ...token,
-          id: user.id,
-          email: user.email,
-          accessToken: user.accessToken,
-          refreshToken: user.refreshToken,
-          accessTokenExpires: Date.now() + ACCESS_TOKEN_EXPIRES_IN,
-        };
-      }
-
-      // Access Token 갱신 로직 추가
-      if (token.refreshToken) {
-        if (token.accessTokenExpires && Date.now() > token.accessTokenExpires) {
-          return refreshAccessToken(token as JWT);
+      if (account?.provider === 'google') {
+        if (account.access_token && account.refresh_token) {
+          token.accessToken = account.access_token;
+          token.refreshToken = account.refresh_token;
+          token.accessTokenExpires = account.expires_at
+            ? account.expires_at * 1000
+            : Date.now();
+          token.id = profile?.sub || token.id;
+        } else {
+          console.error('Google account tokens are undefined.');
         }
       }
-
+    
+      if (user && account?.provider === 'credentials') {
+        token.id = user.id;
+        token.email = user.email;
+        token.accessToken = user.accessToken;
+        token.refreshToken = user.refreshToken;
+        token.accessTokenExpires = Date.now() + ACCESS_TOKEN_EXPIRES_IN;
+      }
+    
+      if (token.refreshToken && token.accessTokenExpires && Date.now() > token.accessTokenExpires) {
+        const refreshedToken = await refreshAccessToken(token as JWT);
+        return refreshedToken;
+      }
+    
       return token;
-    },
-
+    },    
+    
     async session({ session, token }) {
       session.user = {
-        id: token.id as string,
+        id: token.id || '',
         email: token.email as string,
         accessToken: token.accessToken as string,
         refreshToken: token.refreshToken as string | '',
-        googleId: token.googleId as string | '',
       };
       return session;
-    },
+    },    
   },
 
   secret: process.env.NEXTAUTH_SECRET,

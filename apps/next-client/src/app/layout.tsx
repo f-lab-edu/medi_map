@@ -7,6 +7,7 @@ import SessionWrapper from '@/components/SessionWrapper';
 import ContentWrapper from '@/components/ContentWrapper';
 import { ReactNode } from 'react';
 import { checkEnvVariables } from '@/config/env';
+import SessionCookieSetter from '@/components/SessionCookieSetter';
 
 checkEnvVariables();
 
@@ -24,6 +25,7 @@ export default async function Layout({ children }: LayoutProps) {
           <Header />
           <ContentWrapper>
             {children}
+            <SessionCookieSetter />
           </ContentWrapper>
         </SessionWrapper>
       </body>
