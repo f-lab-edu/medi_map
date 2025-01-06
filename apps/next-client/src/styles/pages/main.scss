@@ -273,6 +273,10 @@
 
         img {
           width: 18rem;
+
+          @include mo_767 {
+            width: 15rem;
+          }
         }
       }
 
@@ -287,6 +291,10 @@
         .name {
           font-size: 1.6rem;
           color: #555;
+
+          @include mo_767 {
+            font-size: 1.4rem;
+          }
         }
         .txt {
           font-size: 2.2rem;
@@ -310,6 +318,7 @@
 
           @include mo_767 {
             font-size: 1.5rem;
+            line-height: 1.6;
           }
         }
       }
