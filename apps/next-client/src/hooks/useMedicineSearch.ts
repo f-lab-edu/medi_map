@@ -1,11 +1,11 @@
-import { useCallback } from 'react';
-import axios from 'axios';
-import { NoResultsError, ApiRequestError } from '@/error/SearchError';
-import { MedicineResultDto } from '@/dto/MedicineResultDto';
-import { API_URLS } from '@/constants/urls';
-import { FILTER_ALL } from '@/constants/filters';
-import { SEARCH_ERROR_MESSAGES } from '@/constants/search_errors';
-import { useSearchStore } from '@/store/useSearchStore';
+import { useCallback } from "react";
+import axios from "axios";
+import { NoResultsError, ApiRequestError } from "@/error/SearchError";
+import { MedicineResultDto } from "@/dto/MedicineResultDto";
+import { API_URLS } from "@/constants/urls";
+import { FILTER_ALL } from "@/constants/filters";
+import { SEARCH_ERROR_MESSAGES } from "@/constants/search_errors";
+import { useSearchStore } from "@/store/useSearchStore";
 
 export default function useMedicineSearch() {
   const {
@@ -18,7 +18,7 @@ export default function useMedicineSearch() {
     setError,
     hasMore,
     setHasMore,
-    resetResults
+    resetResults,
   } = useSearchStore();
 
   const fetchMedicineInfo = useCallback(
@@ -42,20 +42,23 @@ export default function useMedicineSearch() {
 
       try {
         // 필터 조건 처리
-        const filterColors = color.length === 0 || color.includes(FILTER_ALL) ? undefined : color.join(",");
-        const filterShapes = shape.length === 0 || shape.includes(FILTER_ALL) ? undefined : shape.join(",");
-        const filterForms = form.length === 0 || form.includes(FILTER_ALL) ? undefined : form.join(",");
+        const filterColors =
+          color.length === 0 || color.includes(FILTER_ALL) ? undefined : color.join(",");
+        const filterShapes =
+          shape.length === 0 || shape.includes(FILTER_ALL) ? undefined : shape.join(",");
+        const filterForms =
+          form.length === 0 || form.includes(FILTER_ALL) ? undefined : form.join(",");
 
         // API 호출
         const response = await axios.get(API_URLS.MEDICINE_SEARCH, {
           params: {
-            medicineName: name, // 약물 이름
-            companyName: company, // 회사 이름
-            color: filterColors, // 필터된 색상 목록
-            shape: filterShapes, // 필터된 모양 목록
+            medicineName: name,      // 약물 이름
+            companyName: company,    // 회사 이름
+            color: filterColors,     // 필터된 색상 목록
+            shape: filterShapes,     // 필터된 모양 목록
             formCodeName: filterForms, // 필터된 제형 목록
-            page, // 페이지 번호
-            limit: 10, // 페이지당 결과 개수
+            page,                    // 페이지 번호
+            limit: 10,               // 페이지당 결과 개수
           },
         });
 
@@ -64,16 +67,17 @@ export default function useMedicineSearch() {
           : [];
         const newTotal: number = response.data.total || 0;
 
+        // 기존 결과에 추가
         setResults(page === 1 ? newResults : [...results, ...newResults]);
         setTotalResults(newTotal);
-        setHasMore(newResults.length > 0);
+
+        setHasMore(page * 10 < newTotal);
 
         if (newTotal === 0 && page === 1) {
           throw new NoResultsError();
         }
       } catch (error: unknown) {
         console.error(SEARCH_ERROR_MESSAGES.API_REQUEST_ERROR, error);
-
         if (error instanceof NoResultsError) {
           setError(error.message);
         } else {
@@ -83,7 +87,14 @@ export default function useMedicineSearch() {
         setLoading(false);
       }
     },
-    [results, setLoading, setError, setHasMore, setResults, setTotalResults]
+    [
+      results,
+      setLoading,
+      setError,
+      setHasMore,
+      setResults,
+      setTotalResults,
+    ]
   );
 
   return {

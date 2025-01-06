@@ -3,6 +3,7 @@
 import { useEffect, KeyboardEvent, ChangeEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import useMedicineSearch from "@/hooks/useMedicineSearch";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 import { SEARCH_ERROR_MESSAGES } from "@/constants/search_errors";
@@ -13,6 +14,9 @@ import { MedicineResultDto } from "@/dto/MedicineResultDto";
 import { ScrollToTopButton } from "@/components/common/ScrollToTopButton";
 
 export default function SearchPage() {
+  const searchParams = useSearchParams();
+  const keyword = searchParams.get("keyword") || "";
+
   const {
     medicineSearchTerm,
     companySearchTerm,
@@ -20,7 +24,6 @@ export default function SearchPage() {
     selectedShapes,
     selectedForms,
     page,
-    isSearchExecuted,
     warning,
     setMedicineSearchTerm,
     setCompanySearchTerm,
@@ -28,7 +31,6 @@ export default function SearchPage() {
     setSelectedShapes,
     setSelectedForms,
     setPage,
-    setIsSearchExecuted,
     setWarning,
     results,
   } = useSearchStore();
@@ -36,6 +38,24 @@ export default function SearchPage() {
   const { fetchMedicineInfo, resetResults, loading, error, hasMore } =
     useMedicineSearch();
 
+  // keyword가 변경될 때마다 검색 로직 실행
+  useEffect(() => {
+    if (!keyword) return; // 쿼리 파라미터에 keyword가 없는 경우는 무시
+    setMedicineSearchTerm(keyword);
+    resetResults();  // 이전 검색 결과 초기화
+    setPage(1);      // 페이지를 1로 초기화
+
+    fetchMedicineInfo({
+      name: keyword,
+      company: "",
+      color: [],
+      shape: [],
+      form: [],
+      page: 1,
+    });
+  }, [keyword]);
+
+  // 검색 버튼(또는 Enter)으로 직접 검색할 때 실행
   const handleSearch = () => {
     if (
       medicineSearchTerm.trim().length < 2 &&
@@ -50,7 +70,6 @@ export default function SearchPage() {
 
     resetResults();
     setPage(1);
-    setIsSearchExecuted(true);
 
     fetchMedicineInfo({
       name: medicineSearchTerm.trim(),
@@ -64,28 +83,11 @@ export default function SearchPage() {
     setWarning(null);
   };
 
-  const updateFilter = (selectedItems: string[], newItem: string) => {
-    if (newItem === FILTER_ALL) {
-      return [FILTER_ALL];
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
     }
-
-    const updatedItems = selectedItems.filter((item) => item !== FILTER_ALL);
-
-    if (updatedItems.includes(newItem)) {
-      return updatedItems.filter((item) => item !== newItem);
-    }
-
-    return [...updatedItems, newItem];
   };
-
-  const handleColorSelect = (color: string) =>
-    setSelectedColors((prev) => updateFilter(prev, color));
-
-  const handleShapeSelect = (shape: string) =>
-    setSelectedShapes((prev) => updateFilter(prev, shape));
-
-  const handleFormSelect = (form: string) =>
-    setSelectedForms((prev) => updateFilter(prev, form));
 
   const handleMediChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMedicineSearchTerm(e.target.value);
@@ -95,43 +97,54 @@ export default function SearchPage() {
     setCompanySearchTerm(e.target.value);
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleSearch();
+  // 필터 클릭 시 배열 업데이트
+  const updateFilter = (selectedItems: string[], newItem: string) => {
+    if (newItem === FILTER_ALL) {
+      return [FILTER_ALL];
     }
+    const updatedItems = selectedItems.filter((item) => item !== FILTER_ALL);
+    if (updatedItems.includes(newItem)) {
+      return updatedItems.filter((item) => item !== newItem);
+    }
+    return [...updatedItems, newItem];
   };
 
+  const handleColorSelect = (color: string) => {
+    setSelectedColors((prev) => updateFilter(prev, color));
+  };
+  const handleShapeSelect = (shape: string) => {
+    setSelectedShapes((prev) => updateFilter(prev, shape));
+  };
+  const handleFormSelect = (form: string) => {
+    setSelectedForms((prev) => updateFilter(prev, form));
+  };
+
+  // 무한 스크롤
   const lastElementRef = useInfiniteScroll({
     loading,
     hasMore,
-    onLoadMore: () => setPage((prevPage) => prevPage + 1),
+    onLoadMore: () => {
+      setPage((prevPage) => prevPage + 1);
+    },
   });
 
   useEffect(() => {
-    if (!isSearchExecuted || page <= 1) return;
+    if (page > 1) {
+      fetchMedicineInfo({
+        name: medicineSearchTerm,
+        company: companySearchTerm,
+        color: selectedColors,
+        shape: selectedShapes,
+        form: selectedForms,
+        page,
+      });
+    }
+  }, [page]);
 
-    fetchMedicineInfo({
-      name: medicineSearchTerm,
-      company: companySearchTerm,
-      color: selectedColors,
-      shape: selectedShapes,
-      form: selectedForms,
-      page,
-    });
-  }, [
-    isSearchExecuted,
-    page,
-    fetchMedicineInfo,
-    medicineSearchTerm,
-    companySearchTerm,
-    selectedColors,
-    selectedShapes,
-    selectedForms,
-  ]);
-  
   return (
     <div className="medicine_search">
-      <h2 className="title">의약품 정보</h2>
+      <h1 className="title">약 정보 검색</h1>
+      <p className="sub_title">궁금했던 약 정보를 검색해보세요!</p>
 
       <div className="search_box">
         <input
@@ -153,12 +166,14 @@ export default function SearchPage() {
           {FILTERS.colors.map(({ name, className }) => (
             <button
               key={name}
-              className={`${className} ${
-                (name === FILTER_ALL && selectedColors.length === 0) ||
-                selectedColors.includes(name)
-                  ? "selected"
-                  : ""
-              }`}
+              className={
+                `${className} ${
+                  (name === FILTER_ALL && selectedColors.length === 0) ||
+                  selectedColors.includes(name)
+                    ? "selected"
+                    : ""
+                }`
+              }
               onClick={() => handleColorSelect(name)}
             >
               {name}

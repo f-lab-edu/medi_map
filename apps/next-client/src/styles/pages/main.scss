@@ -58,9 +58,10 @@
         }
 
         .sub_title {
-          font-size: 3rem;
-          font-weight: 500;
+          font-size: 2.8rem;
+          font-weight: 400;
           margin: 1rem 0 5rem;
+          color: #222;
         }
       }
     }
@@ -77,9 +78,10 @@
         width: 60rem;
         height: 100%;
         padding: 0 2rem;
+        font-size: 1.8rem;
 
         &::placeholder {
-          font-size: 1.7rem;
+          font-size: 1.8rem;
           color: #ccc;
           font-weight: 300;
         }
@@ -91,7 +93,7 @@
         background: var(--btn-color);
         border-radius: 1rem;
         color: #fff;
-        font-size: 1.7rem;
+        font-size: 1.8rem;
       }
     }
   }

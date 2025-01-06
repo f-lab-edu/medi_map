@@ -1,12 +1,23 @@
+.search {
+  .inner {
+    padding: 15rem 0 0;
+  }
+  h1 {
+    font-size: 5rem;
+    font-weight: bold;
+    text-align: center;
+  }
+  .sub_title {
+    font-size: 1.8rem;
+    margin: 1rem 0 5rem;
+    text-align: center;
+  }
+}
+
 .medicine_search {
   width: 80rem;
   margin: 0 auto;
-  .title {
-    font-size: 4rem;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 10rem;
-  }
+
   p {
     margin: 0;
   }
@@ -214,6 +225,13 @@
 .medi_search_result {
   max-width: 128rem;
   margin: 0 auto;
+
+  .title {
+    font-size: 5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10rem;
+  }
 
   .medi_bottom_result {
     margin-bottom: 10rem;
