@@ -1,5 +1,17 @@
+// abstracts
+@import '../../common/abstracts/responsive';
+
 .inner {
   max-width: 168rem;
   margin: 0 auto;
-  padding: 15rem 0 0;
+  padding: 15rem 0;
+
+  @include pc_1680 {
+    max-width: none;
+    padding: 15rem 5rem;
+  }
+
+  @include mo_767 {
+    padding: 5rem 1.75rem;
+  }
 }

@@ -17,12 +17,21 @@
       height: 0;
       overflow: hidden;
 
+      @include pc_1440 {
+        height: 100%;
+        padding: 0;
+      }
+
       .main_video {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
+
+        @include pc_1440 {
+          display: none;
+        }
       }
 
       &::after {
@@ -35,8 +44,17 @@
         z-index: 100;
         background: rgba(255, 255, 255, 0.5);
         backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
         pointer-events: none;
+
+        @include pc_1440 {
+          backdrop-filter: blur(1px);
+        }
+      }
+
+      .main_img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
 
       .txt_box {
@@ -49,12 +67,35 @@
         align-items: center;
         flex-direction: column;
 
+        @include pc_1680 {
+          top: calc(50% - 5rem);
+        }
+
+        @include pc_1440 {
+          top: calc(50%);
+        }
+
+        @include mo_767 {
+          padding: 0 1.75rem;
+          width: 100%;
+        }
+
         .title {
           color: var(--btn-color);
           font-size: 12rem;
           font-weight: 800;
           letter-spacing: -8px;
           text-shadow: 2px 2px 5px rgb(255 255 255 / 50%);
+
+          @include tablet {
+            font-size: 8rem;
+            letter-spacing: -5px;
+          }
+
+          @include mo_767 {
+            font-size: 5rem;
+            letter-spacing: -2px;
+          }
         }
 
         .sub_title {
@@ -62,6 +103,16 @@
           font-weight: 400;
           margin: 1rem 0 5rem;
           color: #222;
+
+          @include tablet {
+            font-size: 2.5rem;
+          }
+
+          @include mo_767 {
+            font-size: 1.7rem;
+            letter-spacing: -1.5px;
+            margin: 0 0 2rem;
+          }
         }
       }
     }
@@ -72,6 +123,15 @@
       gap: 1rem;
       height: 7rem;
 
+      @include tablet {
+        height: 6rem;
+      }
+
+      @include mo_767 {
+        width: 100%;
+        height: 5rem;
+      }
+
       input {
         border: 1px solid #ccc;
         border-radius: 1rem;
@@ -80,20 +140,44 @@
         padding: 0 2rem;
         font-size: 1.8rem;
 
+        @include tablet {
+          font-size: 1.6rem;
+        }
+
+        @include mo_767 {
+          width: 100%;
+          height: 5rem;
+          font-size: 1.5rem;
+          padding: 0 1rem;
+        }
+
         &::placeholder {
           font-size: 1.8rem;
           color: #ccc;
           font-weight: 300;
+
+          @include tablet {
+            font-size: 1.6rem;
+          }
+
+          @include mo_767 {
+            font-size: 1.5rem;
+          }
         }
       }
 
       .search_button {
-        width: 10rem;
+        min-width: 10rem;
         height: 100%;
         background: var(--btn-color);
         border-radius: 1rem;
         color: #fff;
         font-size: 1.8rem;
+
+        @include mo_767 {
+          font-size: 1.5rem;
+          min-width: 6rem;
+        }
       }
     }
   }
@@ -106,16 +190,24 @@
       gap: 2rem;
       margin-top: 10rem;
 
+      @include pc_1280 {
+        flex-direction: column;
+      }
+
       .item {
         border-radius: 1rem;
         padding: 10rem 5rem;
         background: #fff;
-        // text-align: center;
         width: 100%;
         position: relative;
-        // box-shadow:
-        //   5px 5px 15px rgba(0, 0, 0, 0.1),
-        //   -5px -5px 15px rgba(0, 0, 0, 0.1);
+
+        @include pc_1440 {
+          padding: 8rem 5rem;
+        }
+
+        @include mo_767 {
+          padding: 4rem 1.75rem;
+        }
 
         h3 {
           font-size: 3.2rem;
@@ -123,18 +215,36 @@
           font-weight: 600;
           color: #555;
 
+          @include pc_1280 {
+            font-size: 3rem;
+          }
+
+          @include mo_767 {
+            font-size: 2rem;
+          }
+
           span {
             font-size: 3.2rem;
             font-weight: 600;
             color: var(--btn-color);
             letter-spacing: -1.5px;
+
+            @include mo_767 {
+              font-size: 2rem;
+            }
           }
         }
 
         img {
           position: absolute;
-          top: 0;
+          top: 50%;
           right: 0;
+          width: 30%;
+          transform: translateY(-50%);
+
+          @include pc_1280 {
+            width: 20%;
+          }
         }
       }
     }
@@ -150,6 +260,20 @@
         gap: 2rem;
         align-items: center;
         width: 70rem;
+
+        @include pc_1440 {
+          width: 100%;
+          padding: 4rem;
+          flex-direction: column;
+        }
+
+        @include mo_767 {
+          padding: 2rem;
+        }
+
+        img {
+          width: 18rem;
+        }
       }
 
       .profile {
@@ -169,12 +293,24 @@
           font-weight: 600;
           letter-spacing: -1px;
           margin: 0 0 2rem 0;
+
+          @include mo_767 {
+            font-size: 1.8rem;
+          }
         }
         .txt_desc {
           font-size: 1.8rem;
           letter-spacing: -1px;
           margin: 0;
           color: #333;
+
+          @include pc_1440 {
+            font-size: 1.7rem;
+          }
+
+          @include mo_767 {
+            font-size: 1.5rem;
+          }
         }
       }
     }
@@ -184,11 +320,22 @@
       gap: 5rem;
       margin-bottom: 5rem;
       flex-direction: row-reverse;
+
+      @include mo_989 {
+        flex-direction: column;
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
     }
 
     .bottom_cont {
       display: flex;
       gap: 5rem;
+
+      @include mo_989 {
+        flex-direction: column;
+        gap: 2rem;
+      }
     }
   }
 }
@@ -197,12 +344,20 @@ section {
   .title {
     font-size: 6rem;
     font-weight: 600;
+
+    @include mo_767 {
+      font-size: 4rem;
+    }
   }
   .sub_title {
     font-size: 3rem;
     font-weight: 500;
     letter-spacing: -2px;
     margin-bottom: 5rem;
+
+    @include mo_767 {
+      font-size: 2rem;
+    }
   }
   .desc_txt {
     font-size: 2rem;
@@ -210,5 +365,11 @@ section {
     color: #333;
     margin-bottom: 10rem;
     line-height: 1.6;
+
+    @include mo_767 {
+      font-size: 1.5rem;
+      letter-spacing: -1px;
+      margin-bottom: 5rem;
+    }
   }
 }

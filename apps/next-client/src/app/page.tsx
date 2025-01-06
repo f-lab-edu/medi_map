@@ -36,6 +36,8 @@ export default function Home() {
             className="main_video"
           ></video>
 
+          <img src="/images/medicine_image.jpg" alt=""  className="main_img"/>
+
           <div className="txt_box">
             <h2 className="title">MediMap+</h2>
             <p className="sub_title">우리 동네 약국도, 긴급한 약물도 한곳에서</p>
@@ -48,6 +50,17 @@ export default function Home() {
                   setSearchTerm(e.target.value)
                 }
                 onKeyDown={handleKeyDown}
+                className="pc_ver"
+              />
+              <input
+                type="text"
+                placeholder="약물 검색해보세요! 예) 게보린 💊"
+                value={searchTerm}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setSearchTerm(e.target.value)
+                }
+                onKeyDown={handleKeyDown}
+                className="mo_ver"
               />
               <button className="search_button" onClick={handleSearch}>
                 검색

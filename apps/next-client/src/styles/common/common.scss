@@ -18,3 +18,17 @@
 .dn {
   display: none;
 }
+
+.pc_ver {
+  @include mo_767 {
+    display: none;
+  }
+}
+
+.mo_ver {
+  display: none;
+
+  @include mo_767 {
+    display: block;
+  }
+}
