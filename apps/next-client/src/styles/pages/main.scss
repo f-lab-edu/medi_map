@@ -62,20 +62,36 @@
           font-weight: 500;
           margin: 1rem 0 5rem;
         }
+      }
+    }
 
-        input {
-          border: 1px solid #ccc;
-          border-radius: 1rem;
-          height: 7rem;
-          width: 60rem;
-          padding: 0 2rem;
+    .search_box {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      height: 7rem;
 
-          &::placeholder {
-            font-size: 1.8rem;
-            color: #ccc;
-            font-weight: 300;
-          }
+      input {
+        border: 1px solid #ccc;
+        border-radius: 1rem;
+        width: 60rem;
+        height: 100%;
+        padding: 0 2rem;
+
+        &::placeholder {
+          font-size: 1.7rem;
+          color: #ccc;
+          font-weight: 300;
         }
+      }
+
+      .search_button {
+        width: 10rem;
+        height: 100%;
+        background: var(--btn-color);
+        border-radius: 1rem;
+        color: #fff;
+        font-size: 1.7rem;
       }
     }
   }

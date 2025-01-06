@@ -13,7 +13,10 @@ export default function Home() {
           <div className="txt_box">
             <h2 className='title'>MadiMap+</h2>
             <p className='sub_title'>우리 동네 약국도, 긴급한 약물도 한곳에서</p>
-            <input type="text" placeholder='찾아보고 싶은 약물이름을 검색해주세요. 예) 게보린 💊' />
+            <div className="search_box">
+              <input type="text" placeholder='찾아보고 싶은 약물이름을 검색해주세요. 예) 게보린 💊' />
+              <button className='search_button'>검색</button>
+            </div>
           </div>
         </div>
       </section>
