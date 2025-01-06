@@ -14,7 +14,7 @@ export default function Home() {
       alert("2자 이상의 검색어를 입력해주세요.");
       return;
     }
-    router.push(`/search?keyword=${encodeURIComponent(searchTerm)}`);
+    router.push(`/search`);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
