@@ -93,4 +93,52 @@
       }
     }
   }
+
+  .menu_list {
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    right: -100%;
+    transition: all 0.5s;
+    background: #fff;
+
+    &.active {
+      right: 0;
+    }
+
+    .close_button {
+      position: absolute;
+      top: 2.2rem;
+      right: 2.15rem;
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+
+  .menu_button {
+    img {
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+
+  .menu_list_all {
+    width: 100%;
+    height: 100%;
+    padding: 9rem 0;
+
+    .menu_cont {
+      li {
+        margin-bottom: 1rem;
+      }
+    }
+
+    .auth_cont {
+      display: flex;
+      gap: 1rem;
+      padding: 0 1.75rem;
+      margin-top: 5rem;
+    }
+  }
 }
