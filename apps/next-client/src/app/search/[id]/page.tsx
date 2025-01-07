@@ -40,16 +40,22 @@ export default function MedicineDetailPage() {
   if (loading) return <p>로딩 중...</p>;
   if (error) return <p className="error_message">{error}</p>;
 
+  console.log(medicine);
+  
   return (
     <div className="medi_search_result">
       <h2 className="title">의약품 상세정보</h2>
 
       {medicine && (
         <div className="medi_bottom_result">
+          <div className="top_cont">
           <h3 className="name">
-            {medicine.itemName} <br />
-            <span>{medicine.itemEngName}</span>
+            {medicine.itemName}
           </h3>
+          <div className="bookmark">
+            <button>⭐ 즐겨찾기 추가</button>
+          </div>
+          </div>
           <div className="medi_desc">
             {medicine.itemImage && (
               <Image

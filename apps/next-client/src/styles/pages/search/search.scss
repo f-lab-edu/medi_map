@@ -236,6 +236,33 @@
   .medi_bottom_result {
     margin-bottom: 10rem;
 
+    .top_cont {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+
+    .bookmark {
+      button {
+        border: 1px solid var(--btn-color);
+        border-radius: 1rem;
+        padding: 1rem;
+        font-weight: 500;
+        transition: all 0.3s;
+
+        &.active {
+          background: var(--btn-color);
+          color: #fff;
+        }
+
+        &:hover {
+          background: var(--btn-color);
+          color: #fff;
+        }
+      }
+    }
+
     .tab_menu {
       display: flex;
       padding: 0;
