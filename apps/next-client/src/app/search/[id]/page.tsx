@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import axios from 'axios';
 import Link from 'next/link';
 import Image from 'next/image';
+import Modal from "@/components/common/Modal";
 import { MedicineResultDto } from '@/dto/MedicineResultDto';
 import MedicineInfo from '@/components/medicineDetail/MedicineInfo';
 import '@/styles/pages/search/search.scss';
@@ -17,7 +18,7 @@ export default function MedicineDetailPage() {
   const [medicine, setMedicine] = useState<MedicineResultDto | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); 
   const [activeTab, setActiveTab] = useState<'all' | 'efficacy' | 'dosage' | 'precautions'>('all');
 
   useEffect(() => {
@@ -53,7 +54,7 @@ export default function MedicineDetailPage() {
             {medicine.itemName}
           </h3>
           <div className="bookmark">
-            <button>⭐ 즐겨찾기 추가</button>
+            <button onClick={() => setIsModalOpen(true)}>⭐ 즐겨찾기 추가</button>
           </div>
           </div>
           <div className="medi_desc">
@@ -65,7 +66,6 @@ export default function MedicineDetailPage() {
                 height={280}
               />
             )}
-
             <div className="details">
               <table className="medicine_table">
                 <tbody>
@@ -133,7 +133,6 @@ export default function MedicineDetailPage() {
               </table>
             </div>
           </div>
-
           <ul className="tab_menu">
             <li
               className={`tab_item all ${activeTab === 'all' ? 'active' : ''}`}
@@ -160,6 +159,20 @@ export default function MedicineDetailPage() {
               주의사항
             </li>
           </ul>
+
+          <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+            <h3>⭐ 즐겨찾기 추가</h3>
+            <p>이 약물을 즐겨찾기에 추가하시겠습니까?</p>
+            <button
+              onClick={() => {
+                // 즐겨찾기 추가 로직 호출
+                console.log("즐겨찾기에 추가되었습니다.");
+                setIsModalOpen(false);
+              }}
+            >
+              확인
+            </button>
+          </Modal>
 
           {activeTab === 'all' && (
             <>
