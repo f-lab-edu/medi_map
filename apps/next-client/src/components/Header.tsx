@@ -96,7 +96,7 @@ export default function Header() {
           />
         </div>
         <div
-          className={`menu_button ${menuActive ? 'active' : ''}`}
+          className={`menu_button mo_ver${menuActive ? 'active' : ''}`}
           onClick={toggleMenu}
         >
           <img src="/images/icon_menu.png" alt="" />
