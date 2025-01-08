@@ -50,11 +50,12 @@ export default function MedicineDetailPage() {
   
     try {
       const favoriteData = {
-        medicine_id: medicineId,
-        item_name: medicine.itemName,
-        entp_name: medicine.entpName,
-        etc_otc_name: medicine.etcOtcName || "",
-        class_name: medicine.className || "",
+        medicineId: medicineId,
+        itemName: medicine.itemName,
+        entpName: medicine.entpName,
+        etcOtcName: medicine.etcOtcName,
+        className: medicine.className,
+        itemImage: medicine.itemImage
       };
   
       console.log("[AddFavorite] Sending data:", favoriteData);

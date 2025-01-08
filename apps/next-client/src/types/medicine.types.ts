@@ -22,9 +22,10 @@ export interface MedicineData {
 }
 
 export interface MedicineFavorite {
-  medicine_id: string;
-  item_name: string;
-  entp_name: string;
-  etc_otc_name: string;
-  class_name: string;
+  medicineId: string;
+  itemName: string;
+  entpName: string;
+  etcOtcName: string;
+  className: string;
+  itemImage: string;
 }

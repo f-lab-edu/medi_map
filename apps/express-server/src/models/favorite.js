@@ -6,7 +6,7 @@ module.exports = sequelize => {
   class Favorite extends Model {
     static associate(models) {
       Favorite.belongsTo(models.User, {
-        foreignKey: 'user_id',
+        foreignKey: 'userId',
         as: 'user',
       });
     }
@@ -14,7 +14,7 @@ module.exports = sequelize => {
 
   Favorite.init(
     {
-      user_id: {
+      userId: {
         type: DataTypes.UUID,
         allowNull: false,
         references: {
@@ -24,24 +24,28 @@ module.exports = sequelize => {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       },
-      medicine_id: {
+      medicineId: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      item_name: {
+      itemName: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      entp_name: {
+      entpName: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      etc_otc_name: {
+      etcOtcName: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      class_name: {
+      className: {
         type: DataTypes.STRING,
+        allowNull: true,
+      },
+      itemImage: {
+        type: DataTypes.TEXT,
         allowNull: true,
       },
     },

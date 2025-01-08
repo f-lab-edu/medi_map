@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      user_id: {
+      userId: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
@@ -19,24 +19,28 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      medicine_id: {
+      medicineId: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      item_name: {
+      itemName: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      entp_name: {
+      entpName: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      etc_otc_name: {
+      etcOtcName: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      class_name: {
+      className: {
         type: Sequelize.STRING,
+        allowNull: true,
+      },
+      itemImage: {
+        type: Sequelize.TEXT,
         allowNull: true,
       },
       createdAt: {

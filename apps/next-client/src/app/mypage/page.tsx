@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import Link from 'next/link';
+import Image from "next/image";
 import "@/styles/pages/mypage/edit.scss";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -144,6 +145,8 @@ export default function MyPage() {
       headers: getAuthHeader(),
       withCredentials: true,
     });
+
+    console.log("Fetched Favorites:", response.data);
     return response.data;
   };
 
@@ -252,31 +255,33 @@ export default function MyPage() {
             {activeTab === "userBookmark" && (
               <div className="user_bookmark">
                 <h3>약물 정보 즐겨찾기</h3>
-                
                 {favorites.length > 0 ? (
-                  <ul className="favorites_list">
-                    {favorites.map((favorite, index) => {
-                      return (
-                        <li key={index} className="favorite_item">
-                          <Link href={`/search/${favorite.medicine_id}`} legacyBehavior>
-                            <a>
-                              <p>
-                                <strong>약물명:</strong> {favorite.item_name}
-                              </p>
-                              <p>
-                                <strong>제조사:</strong> {favorite.entp_name}
-                              </p>
-                              <p>
-                                <strong>전문/일반:</strong> {favorite.etc_otc_name}
-                              </p>
-                              <p>
-                                <strong>분류:</strong> {favorite.class_name}
-                              </p>
-                            </a>
-                          </Link>
-                        </li>
-                      );
-                    })}
+                  <ul className="medicine_results">
+                    {favorites.map((item, index) => (
+                      <li
+                        className="medicine_desc"
+                        key={item.medicineId}
+                      >
+                        <Link href={`/search/${item.medicineId}`} passHref>
+                          {item.itemImage && (
+                            <Image
+                              src={item.itemImage}
+                              alt={item.itemName}
+                              width={100}
+                              height={50}
+                            />
+                          )}
+                          <div className="medicine_info">
+                            <h3 className="name">{item.itemName}</h3>
+                            <div className="details">
+                              <p className="classification">약물 분류: {item.className}</p>
+                              <p className="type">전문/일반 구분: {item.etcOtcName}</p>
+                              <p className="manufacturer">제조사: {item.entpName}</p>
+                            </div>
+                          </div>
+                        </Link>
+                      </li>
+                    ))}
                   </ul>
                 ) : (
                   <p>즐겨찾기한 약물이 없습니다.</p>
