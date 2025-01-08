@@ -36,7 +36,7 @@ export default function Home() {
             className="main_video"
           ></video>
 
-          <img src="/images/medicine_image.jpg" alt=""  className="main_img"/>
+          <Image src="/imagesmedicine_image.jpg" layout="fill" className="main_img" alt=''/>
 
           <div className="txt_box">
             <h2 className="title">MediMap+</h2>

@@ -6,6 +6,6 @@ const router = Router();
 
 router.post('/', authMiddleware, addFavorite);
 router.get('/', authMiddleware, getFavorites);
-router.delete('/:medicine_id', authMiddleware, removeFavorite);
+router.delete('/:medicineId', authMiddleware, removeFavorite);
 
 export default router;

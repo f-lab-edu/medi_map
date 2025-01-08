@@ -6,6 +6,7 @@ import Cookies from "js-cookie";
 import Link from 'next/link';
 import Image from "next/image";
 import "@/styles/pages/mypage/edit.scss";
+import "@/styles/pages/search/search.scss";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ROUTES, API_URLS } from "@/constants/urls";
@@ -150,6 +151,30 @@ export default function MyPage() {
     return response.data;
   };
 
+  // 즐겨찾기 삭제 API
+  const deleteFavoriteApi = async (medicineId: string): Promise<void> => {
+    await axios.delete(`${API_URLS.FAVORITES}/${medicineId}`, {
+      headers: getAuthHeader(),
+      withCredentials: true,
+    });
+  };
+
+  // 삭제 버튼 핸들러
+  const handleDeleteFavorite = async (medicineId: string) => {
+    if (window.confirm("이 약물을 즐겨찾기에서 삭제하시겠습니까?")) {
+      try {
+        await deleteFavoriteApi(medicineId);
+        alert("즐겨찾기에서 삭제되었습니다.");
+
+        // 삭제 후 상태 업데이트
+        setFavorites((prev) => prev.filter((item) => item.medicineId !== medicineId));
+      } catch (error) {
+        console.error("Error deleting favorite:", error);
+        alert("즐겨찾기 삭제에 실패했습니다.");
+      }
+    }
+  };
+
    // 즐겨찾기 데이터 가져오기
    useEffect(() => {
     if (activeTab === "userBookmark") {
@@ -194,6 +219,7 @@ export default function MyPage() {
         <div className="right_cont">
           {activeTab === "userInfo" && (
             <div className="user_info">
+              <h2 className="title">회원정보 수정</h2>
               <p className="sub_title">
                 <span>{username}</span>님 안녕하세요! 오늘도 좋은 하루 되세요🍀
               </p>
@@ -254,7 +280,7 @@ export default function MyPage() {
 
             {activeTab === "userBookmark" && (
               <div className="user_bookmark">
-                <h3>약물 정보 즐겨찾기</h3>
+                <h2 className="title">약물 정보 즐겨찾기</h2>
                 {favorites.length > 0 ? (
                   <ul className="medicine_results">
                     {favorites.map((item, index) => (
@@ -279,6 +305,16 @@ export default function MyPage() {
                               <p className="manufacturer">제조사: {item.entpName}</p>
                             </div>
                           </div>
+                          <button
+                            className="delete_button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              handleDeleteFavorite(item.medicineId);
+                            }}
+                          >
+                            삭제
+                          </button>
                         </Link>
                       </li>
                     ))}

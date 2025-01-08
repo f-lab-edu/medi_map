@@ -10,7 +10,7 @@ import Image from 'next/image';
 
 export default function Header() {
   const { data: session, status } = useSession();
-  const [menuActive, setMenuActive] = useState(false); // 메뉴 활성 상태
+  const [menuActive, setMenuActive] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -29,11 +29,11 @@ export default function Header() {
   };
 
   const toggleMenu = () => {
-    setMenuActive((prev) => !prev); // 상태를 토글
+    setMenuActive((prev) => !prev);
   };
 
   const closeMenu = () => {
-    setMenuActive(false); // 상태를 false로 설정
+    setMenuActive(false);
   };
 
   return (
@@ -88,18 +88,13 @@ export default function Header() {
             )}
           </ul>
           </div>
-          <img
-            src="/images/icon_close_menu.png"
-            alt=""
-            className='close_button'
-            onClick={closeMenu}
-          />
+          <Image src="/images/icon_close_menu.png" onClick={closeMenu} className='close_button' alt="close_button" width={20} height={20} />
         </div>
         <div
           className={`menu_button mo_ver${menuActive ? 'active' : ''}`}
           onClick={toggleMenu}
         >
-          <img src="/images/icon_menu.png" alt="" />
+          <Image src="/images/icon_menu.png" className='icon_menu' alt="icon_menu" width={30} height={30} />
         </div>
       </div>
     </header>
