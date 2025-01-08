@@ -7,7 +7,8 @@ export const ROUTES = {
     POST: '/api/posts',
     HEALTH: '/api/health',
     UPLOADS: '/api/uploads',
-    UPLOADS_IMAGES: '/api/uploads/images'
+    UPLOADS_IMAGES: '/api/uploads/images',
+    FAVORITES: '/api/favorites'
   },
   HOME: '/',
 };
