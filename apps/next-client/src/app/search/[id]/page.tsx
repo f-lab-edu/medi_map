@@ -5,36 +5,13 @@ import { useParams } from "next/navigation";
 import axios from "axios";
 import Link from "next/link";
 import Image from "next/image";
-import Cookies from "js-cookie";
 import "@/styles/pages/search/search.scss";
 import MedicineInfo from "@/components/medicineDetail/MedicineInfo";
 import { MedicineResultDto } from "@/dto/MedicineResultDto";
 import { SEARCH_ERROR_MESSAGES } from "@/constants/search_errors";
 import { API_URLS } from "@/constants/urls";
 import { ScrollToTopButton } from "@/components/common/ScrollToTopButton";
-
-// 즐겨찾기 추가 API 호출 함수
-export const addFavoriteApi = async (data: {
-  medicine_id: string;
-  item_name: string;
-  entp_name: string;
-  etc_otc_name: string;
-  class_name: string;
-}) => {
-  const token = Cookies.get("accessToken");
-
-  if (!token) {
-    throw new Error("No token available");
-  }
-
-  const response = await axios.post(API_URLS.FAVORITES, data, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    withCredentials: true,
-  });
-  return response.data;
-};
+import { addFavoriteApi } from "@/utils/medicineFavorites";
 
 export default function MedicineDetailPage() {
   const { id } = useParams();
@@ -53,12 +30,10 @@ export default function MedicineDetailPage() {
         medicineId: medicineId,
         itemName: medicine.itemName,
         entpName: medicine.entpName,
-        etcOtcName: medicine.etcOtcName,
-        className: medicine.className,
-        itemImage: medicine.itemImage
+        etcOtcName: medicine.etcOtcName ?? "",
+        className: medicine.className ?? "",
+        itemImage: medicine.itemImage ?? "",
       };
-  
-      console.log("[AddFavorite] Sending data:", favoriteData);
   
       await addFavoriteApi(favoriteData);
       alert("즐겨찾기에 추가되었습니다!");

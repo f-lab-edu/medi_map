@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
@@ -31,7 +31,7 @@ export default function CommunityList() {
     }
   }, [currentPage]);
 
-  const fetchPosts = async (page: number = 1) => {
+  const fetchPosts = useCallback(async (page: number = 1) => {
     try {
       const response = await axios.get(
         `${API_URLS.POSTS}?page=${page}&limit=${postsPerPage}&search=${searchTerm}`
@@ -42,7 +42,7 @@ export default function CommunityList() {
       console.error('Error fetching posts:', error);
       alert(ALERT_MESSAGES.ERROR.POST.FETCH_POSTS);
     }
-  };
+  }, [postsPerPage, searchTerm]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
