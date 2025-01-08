@@ -17,5 +17,6 @@ export const API_URLS = {
   MYPAGE: `${process.env.NEXT_PUBLIC_LOCAL_BACKEND_URL}/api/users/me`,
   POSTS: `${process.env.NEXT_PUBLIC_LOCAL_BACKEND_URL}/api/posts`,
   UPLOADS: `${process.env.NEXT_PUBLIC_LOCAL_BACKEND_URL}/api/uploads`,
-  GOOGLE_LOGIN: `${process.env.NEXT_PUBLIC_LOCAL_BACKEND_URL}/api/auth/google-login`
+  GOOGLE_LOGIN: `${process.env.NEXT_PUBLIC_LOCAL_BACKEND_URL}/api/auth/google-login`,
+  FAVORITES: `${process.env.NEXT_PUBLIC_LOCAL_BACKEND_URL}/api/favorites`
 };
