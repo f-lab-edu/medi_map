@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
+import Link from 'next/link';
 import "@/styles/pages/mypage/edit.scss";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -10,6 +11,7 @@ import { ROUTES, API_URLS } from "@/constants/urls";
 import { FetchUsernameError, UpdateNicknameError, UpdatePasswordError, DeleteAccountError } from "@/error/MypageError";
 import { ALERT_MESSAGES } from "@/constants/alert_message";
 import { getAuthHeader } from "@/utils/authUtils";
+import { MedicineFavorite } from '@/types/medicine.types';
 
 export default function MyPage() {
   const [activeTab, setActiveTab] = useState("userInfo");
@@ -20,6 +22,7 @@ export default function MyPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
   const router = useRouter();
+  const [favorites, setFavorites] = useState<MedicineFavorite[]>([]);
 
   // 이메일 조회
   useEffect(() => {
@@ -135,7 +138,35 @@ export default function MyPage() {
     }
   };
 
+  // 즐겨찾기 데이터 가져오기
+  const fetchFavorites = async (): Promise<MedicineFavorite[]> => {
+    const response = await axios.get(API_URLS.FAVORITES, {
+      headers: getAuthHeader(),
+      withCredentials: true,
+    });
+    return response.data;
+  };
+
+   // 즐겨찾기 데이터 가져오기
+   useEffect(() => {
+    if (activeTab === "userBookmark") {
+      const fetchUserBookmarks = async () => {
+        try {
+          const data = await fetchFavorites();
+          setFavorites(data); // 가져온 데이터 설정
+        } catch (error) {
+          console.error("Error fetching favorites:", error);
+          alert("즐겨찾기 정보를 불러오지 못했습니다.");
+        }
+      };
+
+      fetchUserBookmarks();
+    }
+  }, [activeTab]);
+
+
   return (
+    
     <div>
       <h1 className="title">마이페이지</h1>
 
@@ -218,11 +249,41 @@ export default function MyPage() {
             </div>
           )}
 
-          {activeTab === "userBookmark" && (
-            <div className="user_bookmark">
-              <p>약물 정보 즐겨찾기 기능은 여기에~</p>
-            </div>
-          )}
+            {activeTab === "userBookmark" && (
+              <div className="user_bookmark">
+                <h3>약물 정보 즐겨찾기</h3>
+                
+                {favorites.length > 0 ? (
+                  <ul className="favorites_list">
+                    {favorites.map((favorite, index) => {
+                      return (
+                        <li key={index} className="favorite_item">
+                          <Link href={`/search/${favorite.medicine_id}`} legacyBehavior>
+                            <a>
+                              <p>
+                                <strong>약물명:</strong> {favorite.item_name}
+                              </p>
+                              <p>
+                                <strong>제조사:</strong> {favorite.entp_name}
+                              </p>
+                              <p>
+                                <strong>전문/일반:</strong> {favorite.etc_otc_name}
+                              </p>
+                              <p>
+                                <strong>분류:</strong> {favorite.class_name}
+                              </p>
+                            </a>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : (
+                  <p>즐겨찾기한 약물이 없습니다.</p>
+                )}
+              </div>
+            )}
+
         </div>
       </div>
     </div>

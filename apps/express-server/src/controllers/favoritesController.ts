@@ -57,7 +57,7 @@ export const getFavorites = async (req: AuthenticatedRequest, res: Response): Pr
     // 데이터베이스에서 즐겨찾기 조회
     const favorites = await Favorite.findAll({
       where: { user_id: userId },
-      attributes: ['item_name', 'entp_name', 'etc_otc_name', 'class_name'],
+      attributes: ['item_name', 'entp_name', 'etc_otc_name', 'class_name', 'medicine_id'],
     });
 
     console.log('[GetFavorites] Retrieved favorites:', favorites);

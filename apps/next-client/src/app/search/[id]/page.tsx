@@ -6,9 +6,9 @@ import axios from "axios";
 import Link from "next/link";
 import Image from "next/image";
 import Cookies from "js-cookie";
-import { MedicineResultDto } from "@/dto/MedicineResultDto";
-import MedicineInfo from "@/components/medicineDetail/MedicineInfo";
 import "@/styles/pages/search/search.scss";
+import MedicineInfo from "@/components/medicineDetail/MedicineInfo";
+import { MedicineResultDto } from "@/dto/MedicineResultDto";
 import { SEARCH_ERROR_MESSAGES } from "@/constants/search_errors";
 import { API_URLS } from "@/constants/urls";
 import { ScrollToTopButton } from "@/components/common/ScrollToTopButton";
@@ -31,7 +31,7 @@ export const addFavoriteApi = async (data: {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    withCredentials: true, // 쿠키를 사용하는 경우 추가
+    withCredentials: true,
   });
   return response.data;
 };
