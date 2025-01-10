@@ -38,12 +38,11 @@ export default function SearchPage() {
   const { fetchMedicineInfo, resetResults, loading, error, hasMore } =
     useMedicineSearch();
 
-  // keyword가 변경될 때마다 검색 로직 실행
   useEffect(() => {
-    if (!keyword) return; // 쿼리 파라미터에 keyword가 없는 경우는 무시
+    if (!keyword) return;
     setMedicineSearchTerm(keyword);
-    resetResults();  // 이전 검색 결과 초기화
-    setPage(1);      // 페이지를 1로 초기화
+    resetResults();
+    setPage(1);
 
     fetchMedicineInfo({
       name: keyword,
@@ -55,7 +54,6 @@ export default function SearchPage() {
     });
   }, [keyword]);
 
-  // 검색 버튼(또는 Enter)으로 직접 검색할 때 실행
   const handleSearch = () => {
     if (
       medicineSearchTerm.trim().length < 2 &&
@@ -97,7 +95,6 @@ export default function SearchPage() {
     setCompanySearchTerm(e.target.value);
   };
 
-  // 필터 클릭 시 배열 업데이트
   const updateFilter = (selectedItems: string[], newItem: string) => {
     if (newItem === FILTER_ALL) {
       return [FILTER_ALL];

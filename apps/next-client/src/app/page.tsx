@@ -14,7 +14,7 @@ export default function Home() {
       alert("2자 이상의 검색어를 입력해주세요.");
       return;
     }
-    router.push(`/search`);
+    router.push(`/search?keyword=${encodeURIComponent(searchTerm.trim())}`);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -36,7 +36,7 @@ export default function Home() {
             className="main_video"
           ></video>
 
-          <Image src="/imagesmedicine_image.jpg" layout="fill" className="main_img" alt=''/>
+          <Image src="/images/medicine_image.jpg" layout="fill" className="main_img" alt=''/>
 
           <div className="txt_box">
             <h2 className="title">MediMap+</h2>
@@ -87,13 +87,13 @@ export default function Home() {
               <h3>
                 정확하고 신속한 <span>약물 정보 검색</span>
               </h3>
-              <Image src="/images/main-icon1.png" alt="" width={300} height={300} />
+              <Image src="/images/main-icon1.png" alt="medicine_image" width={300} height={300} />
             </div>
             <div className="item">
               <h3>
                 편리한 <span>약국 위치 검색</span>
               </h3>
-              <Image src="/images/main-icon2.png" alt="" width={300} height={300} />
+              <Image src="/images/main-icon2.png" alt="medicine_image" width={300} height={300} />
             </div>
           </div>
         </div>
@@ -112,7 +112,7 @@ export default function Home() {
           <div className="banner">
             <div className="top_cont">
               <div className="item">
-                <Image src="/images/memoji01.png" alt="" width={200} height={200} />
+                <Image src="/images/memoji01.png" alt="memoji" width={200} height={200} />
                 <div className="txt_cont">
                   <span className="name">김서연 (29세)</span>
                   <p className="txt">필요한 약물 정보를 빠르게 확인하고 싶어요.</p>
@@ -124,7 +124,7 @@ export default function Home() {
               </div>
 
               <div className="item">
-                <Image src="/images/memoji02.png" alt="" width={200} height={200} />
+                <Image src="/images/memoji02.png" alt="memoji" width={200} height={200} />
                 <div className="txt_cont">
                   <span className="name">이진우 (33세)</span>
                   <p className="txt">지금 영업 중인 약국을 바로 찾아갈 수 있었으면 해요.</p>
@@ -138,7 +138,7 @@ export default function Home() {
 
             <div className="bottom_cont">
               <div className="item">
-                <Image src="/images/memoji03.png" alt="" width={200} height={200} />
+                <Image src="/images/memoji03.png" alt="memoji" width={200} height={200} />
                 <div className="txt_cont">
                   <span className="name">박민정 (31세)</span>
                   <p className="txt">다른 사람들의 건강 경험을 참고하고 싶어요.</p>
@@ -148,7 +148,7 @@ export default function Home() {
               </div>
 
               <div className="item">
-                <Image src="/images/memoji04.png" alt="" width={200} height={200} />
+                <Image src="/images/memoji04.png" alt="memoji" width={200} height={200} />
                 <div className="txt_cont">
                   <span className="name">한지수 (25세)</span>
                   <p className="txt">즐겨찾기한 약물을 빠르게 확인하고 싶어요.</p>
