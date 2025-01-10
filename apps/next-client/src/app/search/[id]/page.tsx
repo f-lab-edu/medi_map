@@ -8,57 +8,80 @@ import Image from "next/image";
 import "@/styles/pages/search/search.scss";
 import MedicineInfo from "@/components/medicineDetail/MedicineInfo";
 import { MedicineResultDto } from "@/dto/MedicineResultDto";
-import { SEARCH_ERROR_MESSAGES } from "@/constants/search_errors";
 import { API_URLS } from "@/constants/urls";
+import { addFavoriteApi, checkFavoriteApi } from "@/utils/medicineFavorites";
 import { ScrollToTopButton } from "@/components/common/ScrollToTopButton";
-import { addFavoriteApi } from "@/utils/medicineFavorites";
+
+const handleApiError = (error: unknown, defaultMessage: string): string => {
+  if (axios.isAxiosError(error)) {
+    if (error.response?.data?.message) {
+      return error.response.data.message;
+    }
+    return error.message || defaultMessage;
+  }
+  console.error("[API Error] Unknown Error:", error);
+  return defaultMessage;
+};
 
 export default function MedicineDetailPage() {
   const { id } = useParams();
   const [medicine, setMedicine] = useState<MedicineResultDto | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<"all" | "efficacy" | "dosage" | "precautions">("all");
+
+  const loadMedicineDetails = async () => {
+    if (!id) return;
+
+    try {
+      setLoading(true);
+
+      const response = await axios.get(`${API_URLS.MEDICINE}/${id}`);
+      setMedicine(response.data);
+
+      const medicineId = Array.isArray(id) ? id[0] : id;
+      const isFav = await checkFavoriteApi(medicineId);
+      setIsFavorite(isFav);
+    } catch (error) {
+      const errorMessage = handleApiError(error, "의약품 정보를 불러오는 중 오류가 발생했습니다.");
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddFavorite = async () => {
     if (!medicine || !id) return;
-  
+
     const medicineId = Array.isArray(id) ? id[0] : id;
-  
+
+    if (isFavorite) {
+      alert("이미 즐겨찾기에 추가되었습니다.");
+      return;
+    }
+
     try {
       const favoriteData = {
-        medicineId: medicineId,
+        medicineId,
         itemName: medicine.itemName,
         entpName: medicine.entpName,
         etcOtcName: medicine.etcOtcName ?? "",
         className: medicine.className ?? "",
         itemImage: medicine.itemImage ?? "",
       };
-  
+
       await addFavoriteApi(favoriteData);
+      setIsFavorite(true); 
       alert("즐겨찾기에 추가되었습니다!");
     } catch (error) {
-      console.error("[AddFavorite] Error:", error);
-      alert("즐겨찾기 추가에 실패했습니다.");
+      const errorMessage = handleApiError(error, "즐겨찾기 추가에 실패했습니다.");
+      alert(errorMessage);
     }
   };
-  
 
   useEffect(() => {
-    const fetchMedicine = async () => {
-      if (!id) return;
-      try {
-        const response = await axios.get(`${API_URLS.MEDICINE}/${id}`);
-        setMedicine(response.data);
-      } catch (error) {
-        console.error(SEARCH_ERROR_MESSAGES.NO_MEDICINE_FOUND, error);
-        setError(SEARCH_ERROR_MESSAGES.NO_MEDICINE_FOUND);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMedicine();
+    loadMedicineDetails();
   }, [id]);
 
   if (loading) return <p>로딩 중...</p>;
@@ -67,15 +90,20 @@ export default function MedicineDetailPage() {
   return (
     <div className="medi_search_result">
       <h2 className="title">의약품 상세정보</h2>
-
       {medicine && (
         <div className="medi_bottom_result">
           <div className="top_cont">
             <h3 className="name">{medicine.itemName}</h3>
             <div className="bookmark">
-              <button onClick={handleAddFavorite}>⭐즐겨찾기 추가</button>
+              <button
+                onClick={handleAddFavorite}
+                className={`favorite_button ${isFavorite ? "active" : ""}`}
+              >
+                {isFavorite ? "⭐ 이미 추가됨" : "⭐ 즐겨찾기 추가"}
+              </button>
             </div>
           </div>
+
           <div className="medi_desc">
             {medicine.itemImage && (
               <Image
@@ -152,9 +180,7 @@ export default function MedicineDetailPage() {
                     <th>허가 날짜</th>
                     <td>
                       {medicine.itemPermitDate
-                        ? new Date(medicine.itemPermitDate)
-                            .toISOString()
-                            .split("T")[0]
+                        ? new Date(medicine.itemPermitDate).toISOString().split("T")[0]
                         : "N/A"}
                     </td>
                   </tr>
@@ -214,7 +240,6 @@ export default function MedicineDetailPage() {
           )}
         </div>
       )}
-
       <Link href="/search" className="back_btn">
         뒤로가기
       </Link>

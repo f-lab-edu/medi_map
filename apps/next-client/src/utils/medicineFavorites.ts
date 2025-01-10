@@ -1,13 +1,12 @@
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import { API_URLS } from '@/constants/urls';
-import { MedicineFavorite } from '@/types/medicine.types';
+import axios from "axios";
+import Cookies from "js-cookie";
+import { API_URLS } from "@/constants/urls";
+import { MedicineFavorite } from "@/types/medicine.types";
 
 export const addFavoriteApi = async (data: MedicineFavorite) => {
-  const token = Cookies.get('accessToken');
-
+  const token = Cookies.get("accessToken");
   if (!token) {
-    throw new Error('No token available');
+    throw new Error("No token available");
   }
 
   const apiPayload = {
@@ -26,4 +25,24 @@ export const addFavoriteApi = async (data: MedicineFavorite) => {
     withCredentials: true,
   });
   return response.data;
+};
+
+export const checkFavoriteApi = async (medicineId: string): Promise<boolean> => {
+  const token = Cookies.get("accessToken");
+  if (!token) {
+    throw new Error("No token available");
+  }
+
+  try {
+    const response = await axios.get(`${API_URLS.FAVORITES}/${medicineId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true,
+    });
+    return response.data.isFavorite;
+  } catch (error) {
+    console.error("[checkFavoriteApi] Error:", error);
+    return false;
+  }
 };
