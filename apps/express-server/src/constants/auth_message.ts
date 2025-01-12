@@ -11,5 +11,6 @@ export const AUTH_MESSAGES = {
   SIGNUP_SUCCESS: '회원가입이 성공적으로 완료되었습니다.',
   USERNAME_INVALID: '사용자 이름은 3자 이상 30자 이하여야 합니다.',
   EMAIL_INVALID: '유효한 이메일 주소를 입력해주세요.',
-  PASSWORD_INVALID: '비밀번호는 최소 8자 이상이어야 합니다.'
+  PASSWORD_INVALID: '비밀번호는 최소 8자 이상이어야 합니다.',
+  PASSWORD_CONFIRMATION: '비밀번호 확인을 입력해주세요.'
 };

@@ -26,6 +26,52 @@ export default function MyPage() {
   const router = useRouter();
   const [favorites, setFavorites] = useState<MedicineFavorite[]>([]);
 
+  // 닉네임/비밀번호 유효성 검사 함수
+  const validateInput = (type: string, value: string): string | null => {
+    if (type === 'nickname') {
+      if (!value || value.length < 3 || value.length > 30) {
+        return ALERT_MESSAGES.ERROR.AUTH.NICKNAME_LENGTH;
+      }
+    }
+    if (type === 'password') {
+      if (!value || value.length < 8) {
+        return ALERT_MESSAGES.ERROR.AUTH.PASSWORD_MIN_LENGTH;
+      }
+    }
+    return null;
+  };
+
+  // 전체 비밀번호 확인
+  const validatePasswordChange = ({
+    oldPassword,
+    newPassword,
+    confirmPassword,
+  }: {
+    oldPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+  }): string | null => {
+    if (!oldPassword.trim()) {
+      return ALERT_MESSAGES.ERROR.AUTH.PASSWORD_REQUIRED;
+    }
+    if (!newPassword.trim()) {
+      return ALERT_MESSAGES.ERROR.AUTH.NEW_PASSWORD_REQUIRED;
+    }
+    if (!confirmPassword.trim()) {
+      return ALERT_MESSAGES.ERROR.AUTH.CONFIRM_PASSWORD_REQUIRED;
+    }
+
+    if (newPassword.trim().length < 8) {
+      return ALERT_MESSAGES.ERROR.AUTH.PASSWORD_MIN_LENGTH;
+    }
+
+    if (newPassword !== confirmPassword) {
+      return ALERT_MESSAGES.ERROR.AUTH.PASSWORD_MISMATCH;
+    }
+
+    return null;
+  };
+
   // 이메일 조회
   useEffect(() => {
     const fetchEmail = async () => {
@@ -63,15 +109,22 @@ export default function MyPage() {
 
   // 닉네임 변경
   const handleNicknameChange = async () => {
+    const validationError = validateInput('nickname', nickname);
+    if (validationError) {
+      alert(validationError);
+      return;
+    }
+  
     try {
       await axios.put(
         `${API_URLS.MYPAGE}/username`,
         { nickname },
         { headers: getAuthHeader() }
       );
-
+  
       alert(ALERT_MESSAGES.SUCCESS.NICKNAME_UPDATE);
       setUsername(nickname);
+      setNickname("");
     } catch (error) {
       const errorMessage =
         error instanceof AxiosError && error.response?.data?.error;
@@ -82,23 +135,33 @@ export default function MyPage() {
 
   // 비밀번호 변경
   const handlePasswordChange = async () => {
+    const passwordValidationError = validatePasswordChange({
+      oldPassword,
+      newPassword,
+      confirmPassword,
+    });
+    if (passwordValidationError) {
+      alert(passwordValidationError);
+      return;
+    }
+
     try {
       await axios.put(
         `${API_URLS.MYPAGE}/password`,
         { oldPassword, newPassword, confirmPassword },
         { headers: getAuthHeader() }
       );
-
+  
       alert(ALERT_MESSAGES.SUCCESS.PASSWORD_UPDATE);
       setOldPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (error) {
       let errorMessage = ALERT_MESSAGES.ERROR.UPDATE_PASSWORD;
-
+  
       if (error instanceof AxiosError && error.response?.data?.code) {
         const errorCode = error.response.data.code;
-
+  
         if (errorCode === "PASSWORD_MISMATCH") {
           errorMessage = ALERT_MESSAGES.ERROR.PASSWORD_MISMATCH;
         } else if (errorCode === "PASSWORD_CONFIRMATION_ERROR") {
@@ -110,7 +173,7 @@ export default function MyPage() {
             error.response.data.message || ALERT_MESSAGES.ERROR.UNKNOWN_ERROR;
         }
       }
-
+  
       console.error(new UpdatePasswordError(errorMessage));
       alert(errorMessage);
     }
@@ -147,7 +210,6 @@ export default function MyPage() {
       withCredentials: true,
     });
 
-    console.log("Fetched Favorites:", response.data);
     return response.data;
   };
 
@@ -159,32 +221,32 @@ export default function MyPage() {
     });
   };
 
-  // 삭제 버튼 핸들러
+  // 즐겨찾기 삭제 버튼 핸들러
   const handleDeleteFavorite = async (medicineId: string) => {
-    if (window.confirm("이 약물을 즐겨찾기에서 삭제하시겠습니까?")) {
+    if (window.confirm(ALERT_MESSAGES.CONFIRM.DELETE_FAVORITE)) {
       try {
         await deleteFavoriteApi(medicineId);
-        alert("즐겨찾기에서 삭제되었습니다.");
+        alert(ALERT_MESSAGES.SUCCESS.FAVORITE.FAVORITE_DELETE);
 
         // 삭제 후 상태 업데이트
         setFavorites((prev) => prev.filter((item) => item.medicineId !== medicineId));
       } catch (error) {
         console.error("Error deleting favorite:", error);
-        alert("즐겨찾기 삭제에 실패했습니다.");
+        alert(ALERT_MESSAGES.ERROR.FAVORITES.FAVORITE_DELETE);
       }
     }
   };
 
-   // 즐겨찾기 데이터 가져오기
-   useEffect(() => {
+  // 즐겨찾기 데이터 가져오기
+  useEffect(() => {
     if (activeTab === "userBookmark") {
       const fetchUserBookmarks = async () => {
         try {
           const data = await fetchFavorites();
-          setFavorites(data); // 가져온 데이터 설정
+          setFavorites(data);
         } catch (error) {
           console.error("Error fetching favorites:", error);
-          alert("즐겨찾기 정보를 불러오지 못했습니다.");
+          alert(ALERT_MESSAGES.ERROR.FAVORITES.FAVORITES_FETCH);
         }
       };
 
@@ -192,9 +254,7 @@ export default function MyPage() {
     }
   }, [activeTab]);
 
-
   return (
-    
     <div>
       <h1 className="title">마이페이지</h1>
 
@@ -278,53 +338,49 @@ export default function MyPage() {
             </div>
           )}
 
-            {activeTab === "userBookmark" && (
-              <div className="user_bookmark">
-                <h2 className="title">약물 정보 즐겨찾기</h2>
-                {favorites.length > 0 ? (
-                  <ul className="medicine_results">
-                    {favorites.map((item, index) => (
-                      <li
-                        className="medicine_desc"
-                        key={item.medicineId}
-                      >
-                        <Link href={`/search/${item.medicineId}`} passHref>
-                          {item.itemImage && (
-                            <Image
-                              src={item.itemImage}
-                              alt={item.itemName}
-                              width={100}
-                              height={50}
-                            />
-                          )}
-                          <div className="medicine_info">
-                            <h3 className="name">{item.itemName}</h3>
-                            <div className="details">
-                              <p className="classification">약물 분류: {item.className}</p>
-                              <p className="type">전문/일반 구분: {item.etcOtcName}</p>
-                              <p className="manufacturer">제조사: {item.entpName}</p>
-                            </div>
+          {activeTab === "userBookmark" && (
+            <div className="user_bookmark">
+              <h2 className="title">약물 정보 즐겨찾기</h2>
+              {favorites.length > 0 ? (
+                <ul className="medicine_results">
+                  {favorites.map((item) => (
+                    <li className="medicine_desc" key={item.medicineId}>
+                      <Link href={`/search/${item.medicineId}`} passHref>
+                        {item.itemImage && (
+                          <Image
+                            src={item.itemImage}
+                            alt={item.itemName}
+                            width={100}
+                            height={50}
+                          />
+                        )}
+                        <div className="medicine_info">
+                          <h3 className="name">{item.itemName}</h3>
+                          <div className="details">
+                            <p className="classification">약물 분류: {item.className}</p>
+                            <p className="type">전문/일반 구분: {item.etcOtcName}</p>
+                            <p className="manufacturer">제조사: {item.entpName}</p>
                           </div>
-                          <button
-                            className="delete_button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              e.preventDefault();
-                              handleDeleteFavorite(item.medicineId);
-                            }}
-                          >
-                            삭제
-                          </button>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>즐겨찾기한 약물이 없습니다.</p>
-                )}
-              </div>
-            )}
-
+                        </div>
+                        <button
+                          className="delete_button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            handleDeleteFavorite(item.medicineId);
+                          }}
+                        >
+                          삭제
+                        </button>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>즐겨찾기한 약물이 없습니다.</p>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

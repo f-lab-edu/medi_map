@@ -13,6 +13,10 @@ export const ALERT_MESSAGES = {
       COMMENT_ADD: '댓글이 추가되었습니다.',
       COMMENT_EDIT: '댓글이 수정되었습니다.',
       COMMENT_DELETE: '댓글이 삭제되었습니다.',
+    },
+
+    FAVORITE: {
+      FAVORITE_DELETE: '즐겨찾기에서 삭제되었습니다.',
     }
   },
 
@@ -43,10 +47,25 @@ export const ALERT_MESSAGES = {
       COMMENT_EDIT_ERROR: '댓글 수정 중 문제가 발생했습니다.',
       COMMENT_DELETE_ERROR: '댓글 삭제 중 문제가 발생했습니다.',
     },
+
+    AUTH: {
+      NICKNAME_LENGTH: '닉네임은 3자 이상 30자 이하여야 합니다.',
+      PASSWORD_MIN_LENGTH: '비밀번호는 최소 8자 이상이어야 합니다.',
+      PASSWORD_REQUIRED: '현재 비밀번호를 입력해주세요.',
+      NEW_PASSWORD_REQUIRED: '새 비밀번호를 입력해주세요.',
+      CONFIRM_PASSWORD_REQUIRED: '새 비밀번호 확인을 입력해주세요.',
+      PASSWORD_MISMATCH: '새 비밀번호와 비밀번호 확인이 일치하지 않습니다.',
+    },
+
+    FAVORITES: {
+      FAVORITE_DELETE: '즐겨찾기 삭제에 실패했습니다.',
+      FAVORITES_FETCH: '즐겨찾기 정보를 불러오지 못했습니다.',
+    }
   },
   
   CONFIRM: {
     ACCOUNT_DELETE: '정말로 회원탈퇴를 하시겠습니까?',
     CHECK_DELETE: '정말로 삭제하시겠습니까?',
+    DELETE_FAVORITE: '이 약물을 즐겨찾기에서 삭제하시겠습니까?',
   },
 };

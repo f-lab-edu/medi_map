@@ -17,7 +17,9 @@ export default function SignupPage() {
 
   return (
     <>
-      <h1>회원가입</h1>
+      <h2>회원가입</h2>
+      <p>건강한 생활을 위한 첫걸음, 지금 가입하세요.💪</p>
+
       {error && <p className="error">{error}</p>}
 
       <form onSubmit={(e) => e.preventDefault()}>

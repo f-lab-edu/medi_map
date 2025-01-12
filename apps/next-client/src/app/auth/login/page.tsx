@@ -12,7 +12,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <h1>로그인</h1>
+      <h2>로그인</h2>
       <p>SNS로 간편하게 로그인하고 더 많은 서비스로 즐겨보세요!</p>
 
       {error && <p className="error">{error}</p>}

@@ -3,8 +3,32 @@ import bcrypt from 'bcrypt';
 import { User } from '@/models';
 import { authMiddleware } from '@/middleware/authMiddleware';
 import { MYPAGE_MESSAGES } from '@/constants/mypage_message';
+import { AUTH_MESSAGES } from '@/constants/auth_message';
 
 const router = express.Router();
+
+// 유효성 검사 함수
+const validateInput = (type, value) => {
+  if (type === 'username') {
+    if (!value || value.length < 3 || value.length > 30) {
+      return AUTH_MESSAGES.USERNAME_INVALID;
+    }
+  }
+
+  if (type === 'password') {
+    if (!value || value.length < 8) {
+      return AUTH_MESSAGES.PASSWORD_INVALID;
+    }
+  }
+
+  if (type === 'confirmPassword') {
+    if (!value) {
+      return AUTH_MESSAGES.PASSWORD_CONFIRMATION;
+    }
+  }
+
+  return null;
+};
 
 // 닉네임 조회
 router.get('/me/username', authMiddleware, async (req, res) => {
@@ -25,10 +49,15 @@ router.get('/me/username', authMiddleware, async (req, res) => {
   }
 });
 
-// 닉네임 변경경
+// 닉네임 변경
 router.put('/me/username', authMiddleware, async (req, res) => {
   const { nickname } = req.body;
   const userId = req.user.id;
+
+  const validationError = validateInput('username', nickname);
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
+  }
 
   try {
     await User.update({ username: nickname }, { where: { id: userId } });
@@ -43,10 +72,19 @@ router.put('/me/password', authMiddleware, async (req, res) => {
   const { oldPassword, newPassword, confirmPassword } = req.body;
   const userId = req.user.id;
 
+  // 유효성 검사
+  let validationError = validateInput('password', newPassword);
+  if (!validationError) {
+    validationError = validateInput('confirmPassword', confirmPassword);
+  }
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
+  }
+
   try {
     // 사용자 정보 조회
     const user = await User.findByPk(userId, {
-      attributes: ['id', 'username', 'email', 'password', 'provider'],
+      attributes: ['id', 'password', 'provider'],
       raw: true,
     });
 
