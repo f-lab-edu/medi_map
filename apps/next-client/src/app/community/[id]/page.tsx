@@ -52,13 +52,17 @@ export default function PostDetailPage({ params }: { params: Params }) {
   // 추천 정보 가져오기
   const fetchRecommendation = useCallback(async () => {
     try {
-      const response = await axios.get(`${API_URLS.POSTS}/${id}/recommend`);
+      // 토큰 포함
+      const response = await axios.get(
+        `${API_URLS.POSTS}/${id}/recommend`,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
       setIsRecommended(response.data.recommended);
       setRecommendationCount(response.data.recommendationCount);
     } catch (error) {
       console.error('Error fetching recommendation:', error);
     }
-  }, [id]);
+  }, [id, accessToken]);  
 
   useEffect(() => {
     fetchPost();
@@ -161,16 +165,15 @@ export default function PostDetailPage({ params }: { params: Params }) {
         {},
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
-
+  
       setIsRecommended(response.data.recommended);
-      setRecommendationCount((prev) =>
-        response.data.recommended ? prev + 1 : prev - 1
-      );
+      setRecommendationCount(response.data.recommendationCount);
     } catch (error) {
       console.error('Error toggling recommendation:', error);
       alert(ALERT_MESSAGES.ERROR.UNKNOWN_ERROR);
     }
   };
+  
 
   if (!post) {
     return <p>게시글을 불러오는 중...</p>;
@@ -179,6 +182,16 @@ export default function PostDetailPage({ params }: { params: Params }) {
   return (
     <div className="post_detail">
       <h2 className="post_title">{post.title}</h2>
+      <span className="post_date">
+        {new Date(post.createdAt).toLocaleString('ko-KR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        })}
+      </span>
 
       {post.userId === userId && (
         <div className="post_actions">

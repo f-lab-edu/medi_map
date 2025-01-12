@@ -174,28 +174,54 @@ router.post('/:id/recommend', authMiddleware, async (req: AuthenticatedRequest, 
 
     if (existingRecommend) {
       await existingRecommend.destroy();
-      return res.status(200).json({ message: MESSAGES_POST.RECOMMENDATION_CANCELLED, recommended: false });
+
+      // 취소 후, 현재 총 추천 수
+      const newCount = await Recommendation.count({ where: { articleId: id } });
+
+      return res.status(200).json({
+        message: MESSAGES_POST.RECOMMENDATION_CANCELLED,
+        recommended: false,
+        recommendationCount: newCount,
+      });
     }
 
     // 추천 추가
     await Recommendation.create({ articleId: id, userId });
-    return res.status(200).json({ message: MESSAGES_POST.RECOMMENDED, recommended: true });
+
+    // 추가 후, 현재 총 추천 수
+    const newCount = await Recommendation.count({ where: { articleId: id } });
+
+    return res.status(200).json({
+      message: MESSAGES_POST.RECOMMENDED,
+      recommended: true,
+      recommendationCount: newCount,
+    });
   } catch (error) {
     next(error);
   }
 });
 
 // 게시글 추천 수 조회
-router.get('/:id/recommend', async (req, res, next) => {
+router.get('/:id/recommend', authMiddleware, async (req: AuthenticatedRequest, res, next) => {
   try {
     const { id } = req.params;
+    const userId = req.user?.id;
 
-    // 추천 수 반환
+    // 게시글의 총 추천 수
     const recommendationCount = await Recommendation.count({
       where: { articleId: id },
     });
 
-    return res.status(200).json({ postId: id, recommendationCount });
+    const userRecommendation = await Recommendation.findOne({
+      where: { articleId: id, userId },
+    });
+    const recommended = !!userRecommendation;
+
+    return res.status(200).json({
+      postId: id,
+      recommendationCount,
+      recommended,
+    });
   } catch (error) {
     next(error);
   }
