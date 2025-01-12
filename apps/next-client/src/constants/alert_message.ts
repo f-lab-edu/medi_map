@@ -55,6 +55,7 @@ export const ALERT_MESSAGES = {
       NEW_PASSWORD_REQUIRED: '새 비밀번호를 입력해주세요.',
       CONFIRM_PASSWORD_REQUIRED: '새 비밀번호 확인을 입력해주세요.',
       PASSWORD_MISMATCH: '새 비밀번호와 비밀번호 확인이 일치하지 않습니다.',
+      FETCH_USER_INFO: "사용자 정보를 불러오는 도중 문제가 발생했습니다",
     },
 
     FAVORITES: {
