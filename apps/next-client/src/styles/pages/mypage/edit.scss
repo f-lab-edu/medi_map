@@ -130,6 +130,11 @@
 .medicine_results {
   .medicine_desc {
     position: relative;
+
+    .item {
+      display: flex;
+      gap: 2rem;
+    }
   }
 
   .medicine_info {

@@ -17,7 +17,7 @@ export default function UserBookmark() {
         headers: getAuthHeader(),
         withCredentials: true,
       });
-      setFavorites(response.data);
+      setFavorites(response.data.data);
     } catch (error) {
       console.error("Error fetching favorites:", error);
       alert(ALERT_MESSAGES.ERROR.FAVORITES.FAVORITES_FETCH);
@@ -64,7 +64,6 @@ export default function UserBookmark() {
           {favorites.map((item) => (
             <li className="medicine_desc" key={item.medicineId}>
               <Link href={`/search/${item.medicineId}`} passHref>
-                <div>
                   {item.itemImage && (
                     <Image
                       src={item.itemImage}
@@ -85,7 +84,6 @@ export default function UserBookmark() {
                       <p className="manufacturer">제조사: {item.entpName}</p>
                     </div>
                   </div>
-                </div>
               </Link>
               <button
                 className="delete_button"

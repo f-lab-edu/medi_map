@@ -182,6 +182,7 @@ export default function PostDetailPage({ params }: { params: Params }) {
   return (
     <div className="post_detail">
       <h2 className="post_title">{post.title}</h2>
+      <div className="user_info">
       <span className="post_date">
         {new Date(post.createdAt).toLocaleString('ko-KR', {
           year: 'numeric',
@@ -192,6 +193,10 @@ export default function PostDetailPage({ params }: { params: Params }) {
           hour12: false,
         })}
       </span>
+      <span>
+      {post.author}
+      </span>
+      </div>
 
       {post.userId === userId && (
         <div className="post_actions">
