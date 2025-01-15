@@ -1,5 +1,6 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
+import axios from 'axios';
 import { User } from '@/models';
 import { authMiddleware } from '@/middleware/authMiddleware';
 import { MYPAGE_MESSAGES } from '@/constants/mypage_message';
@@ -7,8 +8,7 @@ import { AUTH_MESSAGES } from '@/constants/auth_message';
 
 const router = express.Router();
 
-// 유효성 검사 함수
-const validateInput = (type, value) => {
+const validateInput = (type: string, value: string) => {
   if (type === 'username') {
     if (!value || value.length < 3 || value.length > 30) {
       return AUTH_MESSAGES.USERNAME_INVALID;
@@ -32,7 +32,7 @@ const validateInput = (type, value) => {
 
 // 닉네임 조회
 router.get('/me/username', authMiddleware, async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user?.id;
 
   try {
     const user = await User.findByPk(userId, {
@@ -45,6 +45,7 @@ router.get('/me/username', authMiddleware, async (req, res) => {
 
     return res.status(200).json({ username: user.username });
   } catch (error) {
+    console.error('Error fetching username:', error);
     return res.status(500).json({ error: MYPAGE_MESSAGES.USERNAME_FETCH_ERROR });
   }
 });
@@ -52,7 +53,7 @@ router.get('/me/username', authMiddleware, async (req, res) => {
 // 닉네임 변경
 router.put('/me/username', authMiddleware, async (req, res) => {
   const { nickname } = req.body;
-  const userId = req.user.id;
+  const userId = req.user?.id;
 
   const validationError = validateInput('username', nickname);
   if (validationError) {
@@ -63,6 +64,7 @@ router.put('/me/username', authMiddleware, async (req, res) => {
     await User.update({ username: nickname }, { where: { id: userId } });
     return res.status(200).json({ message: MYPAGE_MESSAGES.NICKNAME_UPDATE_SUCCESS });
   } catch (error) {
+    console.error('Error updating username:', error);
     return res.status(500).json({ error: MYPAGE_MESSAGES.NICKNAME_UPDATE_ERROR });
   }
 });
@@ -70,9 +72,8 @@ router.put('/me/username', authMiddleware, async (req, res) => {
 // 비밀번호 변경
 router.put('/me/password', authMiddleware, async (req, res) => {
   const { oldPassword, newPassword, confirmPassword } = req.body;
-  const userId = req.user.id;
+  const userId = req.user?.id;
 
-  // 유효성 검사
   let validationError = validateInput('password', newPassword);
   if (!validationError) {
     validationError = validateInput('confirmPassword', confirmPassword);
@@ -82,106 +83,68 @@ router.put('/me/password', authMiddleware, async (req, res) => {
   }
 
   try {
-    // 사용자 정보 조회
     const user = await User.findByPk(userId, {
       attributes: ['id', 'password', 'provider'],
       raw: true,
     });
 
     if (!user) {
-      return res.status(404).json({
-        code: 'USER_NOT_FOUND',
-        message: MYPAGE_MESSAGES.USER_NOT_FOUND,
-      });
+      return res.status(404).json({ message: MYPAGE_MESSAGES.USER_NOT_FOUND });
     }
 
-    // 소셜 로그인 사용자는 비밀번호 변경 불가
     if (user.provider !== 'credentials') {
-      return res.status(400).json({
-        code: 'SOCIAL_PASSWORD_ERROR',
-        message: MYPAGE_MESSAGES.SOCIAL_PASSWORD_ERROR,
-      });
+      return res.status(400).json({ message: MYPAGE_MESSAGES.SOCIAL_PASSWORD_ERROR });
     }
 
-    // 현재 비밀번호 검증
     if (!(await bcrypt.compare(oldPassword, user.password))) {
-      return res.status(400).json({
-        code: 'PASSWORD_MISMATCH',
-        message: MYPAGE_MESSAGES.PASSWORD_MISMATCH,
-      });
+      return res.status(400).json({ message: MYPAGE_MESSAGES.PASSWORD_MISMATCH });
     }
 
-    // 새 비밀번호와 확인 비밀번호 일치 여부 검증
     if (newPassword !== confirmPassword) {
-      return res.status(400).json({
-        code: 'PASSWORD_CONFIRMATION_ERROR',
-        message: MYPAGE_MESSAGES.PASSWORD_CONFIRMATION_ERROR,
-      });
+      return res.status(400).json({ message: MYPAGE_MESSAGES.PASSWORD_CONFIRMATION_ERROR });
     }
 
-    // 새 비밀번호가 기존 비밀번호와 동일한지 검증
     if (await bcrypt.compare(newPassword, user.password)) {
-      return res.status(400).json({
-        code: 'PASSWORD_SAME_AS_OLD',
-        message: MYPAGE_MESSAGES.PASSWORD_SAME_AS_OLD,
-      });
+      return res.status(400).json({ message: MYPAGE_MESSAGES.PASSWORD_SAME_AS_OLD });
     }
 
-    // 비밀번호 업데이트
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await User.update({ password: hashedPassword }, { where: { id: userId } });
 
-    return res.status(200).json({
-      code: 'PASSWORD_UPDATE_SUCCESS',
-      message: MYPAGE_MESSAGES.PASSWORD_UPDATE_SUCCESS,
-    });
+    return res.status(200).json({ message: MYPAGE_MESSAGES.PASSWORD_UPDATE_SUCCESS });
   } catch (error) {
-    console.error(MYPAGE_MESSAGES.PASSWORD_UPDATE_ERROR, error);
-    return res.status(500).json({
-      code: 'PASSWORD_UPDATE_ERROR',
-      message: MYPAGE_MESSAGES.PASSWORD_UPDATE_ERROR,
-    });
+    console.error('Error updating password:', error);
+    return res.status(500).json({ message: MYPAGE_MESSAGES.PASSWORD_UPDATE_ERROR });
   }
 });
 
 // 회원탈퇴
 router.delete('/me', authMiddleware, async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user?.id;
 
   try {
-    // 사용자 정보 확인
     const user = await User.findByPk(userId, {
       attributes: ['id', 'provider', 'googleId', 'username'],
       raw: true,
     });
 
     if (!user) {
-      return res.status(404).json({
-        code: 'USER_NOT_FOUND',
-        message: MYPAGE_MESSAGES.USER_NOT_FOUND,
-      });
+      return res.status(404).json({ message: MYPAGE_MESSAGES.USER_NOT_FOUND });
     }
 
-    // 사용자 삭제
     await User.destroy({ where: { id: userId } });
-    console.log(`회원탈퇴 성공: userId = ${userId}, username = ${user.username}`);
+    console.log(`User account deleted: userId=${userId}, username=${user.username}`);
 
-    return res.status(200).json({
-      code: 'DELETE_ACCOUNT_SUCCESS',
-      message: `${user.username}님의 계정이 성공적으로 삭제되었습니다.`,
-    });
+    return res.status(200).json({ message: MYPAGE_MESSAGES.DELETE_ACCOUNT_SUCCESS });
   } catch (error) {
-    console.error('Error deleting user account:', error);
-    return res.status(500).json({
-      code: 'DELETE_ACCOUNT_ERROR',
-      message: MYPAGE_MESSAGES.DELETE_ACCOUNT_ERROR,
-    });
+    console.error('Error deleting account:', error);
+    return res.status(500).json({ message: MYPAGE_MESSAGES.DELETE_ACCOUNT_ERROR });
   }
 });
 
 // 이메일 조회
 router.get('/me/email', authMiddleware, async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user?.id;
 
   try {
     const user = await User.findByPk(userId, {
@@ -199,5 +162,28 @@ router.get('/me/email', authMiddleware, async (req, res) => {
   }
 });
 
+// Google 계정 연결 해제
+const GOOGLE_REVOKE_URL = 'https://oauth2.googleapis.com/revoke';
+
+router.post('/me/disconnectGoogle', authMiddleware, async (req, res) => {
+  const { token } = req.body;
+
+  if (!token) {
+    return res.status(400).json({ message: MYPAGE_MESSAGES.GOOGLE.DISCONNECT_ERROR });
+  }
+
+  try {
+    const response = await axios.post(`${GOOGLE_REVOKE_URL}?token=${token}`);
+
+    if (response.status === 200) {
+      return res.status(200).json({ message: MYPAGE_MESSAGES.GOOGLE.DISCONNECT_SUCCESS });
+    } else {
+      return res.status(response.status).json({ message: MYPAGE_MESSAGES.GOOGLE.DISCONNECT_FAILED });
+    }
+  } catch (error) {
+    console.error('Error during Google account revocation:', error);
+    return res.status(500).json({ message: MYPAGE_MESSAGES.GOOGLE.DISCONNECT_ERROR });
+  }
+});
 
 export default router;

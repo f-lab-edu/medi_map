@@ -4,9 +4,9 @@ export const ALERT_MESSAGES = {
     PASSWORD_UPDATE: '비밀번호가 성공적으로 변경되었습니다.',
     ACCOUNT_DELETE: '회원탈퇴가 완료되었습니다.',
 
-    POST : {
+    POST: {
       POST_DELETE: '게시글이 성공적으로 삭제되었습니다.',
-      POST_CREATE: '게시글이 성공적으로 게시되었습니다.'
+      POST_CREATE: '게시글이 성공적으로 게시되었습니다.',
     },
 
     COMMENT: {
@@ -17,7 +17,11 @@ export const ALERT_MESSAGES = {
 
     FAVORITE: {
       FAVORITE_DELETE: '즐겨찾기에서 삭제되었습니다.',
-    }
+    },
+
+    GOOGLE: {
+      DISCONNECT: 'Google 계정 연결이 성공적으로 해제되었습니다.',
+    },
   },
 
   ERROR: {
@@ -31,8 +35,8 @@ export const ALERT_MESSAGES = {
     NO_TOKEN: '인증 토큰이 없습니다. 다시 로그인해주세요.',
     UNKNOWN_ERROR: '알 수 없는 오류가 발생했습니다.',
     FETCH_EMAIL: '이메일 조회 중 오류가 발생했습니다.',
-    
-    POST : {
+
+    POST: {
       FETCH_POSTS: '게시글을 불러오는 중 문제가 발생했습니다.',
       POST_EMPTY_FIELDS: '제목과 내용을 입력해주세요.',
       POST_CREATE: '게시글이 성공적으로 작성되었습니다.',
@@ -61,9 +65,14 @@ export const ALERT_MESSAGES = {
     FAVORITES: {
       FAVORITE_DELETE: '즐겨찾기 삭제에 실패했습니다.',
       FAVORITES_FETCH: '즐겨찾기 정보를 불러오지 못했습니다.',
-    }
+    },
+
+    GOOGLE: {
+      DISCONNECT: 'Google 계정 연결 해제 중 오류가 발생했습니다.',
+      DISCONNECT_FAILED: 'Google 계정 연결 해제에 실패했습니다.',
+    },
   },
-  
+
   CONFIRM: {
     ACCOUNT_DELETE: '정말로 회원탈퇴를 하시겠습니까?',
     CHECK_DELETE: '정말로 삭제하시겠습니까?',

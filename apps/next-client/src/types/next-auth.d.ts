@@ -8,6 +8,8 @@ declare module "next-auth" {
     accessToken: string;
     refreshToken: string;
     googleId?: string;
+    provider: string;
+    googleAccessToken?: string;
   }
 
   interface Session extends DefaultSession {
@@ -21,6 +23,8 @@ declare module "next-auth" {
       accessToken: string;
       refreshToken: string;
       googleId?: string;
+      provider: string;
+      googleAccessToken?: string;
     } & DefaultSession["user"];
   }
 }
@@ -32,10 +36,12 @@ interface JwtToken {
   refreshToken: string;
   accessTokenExpires: number;
   error?: string;
+  provider: string;
+  googleAccessToken?: string;
 }
 
 declare module "next-auth/jwt" {
-  interface JWT extends DefaultJWT, JwtToken {} // JwtToken과 DefaultJWT 병합
+  interface JWT extends DefaultJWT, JwtToken {}
 }
 
 declare global {

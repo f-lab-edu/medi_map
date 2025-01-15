@@ -40,6 +40,7 @@ export const authOptions: NextAuthOptions = {
               email: user.email,
               accessToken: token,
               refreshToken,
+              provider: 'credentials',
             };
           }
           throw new CredError(ERROR_MESSAGES.LOGIN_FAILED);
@@ -52,7 +53,7 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ account, profile }) {
       if (account?.provider === 'google' && profile) {
         try {
           const response = await axiosInstance.post(API_URLS.GOOGLE_LOGIN, {
@@ -64,6 +65,7 @@ export const authOptions: NextAuthOptions = {
           if (response.data.accessToken && response.data.refreshToken) {
             account.access_token = response.data.accessToken;
             account.refresh_token = response.data.refreshToken;
+            account.provider = 'google';
           }
           return true;
         } catch (error) {
@@ -73,20 +75,12 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    async jwt({ token, user, account, profile }) {
-      if (account?.provider === 'google') {
-        if (account.access_token && account.refresh_token) {
-          token.accessToken = account.access_token;
-          token.refreshToken = account.refresh_token;
-          token.accessTokenExpires = account.expires_at
-            ? account.expires_at * 1000
-            : Date.now();
-          token.id = profile?.sub || token.id;
-        } else {
-          console.error('Google account tokens are undefined.');
-        }
+
+    async jwt({ token, user, account }) {
+      if (account) {
+        token.provider = account.provider;
       }
-    
+
       if (user && account?.provider === 'credentials') {
         token.id = user.id;
         token.email = user.email;
@@ -94,24 +88,37 @@ export const authOptions: NextAuthOptions = {
         token.refreshToken = user.refreshToken;
         token.accessTokenExpires = Date.now() + ACCESS_TOKEN_EXPIRES_IN;
       }
-    
+
+      if (account?.provider === 'google') {
+        if (account.access_token) {
+          token.accessToken = account.access_token;
+          token.accessTokenExpires = Date.now() + ACCESS_TOKEN_EXPIRES_IN;
+        }
+        if (account.refresh_token) {
+          token.refreshToken = account.refresh_token;
+        }
+      }
+
       if (token.refreshToken && token.accessTokenExpires && Date.now() > token.accessTokenExpires) {
         const refreshedToken = await refreshAccessToken(token as JWT);
         return refreshedToken;
       }
-    
+
       return token;
-    },    
-    
+    },
+
     async session({ session, token }) {
       session.user = {
         id: token.id || '',
         email: token.email as string,
+        provider: token.provider || '',
         accessToken: token.accessToken as string,
-        refreshToken: token.refreshToken as string | '',
+        refreshToken: token.refreshToken as string || '',
+        googleAccessToken: token.googleAccessToken || '',
       };
+
       return session;
-    },    
+    },
   },
 
   secret: process.env.NEXTAUTH_SECRET,

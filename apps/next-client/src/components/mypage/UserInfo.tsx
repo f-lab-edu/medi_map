@@ -1,14 +1,17 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
+import { useSession , signOut } from "next-auth/react";
 import { API_URLS } from "@/constants/urls";
 import { getAuthHeader } from "@/utils/authUtils";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { validateNickname, validatePasswordChange } from "@/utils/validation";
 import { ALERT_MESSAGES } from "@/constants/alert_message";
 import Cookies from "js-cookie";
-import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 export default function UserInfo() {
+  const { data: session } = useSession();
   const [username, setUsername] = useState("");
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
@@ -18,7 +21,6 @@ export default function UserInfo() {
   const router = useRouter();
 
   useEffect(() => {
-    // 이메일 및 유저 이름 로드
     const fetchUserInfo = async () => {
       try {
         const emailResponse = await axios.get(`${API_URLS.MYPAGE}/email`, {
@@ -86,18 +88,44 @@ export default function UserInfo() {
   };
 
   const handleDeleteAccount = async () => {
-    if (window.confirm(ALERT_MESSAGES.CONFIRM.ACCOUNT_DELETE)) {
-      try {
-        await axios.delete(`${API_URLS.MYPAGE}`, {
-          headers: getAuthHeader(),
-        });
-        Cookies.remove("accessToken");
-        await signOut({ callbackUrl: "/" });
-        router.push("/");
-        alert(ALERT_MESSAGES.SUCCESS.ACCOUNT_DELETE);
-      } catch {
-        alert(ALERT_MESSAGES.ERROR.DELETE_ACCOUNT);
+    if (!window.confirm(ALERT_MESSAGES.CONFIRM.ACCOUNT_DELETE)) return;
+
+    try {
+      if (session?.user?.provider === "google" && session?.user?.googleAccessToken) {
+        const googleAccessToken = session.user.googleAccessToken;
+
+        try {
+          const revokeResponse = await axios.post(
+            `${API_URLS.MYPAGE}/disconnectGoogle`,
+            { token: googleAccessToken },
+            { headers: getAuthHeader() }
+          );
+          if (revokeResponse.data.success) {
+            alert(ALERT_MESSAGES.SUCCESS.GOOGLE.DISCONNECT);
+          } else {
+            console.error("Failed to disconnect Google account:", revokeResponse.data.message);
+            alert(ALERT_MESSAGES.ERROR.GOOGLE.DISCONNECT_FAILED);
+            return;
+          }
+        } catch (error) {
+          console.error("An error occurred while disconnecting the Google account:", error);
+          alert(ALERT_MESSAGES.ERROR.GOOGLE.DISCONNECT);
+          return;
+        }
       }
+
+      await axios.delete(`${API_URLS.MYPAGE}`, {
+        headers: getAuthHeader(),
+      });
+
+      Cookies.remove("accessToken");
+      await signOut({ callbackUrl: "/" });
+
+      alert(ALERT_MESSAGES.SUCCESS.ACCOUNT_DELETE);
+      router.push("/");
+    } catch (error) {
+      console.error("Account deletion failed:", error);
+      alert(ALERT_MESSAGES.ERROR.DELETE_ACCOUNT);
     }
   };
 
@@ -111,12 +139,7 @@ export default function UserInfo() {
       <div className="item username">
         <h3>이메일</h3>
         <div className="item_desc">
-          <input
-            type="text"
-            placeholder="내 현재 이메일"
-            value={email}
-            readOnly
-          />
+          <input type="text" placeholder="내 현재 이메일" value={email} readOnly />
         </div>
       </div>
 

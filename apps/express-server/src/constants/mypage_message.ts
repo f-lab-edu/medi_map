@@ -12,4 +12,10 @@ export const MYPAGE_MESSAGES = {
   DELETE_ACCOUNT_ERROR: '회원탈퇴 중 오류가 발생했습니다.',
   USERNAME_FETCH_ERROR: '사용자 이름 조회 중 오류가 발생했습니다.',
   EMAIL_FETCH_ERROR: '이메일을 조회하는 중 오류가 발생했습니다.',
+
+  GOOGLE: {
+    DISCONNECT_SUCCESS: 'Google 계정이 성공적으로 연결 해제되었습니다.',
+    DISCONNECT_FAILED: 'Google 계정 연결 해제에 실패했습니다.',
+    DISCONNECT_ERROR: 'Google 계정 연결 해제 중 오류가 발생했습니다.',
+  },
 };
