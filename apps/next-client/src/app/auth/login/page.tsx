@@ -37,14 +37,14 @@ export default function LoginPage() {
             placeholder="비밀번호를 입력해주세요."
           />
         </fieldset>
-        <CustomButton variant="login" onClick={handleLogin}>
+        <CustomButton variant="background" onClick={handleLogin}>
           로그인
         </CustomButton>
       </form>
 
       <Link href="/auth/signup">회원가입</Link>
 
-      <CustomButton variant="social" onClick={handleGoogleLogin}>
+      <CustomButton variant="border" onClick={handleGoogleLogin}>
         <Image
           src="https://img.icons8.com/color/200/google-logo.png"
           alt="구글로고 이미지"

@@ -3,21 +3,21 @@ import React from "react";
 interface CustomButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
-  variant?: "login" | "social";
+  variant?: "background" | "border";
   type?: "button" | "submit" | "reset";
 }
 
 export const CustomButton = ({
   children,
   onClick,
-  variant = "login",
+  variant = "background",
   type = "button",
 }: CustomButtonProps) => {
   const baseClass =
     "border text-custom rounded-lg py-4 px-6 w-full flex justify-center items-center gap-2 cursor-pointer";
 
     const variantClass =
-    variant === "login"
+    variant === "background"
       ? "bg-btn-color text-white login_button"
       : "border border-border-custom text-black social_button";  
 

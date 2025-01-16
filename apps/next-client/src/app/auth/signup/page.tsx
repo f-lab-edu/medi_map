@@ -4,6 +4,7 @@ import Link from 'next/link';
 import '@/styles/pages/auth/signup.scss';
 import { useSignupForm } from '@/hooks/useSignupForm';
 import { useSignupActions } from '@/hooks/useSignupActions';
+import { CustomButton } from "@/components/common/CustomButton";
 
 export default function SignupPage() {
   const { username, setUsername, email, setEmail, password, setPassword, error, setError } = useSignupForm();
@@ -50,9 +51,10 @@ export default function SignupPage() {
             placeholder="비밀번호를 입력해주세요."
           />
         </fieldset>
-        <button type="button" className="signup_button" onClick={handleSignup}>
+        <CustomButton variant="background"  onClick={handleSignup}>
           회원가입
-        </button>
+        </CustomButton>
+
       </form>
       <Link href="/auth/login">
         이미 계정이 있으신가요? <span>로그인하기</span>

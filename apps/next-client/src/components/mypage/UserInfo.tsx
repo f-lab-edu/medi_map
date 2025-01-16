@@ -8,6 +8,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { validateNickname, validatePasswordChange } from "@/utils/validation";
 import { ALERT_MESSAGES } from "@/constants/alert_message";
+import { CustomButton } from "@/components/common/CustomButton";
 import Cookies from "js-cookie";
 
 export default function UserInfo() {
@@ -176,7 +177,9 @@ export default function UserInfo() {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
-        <button onClick={handlePasswordChange}>비밀번호 변경</button>
+        <CustomButton variant="background"  onClick={handlePasswordChange}>
+            비밀번호 변경
+        </CustomButton>
       </div>
 
       <button onClick={handleDeleteAccount} className="resign">
