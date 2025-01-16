@@ -1,13 +1,16 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import '@/styles/pages/auth/signup.scss';
 import { useSignupForm } from '@/hooks/useSignupForm';
 import { useSignupActions } from '@/hooks/useSignupActions';
 import { CustomButton } from "@/components/common/CustomButton";
+import { useLoginActions } from '@/hooks/useLoginActions';
 
 export default function SignupPage() {
   const { username, setUsername, email, setEmail, password, setPassword, error, setError } = useSignupForm();
+  const { handleGoogleLogin } = useLoginActions({ email, password, setError });
 
   const { handleSignup } = useSignupActions({
     username,
@@ -59,6 +62,16 @@ export default function SignupPage() {
       <Link href="/auth/login">
         이미 계정이 있으신가요? <span>로그인하기</span>
       </Link>
+
+      <CustomButton variant="border" className='google_button' onClick={handleGoogleLogin}>
+        <Image
+          src="https://img.icons8.com/color/200/google-logo.png"
+          alt="구글로고 이미지"
+          width={24}
+          height={24}
+        />
+        Google로 계속하기
+      </CustomButton>
     </>
   );
 }

@@ -5,6 +5,7 @@ interface CustomButtonProps {
   onClick?: () => void;
   variant?: "background" | "border";
   type?: "button" | "submit" | "reset";
+  className?: string;
 }
 
 export const CustomButton = ({
@@ -18,8 +19,8 @@ export const CustomButton = ({
 
     const variantClass =
     variant === "background"
-      ? "bg-btn-color text-white login_button"
-      : "border border-border-custom text-black social_button";  
+      ? "bg-btn-color text-white"
+      : "border border-border-custom text-black";  
 
   return (
     <button
