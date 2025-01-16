@@ -1,6 +1,8 @@
 import React from "react";
 import { Meta, StoryFn } from "@storybook/react";
 import { CustomButton } from "./CustomButton";
+import '@/styles/common/tailwind.css';
+import '@/styles/common/common.scss';
 
 export default {
   title: "Components/CustomButton",
@@ -8,9 +10,15 @@ export default {
   argTypes: {
     variant: {
       control: { type: "radio" },
-      options: ["login", "social"],
+      options: ["background", "border"],
     },
-    children: { control: "text" },
+    type: {
+      control: { type: "radio" },
+      options: ["button", "submit", "reset"],
+    },
+    onClick: { action: "clicked" }, 
+    children: { control: "text" }, 
+    className: { control: "text" }, 
   },
 } as Meta<typeof CustomButton>;
 
@@ -18,19 +26,14 @@ const Template: StoryFn<typeof CustomButton> = (args) => (
   <CustomButton {...args} />
 );
 
-export const LoginButton = Template.bind({});
-LoginButton.args = {
-  variant: "login",
-  children: "로그인",
+export const BackgroundButton = Template.bind({});
+BackgroundButton.args = {
+  variant: "background",
+  children: "배경 버튼",
 };
 
-export const SocialButton = Template.bind({});
-SocialButton.args = {
-  variant: "social",
-  children: (
-    <>
-      <img src="/path/to/social-icon.png" alt="icon" className="w-6" />
-      소셜 로그인
-    </>
-  ),
+export const BorderButton = Template.bind({});
+BorderButton.args = {
+  variant: "border",
+  children: "테두리 버튼",
 };
