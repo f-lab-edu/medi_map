@@ -1,4 +1,5 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/dist/css/bootstrap.min.css';
+import '@/styles/common/tailwind.css';
 import '@/styles/common/common.scss';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/auth/authOptions';

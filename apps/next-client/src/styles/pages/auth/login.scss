@@ -17,28 +17,6 @@
       font-size: 1.6rem;
     }
   }
-  button {
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    font-size: 1.7rem;
-    border-radius: 0.7rem;
-    padding: 1rem 3rem;
-    display: flex;
-    cursor: pointer;
-    margin: 0 auto;
-    justify-content: center;
-    width: 100%;
-    align-items: center;
-    gap: 0.5rem;
-    &.login_button {
-      color: #fff;
-      background: var(--btn-color);
-    }
-    &.social_button {
-      img {
-        width: 2.4rem;
-      }
-    }
-  }
   a {
     border: 1px solid rgba(0, 0, 0, 0.1);
     font-size: 1.7rem;

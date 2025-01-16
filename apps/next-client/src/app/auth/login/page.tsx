@@ -2,6 +2,7 @@
 
 import { useLoginForm } from '@/hooks/useLoginForm';
 import { useLoginActions } from '@/hooks/useLoginActions';
+import { CustomButton } from "@/components/common/CustomButton";
 import Link from 'next/link';
 import Image from 'next/image';
 import '@/styles/pages/auth/login.scss';
@@ -36,22 +37,22 @@ export default function LoginPage() {
             placeholder="비밀번호를 입력해주세요."
           />
         </fieldset>
-        <button type="button" className="login_button" onClick={handleLogin}>
+        <CustomButton variant="login" onClick={handleLogin}>
           로그인
-        </button>
+        </CustomButton>
       </form>
 
       <Link href="/auth/signup">회원가입</Link>
 
-      <button className="social_button" onClick={handleGoogleLogin}>
+      <CustomButton variant="social" onClick={handleGoogleLogin}>
         <Image
           src="https://img.icons8.com/color/200/google-logo.png"
           alt="구글로고 이미지"
           width={24}
           height={24}
         />
-          Google로 계속하기
-      </button>
+        Google로 계속하기
+      </CustomButton>
     </>
   );
 }
