@@ -3,6 +3,7 @@
 import { useLoginForm } from '@/hooks/useLoginForm';
 import { useLoginActions } from '@/hooks/useLoginActions';
 import { CustomButton } from "@/components/common/CustomButton";
+import { CustomInput } from "@/components/common/CustomInput";
 import Link from 'next/link';
 import Image from 'next/image';
 import '@/styles/pages/auth/login.scss';
@@ -21,20 +22,22 @@ export default function LoginPage() {
       <form onSubmit={(e) => e.preventDefault()}>
         <fieldset>
           <legend>이메일</legend>
-          <input
+          <CustomInput
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="이메일을 입력해주세요."
+            variant="border"
           />
         </fieldset>
         <fieldset>
           <legend>비밀번호</legend>
-          <input
+          <CustomInput
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="비밀번호를 입력해주세요."
+            placeholder="비밀번호를 입력해주세요"
+            variant="border"
           />
         </fieldset>
         <CustomButton variant="background" onClick={handleLogin}>

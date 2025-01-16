@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { validateNickname, validatePasswordChange } from "@/utils/validation";
 import { ALERT_MESSAGES } from "@/constants/alert_message";
 import { CustomButton } from "@/components/common/CustomButton";
+import { CustomInput } from "@/components/common/CustomInput";
 import Cookies from "js-cookie";
 
 export default function UserInfo() {
@@ -140,44 +141,56 @@ export default function UserInfo() {
       <div className="item username">
         <h3>이메일</h3>
         <div className="item_desc">
-          <input type="text" placeholder="내 현재 이메일" value={email} readOnly />
+        <CustomInput
+          type="text"
+          placeholder="내 현재 이메일"
+          value={email}
+          variant="border"
+          readOnly={true}
+          />
         </div>
       </div>
 
       <div className="item username">
         <h3>닉네임 변경</h3>
         <div className="item_desc">
-          <input
-            type="text"
-            placeholder="새로운 닉네임"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
+          <CustomInput
+          type="text"
+          placeholder="새로운 닉네임"
+          value={nickname}
+          onChange={(e) => setNickname(e.target.value)}
+          variant="border"
           />
-          <button onClick={handleNicknameChange}>닉네임 변경</button>
+          <CustomButton variant="background" onClick={handleNicknameChange}>
+            닉네임 변경
+          </CustomButton>
         </div>
       </div>
 
       <div className="item password">
         <h3>비밀번호 변경</h3>
-        <input
+        <CustomInput
           type="password"
           placeholder="현재 비밀번호"
           value={oldPassword}
           onChange={(e) => setOldPassword(e.target.value)}
+          variant="border"
         />
-        <input
+        <CustomInput
           type="password"
           placeholder="새 비밀번호"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
+          variant="border"
         />
-        <input
+        <CustomInput
           type="password"
           placeholder="새 비밀번호 확인"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
+          variant="border"
         />
-        <CustomButton variant="background"  onClick={handlePasswordChange}>
+        <CustomButton variant="background" onClick={handlePasswordChange}>
             비밀번호 변경
         </CustomButton>
       </div>
