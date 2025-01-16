@@ -7,6 +7,7 @@ import { useSignupForm } from '@/hooks/useSignupForm';
 import { useSignupActions } from '@/hooks/useSignupActions';
 import { CustomButton } from "@/components/common/CustomButton";
 import { useLoginActions } from '@/hooks/useLoginActions';
+import { CustomInput } from "@/components/common/CustomInput";
 
 export default function SignupPage() {
   const { username, setUsername, email, setEmail, password, setPassword, error, setError } = useSignupForm();
@@ -29,37 +30,39 @@ export default function SignupPage() {
       <form onSubmit={(e) => e.preventDefault()}>
         <fieldset>
           <legend>이름</legend>
-          <input
+          <CustomInput
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="이름을 입력해주세요."
+            variant="border"
           />
         </fieldset>
         <fieldset>
           <legend>이메일</legend>
-          <input
+          <CustomInput
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="이메일을 입력해주세요."
+            variant="border"
           />
         </fieldset>
         <fieldset>
           <legend>비밀번호</legend>
-          <input
+          <CustomInput
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="비밀번호를 입력해주세요."
+            variant="border"
           />
         </fieldset>
         <CustomButton variant="background"  onClick={handleSignup}>
           회원가입
         </CustomButton>
-
       </form>
-      <Link href="/auth/login">
+      <Link href="/auth/login" className='login_button'>
         이미 계정이 있으신가요? <span>로그인하기</span>
       </Link>
 

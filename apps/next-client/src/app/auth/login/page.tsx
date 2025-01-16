@@ -4,7 +4,7 @@ import { useLoginForm } from '@/hooks/useLoginForm';
 import { useLoginActions } from '@/hooks/useLoginActions';
 import { CustomButton } from "@/components/common/CustomButton";
 import { CustomInput } from "@/components/common/CustomInput";
-import Link from 'next/link';
+import { CustomLinkButton } from "@/components/common/CustomLinkButton";
 import Image from 'next/image';
 import '@/styles/pages/auth/login.scss';
 
@@ -45,7 +45,9 @@ export default function LoginPage() {
         </CustomButton>
       </form>
 
-      <Link href="/auth/signup">회원가입</Link>
+      <CustomLinkButton href="/auth/signup" variant="border" size="large">
+        회원가입
+      </CustomLinkButton>
 
       <CustomButton variant="border" onClick={handleGoogleLogin}>
         <Image

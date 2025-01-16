@@ -8,7 +8,6 @@
     text-align: center;
   }
   p {
-    font-size: 1.8rem;
     text-align: center;
     margin: 1rem 0 5rem;
     &.error {
@@ -18,22 +17,13 @@
     }
   }
   a {
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    font-size: 1.7rem;
-    border-radius: 0.7rem;
-    padding: 1rem 3rem;
-    display: flex;
-    cursor: pointer;
-    margin: 0 auto;
-    justify-content: center;
-    width: 100%;
     margin-bottom: 5rem;
   }
   form {
     margin-bottom: 1rem;
     legend {
       margin-bottom: 1rem;
-      font-size: 1.8rem;
+      font-size: 1.7rem;
       font-weight: 500;
     }
     input {

@@ -11,19 +11,11 @@
     margin-bottom: 1rem;
     legend {
       margin-bottom: 1rem;
-      font-size: 1.8rem;
+      font-size: 1.7rem;
       font-weight: 500;
     }
     input {
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      font-size: 1.8rem;
-      border-radius: 0.7rem;
-      padding: 1rem 2rem;
-      display: flex;
-      margin: 0 auto;
-      justify-content: center;
-      width: 100%;
-      margin-bottom: 3rem;
+      margin-bottom: 2rem;
       &::placeholder {
         font-size: 1.6rem;
         font-weight: 400;
@@ -37,7 +29,6 @@
     }
   }
   p {
-    font-size: 1.8rem;
     text-align: center;
     margin: 1rem 0 5rem;
     &.error {
@@ -46,7 +37,10 @@
       font-size: 1.6rem;
     }
   }
-  button {
-    margin-top: 2rem;
+  .google_button {
+    margin-top: 5rem;
+  }
+  .login_button {
+    font-size: 1.5rem;
   }
 }

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
 import { ROUTES, API_URLS } from '@/constants/urls';
+import { CustomLinkButton } from "@/components/common/CustomLinkButton";
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import Image from 'next/image';
@@ -60,7 +61,11 @@ export default function Header() {
             ) : (
               <>
                 <li className='login_button'><Link href="/auth/login">로그인</Link></li>
-                <li className='sign_up_button'><Link href="/auth/signup">회원가입</Link></li>
+                <li className='sign_up_button'>
+                <CustomLinkButton href="/auth/signup" variant="border" size="small">
+                  회원가입
+                </CustomLinkButton>
+                </li>
               </>
             )}
           </ul>
@@ -83,7 +88,12 @@ export default function Header() {
             ) : (
               <>
                 <li className='login_button'><Link href="/auth/login">로그인</Link></li>
-                <li className='sign_up_button'><Link href="/auth/signup">회원가입</Link></li>
+                <li ><Link href="/auth/signup">회원가입</Link></li>
+                <li className='sign_up_button'>
+                <CustomLinkButton href="/auth/signup" variant="border" size="small">
+                  회원가입
+                </CustomLinkButton>
+                </li>
               </>
             )}
           </ul>

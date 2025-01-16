@@ -1,4 +1,6 @@
 import React from "react";
+import clsx from "clsx";
+import { twMerge } from "tailwind-merge";
 
 interface CustomInputProps {
   placeholder?: string;
@@ -24,17 +26,17 @@ export const CustomInput = ({
   const baseClass =
     "border text-custom rounded-lg py-4 px-6 w-full flex justify-center items-center gap-2";
 
-  const variantClass =
-    variant === "background"
-      ? "bg-btn-color text-white"
-      : "border border-border-custom text-black";
+  const variantClass = clsx({
+    "bg-btn-color text-white": variant === "background",
+    "border border-border-custom text-black": variant === "border",
+  });
 
   return (
     <input
       placeholder={placeholder}
       onClick={onClick}
       type={type}
-      className={`${baseClass} ${variantClass} ${className}`}
+      className={twMerge(baseClass, variantClass, className)}
       value={value}
       onChange={onChange}
       readOnly={readOnly}

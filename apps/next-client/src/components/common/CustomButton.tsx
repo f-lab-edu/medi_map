@@ -1,11 +1,13 @@
 import React from "react";
+import clsx from "clsx";
+import { twMerge } from "tailwind-merge";
 
 interface CustomButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
   variant?: "background" | "border";
   type?: "button" | "submit" | "reset";
-  className?: string;
+  className?: string;  
 }
 
 export const CustomButton = ({
@@ -13,20 +15,21 @@ export const CustomButton = ({
   onClick,
   variant = "background",
   type = "button",
+  className = "",
 }: CustomButtonProps) => {
   const baseClass =
-    "border text-custom rounded-lg py-4 px-6 w-full flex justify-center items-center gap-2 cursor-pointer";
+    "border rounded-lg py-4 px-6 w-full flex justify-center items-center gap-2 cursor-pointer";
 
-    const variantClass =
-    variant === "background"
-      ? "bg-btn-color text-white"
-      : "border border-border-custom text-black";  
+  const variantClass = clsx({
+    "bg-btn-color text-white": variant === "background",
+    "border border-border-custom text-black": variant === "border",
+  });
 
   return (
     <button
       onClick={onClick}
       type={type}
-      className={`${baseClass} ${variantClass}`}
+      className={twMerge(baseClass, variantClass, className)}
     >
       {children}
     </button>

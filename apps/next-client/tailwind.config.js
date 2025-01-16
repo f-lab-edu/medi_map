@@ -13,9 +13,6 @@ module.exports = {
         "border-gray": "#ccc",
         "border-custom": "rgba(0, 0, 0, 0.1)",
       },
-      fontSize: {
-        "custom": "1.7rem",
-      },
     },
   },
   plugins: [],

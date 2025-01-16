@@ -64,7 +64,6 @@
 
       li {
         a {
-          font-size: 1.6rem;
           font-weight: 500;
         }
       }
@@ -77,18 +76,12 @@
       button {
         cursor: pointer;
       }
-
-      a {
-        font-size: 1.6rem;
-      }
-
       .sign_up_button {
-        background: var(--btn-color);
-        padding: 1rem 2rem;
-        border-radius: 2rem;
-
         a {
+          padding: 1rem 2rem;
+          border-radius: 2rem;
           color: #fff;
+          border: none;
         }
       }
     }
