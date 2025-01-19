@@ -1,0 +1,20 @@
+{
+  "extends": "./index.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES6",
+    "rootDir": "src",
+    "outDir": "dist",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "typeRoots": ["./src/types", "./node_modules/@types"]
+  },
+  "ts-node": {
+    "require": ["tsconfig-paths/register"],
+    "files": true
+  },
+  "include": ["src", "src/types"],
+  "exclude": ["node_modules", "**/__tests__/*", "dist"]
+}

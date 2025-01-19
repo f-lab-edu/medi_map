@@ -1,25 +1,11 @@
 {
-  "extends": "../../packages/typescript-config/tsconfig.json",
-  "compilerOptions": {
-    "target": "es5",
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "jsx": "preserve",
-    "incremental": true,
-    "noEmit": true,
-    "allowSyntheticDefaultImports": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
-  },
+  "extends": "@medi-map/tsconfig/next-client",
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/hooks/useMedicineSearch."
+    "src/hooks/useMedicineSearch.ts"
   ],
   "exclude": ["node_modules"]
 }

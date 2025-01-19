@@ -1,5 +1,9 @@
 {
-  "name": "@medi-map/typescript-config",
+  "name": "@medi-map/tsconfig",
   "version": "1.0.0",
-  "main": "tsconfig.json"
+  "main": "index.json",
+  "files": [
+    "express-server.json",
+    "next-client.json"
+  ]
 }
