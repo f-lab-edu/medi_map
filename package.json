@@ -12,7 +12,8 @@
     "dev": "turbo run dev --parallel --no-cache",
     "build": "turbo run build",
     "lint": "turbo run lint",
-    "prettier": "prettier \"{apps,packages}/**/*.{json,html,css,sass,scss}\" --write --ignore-unknown"
+    "prettier": "prettier \"{apps,packages}/**/*.{json,html,css,sass,scss}\" --write --ignore-unknown",
+    "tsc": "turbo run tsc"
   },
   "devDependencies": {
     "husky": "^9.0.11",

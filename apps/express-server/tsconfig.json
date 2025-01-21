@@ -1,8 +1,23 @@
 {
-  "extends": "@medi-map/tsconfig/express-server",
+  "extends": "@medi-map/tsconfig",
+
   "compilerOptions": {
-    "outDir": "dist"
+    "target": "ES6",
+    "module": "commonjs",
+    "rootDir": "src",
+    "outDir": "dist",
+    "incremental": false,
+    "typeRoots": ["./src/types", "./node_modules/@types"],
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+
+  "ts-node": {
+    "require": ["tsconfig-paths/register"],
+    "files": true
+  },
+  "include": ["src", "src/types"],
+  "exclude": ["node_modules", "**/__tests__/*", "dist"]
 }

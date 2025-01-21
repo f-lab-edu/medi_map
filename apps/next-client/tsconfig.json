@@ -1,11 +1,38 @@
 {
-  "extends": "@medi-map/tsconfig/next-client",
+  "extends": "@medi-map/tsconfig",
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "allowSyntheticDefaultImports": true,
+
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/hooks/useMedicineSearch.ts"
+    "src/hooks/useMedicineSearch."
   ],
   "exclude": ["node_modules"]
 }

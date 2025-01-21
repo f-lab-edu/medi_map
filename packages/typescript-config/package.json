@@ -1,9 +1,6 @@
 {
   "name": "@medi-map/tsconfig",
   "version": "1.0.0",
-  "main": "index.json",
-  "files": [
-    "express-server.json",
-    "next-client.json"
-  ]
+  "main": "tsconfig.json",
+  "license": "MIT"
 }
