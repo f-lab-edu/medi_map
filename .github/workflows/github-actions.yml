@@ -24,9 +24,6 @@ jobs:
       - name: Install dependencies
         run: yarn
       
-      - name: Build @core/lib
-        run: yarn lib:build
-
       - name: Build express-server
         run: yarn workspace express-server build
 
