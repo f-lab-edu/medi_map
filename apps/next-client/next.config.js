@@ -1,7 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['img.icons8.com', 'nedrug.mfds.go.kr'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'img.icons8.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'nedrug.mfds.go.kr',
+      },
+    ],
   },
   webpack: (config) => {
     config.cache = {
