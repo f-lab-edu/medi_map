@@ -43,3 +43,5 @@ module.exports = (sequelize, DataTypes) => {
 
   return MedicineDesc;
 };
+
+module.exports.MedicineDesc = module.exports;

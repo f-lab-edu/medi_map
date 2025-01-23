@@ -106,3 +106,5 @@ module.exports = (sequelize, DataTypes) => {
 
   return Pharmacy;
 };
+
+module.exports.Pharmacy = module.exports;

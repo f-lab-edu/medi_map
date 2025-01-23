@@ -1,6 +1,7 @@
 import express from 'express';
 import { syncMedicines, syncApprovals, getJoinedMedicines, getAllMedicines } from '@/services/medicineService';
-import { Medicine, MedicineDesc } from '@/models';
+import { Medicine } from '@/models/medicine';
+import { MedicineDesc } from '@/models/medicineDesc';
 import { sendResponse } from '@/utils/medicineUtils';
 import { buildWhereClause } from '@/utils/queryBuilder';
 import { SEARCH_MESSAGES } from '@/constants/search_messages';
@@ -79,13 +80,21 @@ router.get('/search', async (req, res) => {
         limit: limitNumber,
       },
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Search API Error:', error);
-    const err = error instanceof ValidationError ? error : new UnexpectedError(error.message);
+
+    let err: ValidationError | UnexpectedError;
+    if (error instanceof ValidationError) {
+      err = error;
+    } else if (error instanceof Error) {
+      err = new UnexpectedError(error.message);
+    } else {
+      err = new UnexpectedError('An unknown error occurred');
+    }
+
     sendResponse(res, err.statusCode, { error: err.message });
   }
 });
-
 
 // 특정 ITEM_SEQ 조인 데이터 조회
 router.get('/:itemSeq', async (req, res) => {

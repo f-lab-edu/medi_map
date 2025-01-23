@@ -1,4 +1,4 @@
-import { Medicine } from '@/models';
+import { Medicine } from '@/models/medicine';
 import { MedicineData } from '@/types/medicine.types';
 import moment from 'moment';
 

@@ -22,7 +22,6 @@ app.use(cors(corsOptions));
 // 정적 파일 제공 설정 추가
 const uploadsPath = path.join(__dirname, './uploads/images'); // 상대 경로 수정
 app.use('/uploads', express.static(uploadsPath));
-console.log(`Static files served from: ${uploadsPath}`);
 
 // 로깅 미들웨어
 app.use((req: Request, res: Response, next: NextFunction) => {

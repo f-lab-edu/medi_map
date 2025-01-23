@@ -46,3 +46,5 @@ module.exports = (sequelize, DataTypes) => {
 
   return Medicine;
 };
+
+module.exports.Medicine = module.exports;

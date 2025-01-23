@@ -1,4 +1,4 @@
-import { User } from '@/models';
+import { User } from '@/models/user';
 
 // 사용자 생성 함수
 export const createUser = async (username: string, email: string, password: string) => {

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Pharmacy } from '@/models';
+import { Pharmacy } from '@/models/pharmacy';
 import { PharmacyAPIItem } from '@/types/pharmacy.types';
 import { PharmacyItemDTO } from '@/dto/PharmacyItemDTO';
 import { APIError, DataParsingError, DatabaseError, UpdateError } from '@/error/CommonError';
@@ -33,18 +33,19 @@ async function fetchPageData(pageNo: number): Promise<PharmacyAPIItem[]> {
   try {
     const { data } = await axios.get<PharmacyAPIResponse>(url);
 
-    // DTO 클래스를 사용한 매핑
     if (!data.response?.body?.items?.item) {
       throw new DataParsingError(`${ERROR_MESSAGES.DATA_PARSING_ERROR}: Page: ${pageNo}`);
     }
 
     return (data.response.body.items.item || []).map(PharmacyItemDTO.fromAPI);
-  } catch (error) {
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error.message : String(error);
+
     if (error instanceof DataParsingError) {
       throw error;
     }
 
-    throw new APIError(`${ERROR_MESSAGES.API_ERROR}: (page: ${pageNo}) - ${error.message}`);
+    throw new APIError(`${ERROR_MESSAGES.API_ERROR}: (page: ${pageNo}) - ${err}`);
   }
 }
 
@@ -75,25 +76,25 @@ async function savePharmacyData(items: PharmacyAPIItem[]) {
         hpid: item.hpid,
       }));
 
-    // 모든 데이터 저장 Promise 처리
     await Promise.all(upsertPromises);
-  } catch (error) {
-    throw new DatabaseError(`${ERROR_MESSAGES.DATABASE_ERROR}: ${error.message}`);
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error.message : String(error);
+    throw new DatabaseError(`${ERROR_MESSAGES.DATABASE_ERROR}: ${err}`);
   }
 }
 
 // 약국 데이터를 업데이트하는 메인 함수
 export async function updatePharmacyData() {
   try {
-    // 첫 번째 요청으로 총 페이지 수 계산
     const firstUrl = buildUrl(1, 1);
-
     let firstData: PharmacyAPIResponse;
+
     try {
       const { data } = await axios.get<PharmacyAPIResponse>(firstUrl);
       firstData = data;
-    } catch (error) {
-      throw new APIError(`${ERROR_MESSAGES.API_ERROR}: Failed to fetch the first page - ${error.message}`);
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error.message : String(error);
+      throw new APIError(`${ERROR_MESSAGES.API_ERROR}: Failed to fetch the first page - ${err}`);
     }
 
     const totalCount = parseInt(firstData.response.body.totalCount, 10);
@@ -112,16 +113,17 @@ export async function updatePharmacyData() {
     }
 
     console.log('Pharmacy data update complete.');
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error.message : String(error);
 
-  } catch (error) {
     if (error instanceof APIError) {
-      console.error(ERROR_MESSAGES.API_ERROR, error.message);
+      console.error(ERROR_MESSAGES.API_ERROR, err);
     } else if (error instanceof DataParsingError) {
-      console.error(ERROR_MESSAGES.DATA_PARSING_ERROR, error.message);
+      console.error(ERROR_MESSAGES.DATA_PARSING_ERROR, err);
     } else if (error instanceof DatabaseError) {
-      console.error(ERROR_MESSAGES.DATA_PARSING_ERROR, error.message);
+      console.error(ERROR_MESSAGES.DATABASE_ERROR, err);
     } else {
-      throw new UpdateError(`${ERROR_MESSAGES.UPDATE_ERROR}: ${error.message}`);
+      throw new UpdateError(`${ERROR_MESSAGES.UPDATE_ERROR}: ${err}`);
     }
 
     throw error;

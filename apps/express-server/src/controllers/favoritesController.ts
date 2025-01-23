@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { Favorite } from '@/models';
+import { Favorite } from '@/models/favorite';
 import { AuthenticatedRequest } from '@/middleware/authMiddleware';
 import { ERROR_MESSAGES } from '@/constants/errors';
 import { FAVORITE_MESSAGES } from '@/constants/favorites_message';

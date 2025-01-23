@@ -11,6 +11,12 @@
         "@medi-map/tsconfig"
       ]
     },
+    "dev": {
+      "dependsOn": [
+        "^lib:build"
+      ],
+      "cache": false
+    },
     "build": {
       "dependsOn": [
         "^build"

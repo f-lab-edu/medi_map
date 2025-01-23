@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { removeRefreshTokens } from '@/services/refreshTokenService';
 import { AUTH_MESSAGES } from '@/constants/auth_message';
-import { User } from '@/models';
+import { User } from '@/models/user';
 
 export const logoutAllSessions = async (req: Request, res: Response): Promise<Response> => {
   const userId = req.user?.id;

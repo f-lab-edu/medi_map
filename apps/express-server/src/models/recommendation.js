@@ -43,3 +43,5 @@ module.exports = (sequelize, DataTypes) => {
 
   return Recommendation;
 };
+
+module.exports.Recommendation = module.exports;

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { User } from '@/models';
+import { User } from '@/models/user';
 import { generateAccessToken, generateRefreshToken } from '@/utils/generateToken';
 
 export const googleLogin = async (req: Request, res: Response) => {

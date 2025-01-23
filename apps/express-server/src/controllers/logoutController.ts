@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { removeRefreshTokens } from '@/services/refreshTokenService';
-import { User } from '@/models';
+import { User } from '@/models/user';
 import { AUTH_MESSAGES } from '@/constants/auth_message';
 
 export const logout = async (req: Request, res: Response): Promise<Response> => {
@@ -17,9 +17,7 @@ export const logout = async (req: Request, res: Response): Promise<Response> => 
     // 일반 사용자
     if (userId) {
       user = await User.findOne({ where: { id: userId } });
-    }
-    // Google 사용자
-    else if (googleId) {
+    } else if (googleId) {
       user = await User.findOne({ where: { googleId } });
     }
 

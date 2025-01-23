@@ -39,3 +39,5 @@ module.exports = (sequelize, DataTypes) => {
 
   return RefreshToken;
 };
+
+module.exports.RefreshToken = module.exports;

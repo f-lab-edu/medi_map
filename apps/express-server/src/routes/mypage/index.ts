@@ -1,7 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import axios from 'axios';
-import { User } from '@/models';
+import { User } from '@/models/user';
 import { authMiddleware } from '@/middleware/authMiddleware';
 import { MYPAGE_MESSAGES } from '@/constants/mypage_message';
 import { AUTH_MESSAGES } from '@/constants/auth_message';

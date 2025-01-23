@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import path from 'path';
 
@@ -17,11 +17,11 @@ const storage = multer.diskStorage({
   },
 });
 
-// Multer 미들웨어 생성
-const upload = multer({ storage });
+// Multer 미들웨어 생성 (타입 캐스팅 적용)
+const upload = multer({ storage }) as unknown as express.RequestHandler;
 
 // 파일 업로드 라우트
-router.post('/', upload.single('image'), (req: Request, res: Response) => {
+router.post('/', upload, (req: Request, res: Response) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });

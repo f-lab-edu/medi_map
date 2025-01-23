@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { updatePharmacyData } from '@/services/pharmacyService';
-import { Pharmacy } from '@/models';
+import { Pharmacy } from '@/models/pharmacy';
 import { ValidationError, DatabaseError, UpdateError, UnexpectedError } from '@/error/CommonError';
 import { ERROR_MESSAGES } from '@/constants/errors';
 import { PharmacyAPIItem } from '@/types/pharmacy.types';
@@ -18,13 +18,19 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
   const deltaLon = toRadians(lon2 - lon1);
   const a
     = Math.sin(deltaLat / 2) ** 2
-    + Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.sin(deltaLon / 2) ** 2;
+      + Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.sin(deltaLon / 2) ** 2;
 
   return EARTH_RADIUS * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 };
 
 // 유틸리티 함수: 반경 내 확인
-const isWithinRadius = (originLat: number, originLng: number, targetLat: number, targetLng: number, radius: number = DEFAULT_RADIUS): boolean => {
+const isWithinRadius = (
+  originLat: number,
+  originLng: number,
+  targetLat: number,
+  targetLng: number,
+  radius: number = DEFAULT_RADIUS
+): boolean => {
   return calculateDistance(originLat, originLng, targetLat, targetLng) <= radius;
 };
 
@@ -40,30 +46,35 @@ router.get('/', async (req, res) => {
     const centerLat = parseFloat(lat as string);
     const centerLng = parseFloat(lng as string);
 
-    // 데이터베이스에서 모든 약국 데이터 조회
     let pharmacies;
     try {
       pharmacies = await Pharmacy.findAll();
-    } catch (error) {
+    } catch (error: unknown) {
       throw new DatabaseError(ERROR_MESSAGES.DATABASE_ERROR);
     }
 
-    // 반경 내 약국 필터링
     const filteredPharmacies = pharmacies.filter((pharmacy: PharmacyAPIItem) =>
       isWithinRadius(centerLat, centerLng, pharmacy.wgs84Lat, pharmacy.wgs84Lon));
 
     return res.status(200).json(filteredPharmacies);
-  } catch (error) {
+  } catch (error: unknown) {
+    let errorMessage = 'An unexpected error occurred';
+
     if (error instanceof ValidationError) {
       return res.status(400).json({ error: error.message });
     }
     if (error instanceof DatabaseError) {
       return res.status(500).json({ error: error.message });
     }
+    if (error instanceof Error) {
+      console.error(`Unexpected error: ${error.message}`);
+      errorMessage = error.message;
+    } else {
+      console.error('Unexpected error occurred');
+    }
 
-    console.error(`Unexpected error: ${error.message}`);
     const unexpectedError = new UnexpectedError();
-    return res.status(500).json({ error: unexpectedError.message });
+    return res.status(500).json({ error: errorMessage || unexpectedError.message });
   }
 });
 
@@ -72,19 +83,26 @@ router.post('/sync', async (req, res) => {
   try {
     try {
       await updatePharmacyData();
-    } catch (error) {
+    } catch (error: unknown) {
       throw new UpdateError(ERROR_MESSAGES.PHARMACY.PHARMACY_DATA_ERROR);
     }
 
     return res.status(200).json({ message: 'Pharmacy data updated successfully!' });
-  } catch (error) {
+  } catch (error: unknown) {
+    let errorMessage = 'An unexpected error occurred';
+
     if (error instanceof UpdateError) {
       return res.status(500).json({ error: error.message });
     }
+    if (error instanceof Error) {
+      console.error(`Unexpected error: ${error.message}`);
+      errorMessage = error.message;
+    } else {
+      console.error('Unexpected error occurred');
+    }
 
-    console.error(`Unexpected error: ${error.message}`);
     const unexpectedError = new UnexpectedError();
-    return res.status(500).json({ error: unexpectedError.message });
+    return res.status(500).json({ error: errorMessage || unexpectedError.message });
   }
 });
 

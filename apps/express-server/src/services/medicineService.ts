@@ -1,4 +1,5 @@
-import { Medicine, MedicineDesc } from '@/models';
+import { Medicine } from '@/models/medicine';
+import { MedicineDesc } from '@/models/medicineDesc';
 import axios from 'axios';
 import moment from 'moment';
 import { MedicineData, JoinedMedicine } from '@/types/medicine.types';
@@ -9,6 +10,14 @@ const BASE_URL = 'http://apis.data.go.kr/1471000';
 const API_KEY = process.env.DATA_API_KEY;
 const NUM_OF_ROWS = 100;
 const REQUEST_DELAY = 500;
+
+// 안전한 에러 메시지 추출 함수
+const getErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return 'An unknown error occurred';
+};
 
 // 1. 의약품 공공 데이터 가져오기
 export async function syncMedicines(): Promise<void> {
@@ -59,31 +68,23 @@ export async function syncMedicines(): Promise<void> {
               lengShort: medicine.LENG_SHORT ?? null,
               thick: medicine.THICK ?? null,
             });
-          } catch (innerError) {
+          } catch (innerError: unknown) {
             throw new DatabaseError(
-              `${ERROR_MESSAGES.UPDATE_ERROR}: ${medicine.ITEM_SEQ}, ${innerError.message}`
+              `${ERROR_MESSAGES.UPDATE_ERROR}: ${medicine.ITEM_SEQ}, ${getErrorMessage(innerError)}`
             );
           }
         });
 
         await Promise.all(upsertPromises);
-      } catch (pageError) {
-        throw new APIError(`${ERROR_MESSAGES.API_ERROR} (Page ${pageNo}): ${pageError.message}`);
+      } catch (pageError: unknown) {
+        throw new APIError(`${ERROR_MESSAGES.API_ERROR} (Page ${pageNo}): ${getErrorMessage(pageError)}`);
       }
     }
 
     console.log('All Medicine data synced successfully.');
 
-  } catch (error) {
-    if (error instanceof APIError) {
-      console.error('API Error:', error.message);
-    } else if (error instanceof DataParsingError) {
-      console.error('Data Parsing Error:', error.message);
-    } else if (error instanceof DatabaseError) {
-      console.error('Database Error:', error.message);
-    } else {
-      console.error(`${ERROR_MESSAGES.MEDICINE.SYNC_MEDICINE_ERROR}: ${error.message}`);
-    }
+  } catch (error: unknown) {
+    console.error(`${ERROR_MESSAGES.MEDICINE.SYNC_MEDICINE_ERROR}: ${getErrorMessage(error)}`);
     throw error;
   }
 }
@@ -124,36 +125,27 @@ export async function syncApprovals(): Promise<void> {
               validTerm: approval.VALID_TERM || null,
               packUnit: approval.PACK_UNIT || null,
               meterialName: approval.MATERIAL_NAME || null,
-              eeDocData: approval.EE_DOC_DATA ? approval.EE_DOC_DATA : null,
-              udDocData: approval.UD_DOC_DATA ? approval.UD_DOC_DATA : null,
-              nbDocData: approval.NB_DOC_DATA ? approval.NB_DOC_DATA : null,
+              eeDocData: approval.EE_DOC_DATA || null,
+              udDocData: approval.UD_DOC_DATA || null,
+              nbDocData: approval.NB_DOC_DATA || null,
             });
-          } catch (innerError) {
+          } catch (innerError: unknown) {
             throw new DatabaseError(
-              `${ERROR_MESSAGES.UPDATE_ERROR}: ${approval.ITEM_SEQ}, ${innerError.message}`
+              `${ERROR_MESSAGES.UPDATE_ERROR}: ${approval.ITEM_SEQ}, ${getErrorMessage(innerError)}`
             );
           }
         }
 
         await new Promise(resolve => setTimeout(resolve, REQUEST_DELAY));
-      } catch (pageError) {
-        throw new APIError(`${ERROR_MESSAGES.API_ERROR} (Page ${pageNo}): ${pageError.message}`);
+      } catch (pageError: unknown) {
+        throw new APIError(`${ERROR_MESSAGES.API_ERROR} (Page ${pageNo}): ${getErrorMessage(pageError)}`);
       }
     }
 
     console.log('All approval data synced successfully.');
 
-  } catch (error) {
-    if (error instanceof APIError) {
-      console.error('API Error:', error.message);
-    } else if (error instanceof DataParsingError) {
-      console.error('Data Parsing Error:', error.message);
-    } else if (error instanceof DatabaseError) {
-      console.error('Database Error:', error.message);
-    } else {
-      console.error(`${ERROR_MESSAGES.MEDICINE.SYNC_APPROVALS_ERROR}: ${error.message}`);
-    }
-
+  } catch (error: unknown) {
+    console.error(`${ERROR_MESSAGES.MEDICINE.SYNC_APPROVALS_ERROR}: ${getErrorMessage(error)}`);
     throw error;
   }
 }
@@ -163,48 +155,16 @@ export async function getJoinedMedicines(itemSeq: string): Promise<JoinedMedicin
   try {
     const medicine = await Medicine.findOne({
       where: { itemSeq },
-      include: [
-        {
-          model: MedicineDesc,
-          required: false,
-        },
-      ],
+      include: [{ model: MedicineDesc, required: false }],
     });
 
     if (!medicine) {
       throw new ValidationError(ERROR_MESSAGES.MEDICINE.FETCH_JOINED_MEDICINES_ERROR);
     }
 
-    const medicineDesc = medicine.MedicineDesc || {};
-
-    return {
-      itemSeq: medicine.itemSeq,
-      itemName: medicine.itemName,
-      entpName: medicine.entpName,
-      itemPermitDate: medicine.itemPermitDate,
-      chart: medicine.chart,
-      colorClass1: medicine.colorClass1,
-      className: medicine.className,
-      etcOtcName: medicine.etcOtcName,
-      itemImage: medicine.itemImage,
-      formCodeName: medicine.formCodeName,
-      drugShape: medicine.drugShape,
-      lengLong: medicine.lengLong,
-      lengShort: medicine.lengShort,
-      thick: medicine.thick,
-      storageMethod: medicineDesc.storageMethod || null,
-      validTerm: medicineDesc.validTerm || null,
-      packUnit: medicineDesc.packUnit || null,
-      eeDocData: medicineDesc.eeDocData || null,
-      udDocData: medicineDesc.udDocData || null,
-      nbDocData: medicineDesc.nbDocData || null,
-    };
-  } catch (error) {
-    if (error instanceof ValidationError) {
-      console.error(`${error.message}`);
-    } else {
-      console.error(`${ERROR_MESSAGES.MEDICINE.FETCH_JOINED_MEDICINES_ERROR}: ${error.message}`);
-    }
+    return { ...medicine.get(), ...medicine.MedicineDesc?.get() };
+  } catch (error: unknown) {
+    console.error(`${ERROR_MESSAGES.MEDICINE.FETCH_JOINED_MEDICINES_ERROR}: ${getErrorMessage(error)}`);
     throw error;
   }
 }
@@ -215,12 +175,7 @@ export async function getAllMedicines(page: number, limit: number) {
     const offset = (page - 1) * limit;
 
     const medicineQueryResult = await Medicine.findAndCountAll({
-      include: [
-        {
-          model: MedicineDesc,
-          required: false,
-        },
-      ],
+      include: [{ model: MedicineDesc, required: false }],
       limit,
       offset,
     });
@@ -238,12 +193,8 @@ export async function getAllMedicines(page: number, limit: number) {
         limit,
       },
     };
-  } catch (error) {
-    if (error instanceof ValidationError) {
-      console.error(`${error.message}`);
-    } else {
-      console.error(`${ERROR_MESSAGES.MEDICINE.FETCH_ALL_MEDICINES_ERROR}: ${error.message}`);
-    }
+  } catch (error: unknown) {
+    console.error(`${ERROR_MESSAGES.MEDICINE.FETCH_ALL_MEDICINES_ERROR}: ${getErrorMessage(error)}`);
     throw error;
   }
 }

@@ -2,7 +2,10 @@ import express from 'express';
 import { JSDOM } from 'jsdom';
 import DOMPurify from 'dompurify';
 import { Op, WhereOptions } from 'sequelize';
-import { Post, Comment, Recommendation, User } from '@/models';
+import { Post } from '@/models/post';
+import { Comment } from '@/models/comment';
+import { Recommendation } from '@/models/recommendation';
+import { User } from '@/models/user';
 import { authMiddleware, AuthenticatedRequest } from '@/middleware/authMiddleware';
 import { MESSAGES_POST } from '@/constants/post_messages';
 

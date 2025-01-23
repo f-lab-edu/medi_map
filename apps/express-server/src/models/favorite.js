@@ -1,14 +1,10 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-'use strict';
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = sequelize => {
   class Favorite extends Model {
     static associate(models) {
-      Favorite.belongsTo(models.User, {
-        foreignKey: 'userId',
-        as: 'user',
-      });
+      Favorite.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
     }
   }
 
@@ -59,3 +55,5 @@ module.exports = sequelize => {
 
   return Favorite;
 };
+
+module.exports.Favorite = module.exports;

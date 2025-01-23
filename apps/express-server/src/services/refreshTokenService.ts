@@ -1,4 +1,4 @@
-import { RefreshToken } from '@/models';
+import { RefreshToken } from '@/models/refreshToken';
 
 // 리프레시 토큰 저장
 export function storeRefreshToken(userId: string, token: string, expiresAt: Date) {
