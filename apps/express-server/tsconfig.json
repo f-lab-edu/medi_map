@@ -1,22 +1,21 @@
 {
-  "extends": "@medi-map/tsconfig",
-
   "compilerOptions": {
     "target": "ES6",
-    "module": "commonjs",
     "rootDir": "src",
+    "module": "commonjs",
+    "resolveJsonModule": true,
     "outDir": "dist",
+    "esModuleInterop": true,
     "incremental": false,
-    "typeRoots": ["./src/types", "./node_modules/@types"],
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
+    "typeRoots": ["./src/types", "./node_modules/@types"],
   },
-
   "ts-node": {
     "require": ["tsconfig-paths/register"],
-    "files": true
+    "files": true 
   },
   "include": ["src", "src/types"],
   "exclude": ["node_modules", "**/__tests__/*", "dist"]
