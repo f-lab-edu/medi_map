@@ -4,35 +4,19 @@ import { createUser, findUserByEmail } from '@/services/authService';
 import { generateAccessToken, generateRefreshToken } from '@/utils/generateToken';
 import { AUTH_MESSAGES } from '@/constants/auth_message';
 import { storeRefreshToken } from '@/services/refreshTokenService';
-
-// 유효성 검사 함수
-const validateSignupInput = (username: string, email: string, password: string): string | null => {
-  if (!username || username.length < 3 || username.length > 30) {
-    return AUTH_MESSAGES.USERNAME_INVALID;
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!email || !emailRegex.test(email)) {
-    return AUTH_MESSAGES.EMAIL_INVALID;
-  }
-
-  if (!password || password.length < 8) {
-    return AUTH_MESSAGES.PASSWORD_INVALID;
-  }
-
-  return null;
-};
+import { signupSchema } from '@medi-map/validation';
 
 // 회원가입 처리
 export const signup = async (req: Request, res: Response): Promise<Response> => {
   const { username, email, password } = req.body;
 
   try {
-    // 유효성 검사
-    const validationError = validateSignupInput(username, email, password);
-    if (validationError) {
-      console.error('Validation error:', validationError);
-      return res.status(400).json({ message: validationError });
+    // Zod 유효성 검사 수행
+    const validationResult = signupSchema.safeParse({ username, email, password });
+
+    if (!validationResult.success) {
+      console.error('Validation error:', validationResult.error.format());
+      return res.status(400).json({ message: validationResult.error.format() });
     }
 
     // 이메일 중복 확인
