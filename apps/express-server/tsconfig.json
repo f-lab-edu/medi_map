@@ -8,6 +8,11 @@
     "outDir": "dist",
     "incremental": false,
     "typeRoots": ["./src/types", "./node_modules/@types"],
+    "allowJs": true,
+    "checkJs": false,
+    "esModuleInterop": true,
+    "noImplicitAny": false,
+    "resolveJsonModule": true,
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"]

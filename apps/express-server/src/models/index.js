@@ -16,6 +16,7 @@ const sequelize = new Sequelize(
   config
 );
 
+// 모든 모델을 읽어와 db 객체에 추가
 fs
   .readdirSync(__dirname)
   .filter(file => (
@@ -28,6 +29,7 @@ fs
     db[model.name] = model;
   });
 
+// 모델 관계 설정 (associate 호출)
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
@@ -37,4 +39,7 @@ Object.keys(db).forEach(modelName => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-module.exports = db;
+module.exports = {
+  ...db,
+  User: db.User,
+};
