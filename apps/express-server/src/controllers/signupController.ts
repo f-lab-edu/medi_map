@@ -19,11 +19,11 @@ export const signup = async (req: Request, res: Response): Promise<Response> => 
 
       console.error('Validation error:', flattenedErrors);
 
-      const [firstMessages] = Object.entries(flattenedErrors)[0];
+      const [firstField, firstMessages] = Object.entries(flattenedErrors)[0];
 
       return res.status(400).json({
-        message: `${firstMessages[0]}`,
-        errors: flattenedErrors
+        message: firstMessages[0],
+        field: firstField
       });
     }
 
