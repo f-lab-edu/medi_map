@@ -20,17 +20,6 @@ export const useSignupActions = ({
   const router = useRouter();
 
   const handleSignup = async () => {
-    if (!username || !email || !password) {
-      setError(
-        !username
-          ? '사용자명을 입력해 주세요.'
-          : !email
-          ? '이메일을 입력해 주세요.'
-          : '비밀번호를 입력해 주세요.'
-      );
-      return;
-    }
-
     try {
       const response = await signup({ username, email, password });
 

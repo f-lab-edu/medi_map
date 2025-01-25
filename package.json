@@ -29,5 +29,8 @@
       "prettier --write --ignore-unknown"
     ]
   },
-  "packageManager": "yarn@1.22.19"
+  "packageManager": "yarn@1.22.19",
+  "main": "index.js",
+  "repository": "git@github.com:f-lab-edu/medi_map.git",
+  "license": "MIT"
 }
