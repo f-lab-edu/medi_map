@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import axios from 'axios';
+import { axiosInstance } from '@/services/axiosInstance';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
@@ -33,7 +33,7 @@ export default function CommunityList() {
 
   const fetchPosts = useCallback(async (page: number = 1) => {
     try {
-      const response = await axios.get(
+      const response = await  axiosInstance.get(
         `${API_URLS.POSTS}?page=${page}&limit=${postsPerPage}&search=${searchTerm}`
       );
       setPosts(response.data.posts);

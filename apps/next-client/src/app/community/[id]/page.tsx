@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { API_URLS } from '@/constants/urls';
 import '@/styles/pages/community/community.scss';
@@ -10,6 +9,7 @@ import { Params, Post, Comment } from '@/types/post';
 import { FaThumbsUp, FaRegThumbsUp } from "react-icons/fa6";
 import Link from 'next/link';
 import { ALERT_MESSAGES } from '@/constants/alert_message';
+import { axiosInstance } from '@/services/axiosInstance';
 
 export default function PostDetailPage({ params }: { params: Params }) {
   const { id } = params;
@@ -30,7 +30,7 @@ export default function PostDetailPage({ params }: { params: Params }) {
   // 게시글 정보 가져오기
   const fetchPost = useCallback(async () => {
     try {
-      const response = await axios.get(`${API_URLS.POSTS}/${id}`);
+      const response = await axiosInstance.get(`${API_URLS.POSTS}/${id}`);
       setPost(response.data);
     } catch (error) {
       console.error('Error fetching post:', error);
@@ -41,7 +41,7 @@ export default function PostDetailPage({ params }: { params: Params }) {
   // 댓글 목록 가져오기
   const fetchComments = useCallback(async () => {
     try {
-      const response = await axios.get(`${API_URLS.POSTS}/${id}/comments`);
+      const response = await axiosInstance.get(`${API_URLS.POSTS}/${id}/comments`);
       setComments(response.data);
     } catch (error) {
       console.error('Error fetching comments:', error);
@@ -53,7 +53,7 @@ export default function PostDetailPage({ params }: { params: Params }) {
   const fetchRecommendation = useCallback(async () => {
     try {
       // 토큰 포함
-      const response = await axios.get(
+      const response = await axiosInstance.get(
         `${API_URLS.POSTS}/${id}/recommend`,
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
@@ -75,7 +75,7 @@ export default function PostDetailPage({ params }: { params: Params }) {
     try {
       if (!window.confirm(ALERT_MESSAGES.CONFIRM.CHECK_DELETE)) return;
 
-      await axios.delete(`${API_URLS.POSTS}/${id}`, {
+      await  axiosInstance.delete(`${API_URLS.POSTS}/${id}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
@@ -95,7 +95,7 @@ export default function PostDetailPage({ params }: { params: Params }) {
         return;
       }
 
-      await axios.post(
+      await axiosInstance.post(
         `${API_URLS.POSTS}/${id}/comments`,
         { content: newComment },
         { headers: { Authorization: `Bearer ${accessToken}` } }
@@ -114,7 +114,7 @@ export default function PostDetailPage({ params }: { params: Params }) {
     try {
       if (!window.confirm(ALERT_MESSAGES.CONFIRM.CHECK_DELETE)) return;
 
-      await axios.delete(`${API_URLS.POSTS}/comments/${commentId}`, {
+      await  axiosInstance.delete(`${API_URLS.POSTS}/comments/${commentId}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
@@ -140,7 +140,7 @@ export default function PostDetailPage({ params }: { params: Params }) {
         return;
       }
 
-      await axios.put(
+      await  axiosInstance.put(
         `${API_URLS.POSTS}/comments/${commentId}`,
         { content: editedComment },
         { headers: { Authorization: `Bearer ${accessToken}` } }
@@ -160,7 +160,7 @@ export default function PostDetailPage({ params }: { params: Params }) {
   // 추천 토글
   const toggleRecommendation = async () => {
     try {
-      const response = await axios.post(
+      const response = await  axiosInstance.post(
         `${API_URLS.POSTS}/${id}/recommend`,
         {},
         { headers: { Authorization: `Bearer ${accessToken}` } }

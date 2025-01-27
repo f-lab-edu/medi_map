@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
 import { ROUTES, API_URLS } from '@/constants/urls';
 import Cookies from 'js-cookie';
-import axios from 'axios';
+import { axiosInstance } from '@/services/axiosInstance';
 import Image from 'next/image';
 
 export default function Header() {
@@ -15,7 +15,7 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       if (session?.user.id) {
-        await axios.post(API_URLS.LOGOUT, {
+        await  axiosInstance.post(API_URLS.LOGOUT, {
           userId: session.user.id,
         });
       }
