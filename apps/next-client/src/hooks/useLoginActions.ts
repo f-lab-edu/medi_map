@@ -1,3 +1,5 @@
+'use client';
+
 import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { loginWithCredentials, loginWithGoogle } from '@/services/loginService';

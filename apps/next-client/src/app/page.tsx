@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React, { useState, ChangeEvent, KeyboardEvent } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import "@/styles/pages/main.scss";
+import React, { useState, ChangeEvent, KeyboardEvent } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import '@/styles/pages/main.scss'; 
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
