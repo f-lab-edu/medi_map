@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState, useRef, useCallback } from "react";
-import { PharmacyDTO } from "@/dto/PharmacyDTO";
-import { loadKakaoMapScript } from "@/utils/kakaoMapLoader";
-import { initializeMap, addMarkers } from "@/utils/mapUtils";
-import { applyFilter, FilterType } from "@/utils/mapFilterUtils";
-import { ERROR_MESSAGES } from "@/constants/errors";
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { PharmacyDTO } from '@/dto/PharmacyDTO';
+import { loadKakaoMapScript } from '@/utils/kakaoMapLoader';
+import { initializeMap, addMarkers } from '@/utils/mapUtils';
+import { applyFilter, FilterType } from '@/utils/mapFilterUtils';
+import { ERROR_MESSAGES } from '@/constants/errors';
 
 interface KakaoMapProps {
   pharmacies: PharmacyDTO[];

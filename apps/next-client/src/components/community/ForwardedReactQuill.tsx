@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React, { forwardRef, useRef, useImperativeHandle } from "react";
-import ReactQuill, { ReactQuillProps } from "react-quill";
-import type Quill from "quill";
-import { ERROR_MESSAGES } from "@/constants/errors";
+import React, { forwardRef, useRef, useImperativeHandle } from 'react';
+import ReactQuill, { ReactQuillProps } from 'react-quill';
+import type Quill from 'quill';
+import { ERROR_MESSAGES } from '@/constants/errors';
 
 export type ReactQuillInstance = {
   getEditor(): Quill;

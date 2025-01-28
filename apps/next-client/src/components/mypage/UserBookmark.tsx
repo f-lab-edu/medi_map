@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import axios from "axios";
-import { API_URLS } from "@/constants/urls";
-import { getAuthHeader } from "@/utils/authUtils";
-import { ALERT_MESSAGES } from "@/constants/alert_message";
-import { MedicineFavorite } from "@/types/medicine.types";
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { axiosInstance } from '@/services/axiosInstance';
+import { API_URLS } from '@/constants/urls';
+import { getAuthHeader } from '@/utils/authUtils';
+import { ALERT_MESSAGES } from '@/constants/alert_message';
+import { MedicineFavorite } from '@/types/medicine.types';
 
 export default function UserBookmark() {
   const [favorites, setFavorites] = useState<MedicineFavorite[]>([]);
@@ -13,7 +13,7 @@ export default function UserBookmark() {
   // 즐겨찾기 데이터 가져오기
   const fetchFavorites = async () => {
     try {
-      const response = await axios.get(API_URLS.FAVORITES, {
+      const response = await axiosInstance.get(API_URLS.FAVORITES, {
         headers: getAuthHeader(),
         withCredentials: true,
       });
@@ -27,7 +27,7 @@ export default function UserBookmark() {
   // 즐겨찾기 삭제 API
   const deleteFavoriteApi = async (medicineId: string): Promise<void> => {
     try {
-      await axios.delete(`${API_URLS.FAVORITES}/${medicineId}`, {
+      await axiosInstance.delete(`${API_URLS.FAVORITES}/${medicineId}`, {
         headers: getAuthHeader(),
         withCredentials: true,
       });

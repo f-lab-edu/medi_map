@@ -1,11 +1,11 @@
-import { useCallback } from "react";
-import axios from "axios";
-import { NoResultsError, ApiRequestError } from "@/error/SearchError";
-import { MedicineResultDto } from "@/dto/MedicineResultDto";
-import { API_URLS } from "@/constants/urls";
-import { FILTER_ALL } from "@/constants/filters";
-import { SEARCH_ERROR_MESSAGES } from "@/constants/search_errors";
-import { useSearchStore } from "@/store/useSearchStore";
+import { useCallback } from 'react';
+import { axiosInstance } from '@/services/axiosInstance';
+import { NoResultsError, ApiRequestError } from '@/error/SearchError';
+import { MedicineResultDto } from '@/dto/MedicineResultDto';
+import { API_URLS } from '@/constants/urls';
+import { FILTER_ALL } from '@/constants/filters';
+import { SEARCH_ERROR_MESSAGES } from '@/constants/search_errors';
+import { useSearchStore } from '@/store/useSearchStore';
 
 export default function useMedicineSearch() {
   const {
@@ -50,7 +50,7 @@ export default function useMedicineSearch() {
           form.length === 0 || form.includes(FILTER_ALL) ? undefined : form.join(",");
 
         // API 호출
-        const response = await axios.get(API_URLS.MEDICINE_SEARCH, {
+        const response = await axiosInstance.get(API_URLS.MEDICINE_SEARCH, {
           params: {
             medicineName: name,      // 약물 이름
             companyName: company,    // 회사 이름

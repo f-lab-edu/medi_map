@@ -33,7 +33,7 @@ export default function CommunityList() {
 
   const fetchPosts = useCallback(async (page: number = 1) => {
     try {
-      const response = await  axiosInstance.get(
+      const response = await axiosInstance.get(
         `${API_URLS.POSTS}?page=${page}&limit=${postsPerPage}&search=${searchTerm}`
       );
       setPosts(response.data.posts);

@@ -26,7 +26,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await  axiosInstance.get(`${API_URLS.POSTS}/${id}`);
+        const response = await axiosInstance.get(`${API_URLS.POSTS}/${id}`);
         const post = response.data;
 
         if (post.userId !== userId) {
@@ -93,7 +93,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         return;
       }
 
-      await  axiosInstance.put(
+      await axiosInstance.put(
         `${API_URLS.POSTS}/${id}`,
         { title, content },
         { headers: { Authorization: `Bearer ${accessToken}` } }
@@ -111,7 +111,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     try {
       if (!window.confirm('정말 삭제하시겠습니까?')) return;
 
-      await  axiosInstance.delete(`${API_URLS.POSTS}/${id}`, {
+      await axiosInstance.delete(`${API_URLS.POSTS}/${id}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 

@@ -15,7 +15,7 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       if (session?.user.id) {
-        await  axiosInstance.post(API_URLS.LOGOUT, {
+        await axiosInstance.post(API_URLS.LOGOUT, {
           userId: session.user.id,
         });
       }

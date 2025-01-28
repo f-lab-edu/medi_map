@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import "@/styles/pages/mypage/edit.scss";
-import "@/styles/pages/search/search.scss";
-import UserInfo from "@/components/mypage/UserInfo";
-import UserBookmark from "@/components/mypage/UserBookmark";
+import React, { useState } from 'react';
+import '@/styles/pages/mypage/edit.scss';
+import '@/styles/pages/search/search.scss';
+import UserInfo from '@/components/mypage/UserInfo';
+import UserBookmark from '@/components/mypage/UserBookmark';
 
 export default function MyPage() {
   const [activeTab, setActiveTab] = useState<"userInfo" | "userBookmark">("userInfo");

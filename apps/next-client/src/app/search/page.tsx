@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useEffect, KeyboardEvent, ChangeEvent } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { useSearchParams } from "next/navigation";
-import useMedicineSearch from "@/hooks/useMedicineSearch";
-import useInfiniteScroll from "@/hooks/useInfiniteScroll";
-import { SEARCH_ERROR_MESSAGES } from "@/constants/search_errors";
-import { FILTERS, FILTER_ALL } from "@/constants/filters";
-import "@/styles/pages/search/search.scss";
-import { useSearchStore } from "@/store/useSearchStore";
-import { MedicineResultDto } from "@/dto/MedicineResultDto";
-import { ScrollToTopButton } from "@/components/common/ScrollToTopButton";
+import { useEffect, KeyboardEvent, ChangeEvent } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+import useMedicineSearch from '@/hooks/useMedicineSearch';
+import useInfiniteScroll from '@/hooks/useInfiniteScroll';
+import { SEARCH_ERROR_MESSAGES } from '@/constants/search_errors';
+import { FILTERS, FILTER_ALL } from '@/constants/filters';
+import '@/styles/pages/search/search.scss';
+import { useSearchStore } from '@/store/useSearchStore';
+import { MedicineResultDto } from '@/dto/MedicineResultDto';
+import { ScrollToTopButton } from '@/components/common/ScrollToTopButton';
 
 export default function SearchPage() {
   const searchParams = useSearchParams();

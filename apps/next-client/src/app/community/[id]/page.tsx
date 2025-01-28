@@ -75,7 +75,7 @@ export default function PostDetailPage({ params }: { params: Params }) {
     try {
       if (!window.confirm(ALERT_MESSAGES.CONFIRM.CHECK_DELETE)) return;
 
-      await  axiosInstance.delete(`${API_URLS.POSTS}/${id}`, {
+      await axiosInstance.delete(`${API_URLS.POSTS}/${id}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
@@ -114,7 +114,7 @@ export default function PostDetailPage({ params }: { params: Params }) {
     try {
       if (!window.confirm(ALERT_MESSAGES.CONFIRM.CHECK_DELETE)) return;
 
-      await  axiosInstance.delete(`${API_URLS.POSTS}/comments/${commentId}`, {
+      await axiosInstance.delete(`${API_URLS.POSTS}/comments/${commentId}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
@@ -140,7 +140,7 @@ export default function PostDetailPage({ params }: { params: Params }) {
         return;
       }
 
-      await  axiosInstance.put(
+      await axiosInstance.put(
         `${API_URLS.POSTS}/comments/${commentId}`,
         { content: editedComment },
         { headers: { Authorization: `Bearer ${accessToken}` } }
@@ -160,7 +160,7 @@ export default function PostDetailPage({ params }: { params: Params }) {
   // 추천 토글
   const toggleRecommendation = async () => {
     try {
-      const response = await  axiosInstance.post(
+      const response = await axiosInstance.post(
         `${API_URLS.POSTS}/${id}/recommend`,
         {},
         { headers: { Authorization: `Bearer ${accessToken}` } }

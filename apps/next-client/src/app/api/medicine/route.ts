@@ -1,4 +1,5 @@
-import axios, { AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
+import { axiosInstance } from '@/services/axiosInstance';
 import { NextResponse } from 'next/server';
 import { XMLParser } from 'fast-xml-parser';
 import { SEARCH_ERROR_MESSAGES } from '@/constants/search_errors';
@@ -54,7 +55,7 @@ async function fetchMedicineInfo(name: string, pageNo: number, numOfRows: number
   const url = `http://apis.data.go.kr/1471000/MdcinGrnIdntfcInfoService01/getMdcinGrnIdntfcInfoList01?ServiceKey=${MEDI_DATA_API_KEY}`;
 
   try {
-    const response = await axios.get(url, {
+    const response = await axiosInstance.get(url, {
       params: { item_name: name, pageNo, numOfRows },
       responseType: 'text',
     });

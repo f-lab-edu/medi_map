@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import axios from "axios";
-import Link from "next/link";
-import Image from "next/image";
-import "@/styles/pages/search/search.scss";
-import MedicineInfo from "@/components/medicineDetail/MedicineInfo";
-import { MedicineResultDto } from "@/dto/MedicineResultDto";
-import { API_URLS } from "@/constants/urls";
-import { addFavoriteApi, checkFavoriteApi } from "@/utils/medicineFavorites";
-import { ScrollToTopButton } from "@/components/common/ScrollToTopButton";
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import axios from 'axios';
+import Link from 'next/link';
+import Image from 'next/image';
+import '@/styles/pages/search/search.scss';
+import MedicineInfo from '@/components/medicineDetail/MedicineInfo';
+import { MedicineResultDto } from '@/dto/MedicineResultDto';
+import { API_URLS } from '@/constants/urls';
+import { addFavoriteApi, checkFavoriteApi } from '@/utils/medicineFavorites';
+import { ScrollToTopButton } from '@/components/common/ScrollToTopButton';
 
 const handleApiError = (error: unknown, defaultMessage: string): string => {
   if (axios.isAxiosError(error)) {

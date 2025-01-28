@@ -1,7 +1,7 @@
-import axios from "axios";
-import Cookies from "js-cookie";
-import { API_URLS } from "@/constants/urls";
-import { MedicineFavorite } from "@/types/medicine.types";
+import { axiosInstance } from '@/services/axiosInstance';
+import Cookies from 'js-cookie';
+import { API_URLS } from '@/constants/urls';
+import { MedicineFavorite } from '@/types/medicine.types';
 
 export const addFavoriteApi = async (data: MedicineFavorite) => {
   const token = Cookies.get("accessToken");
@@ -18,7 +18,7 @@ export const addFavoriteApi = async (data: MedicineFavorite) => {
     itemImage: data.itemImage,
   };
 
-  const response = await axios.post(API_URLS.FAVORITES, apiPayload, {
+  const response = await axiosInstance.post(API_URLS.FAVORITES, apiPayload, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -34,7 +34,7 @@ export const checkFavoriteApi = async (medicineId: string): Promise<boolean> => 
   }
 
   try {
-    const response = await axios.get(`${API_URLS.FAVORITES}/${medicineId}`, {
+    const response = await axiosInstance.get(`${API_URLS.FAVORITES}/${medicineId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

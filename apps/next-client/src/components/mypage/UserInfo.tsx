@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import { useSession , signOut } from "next-auth/react";
-import { API_URLS } from "@/constants/urls";
-import { getAuthHeader } from "@/utils/authUtils";
-import axios from "axios";
-import { useRouter } from "next/navigation";
-import { validateNickname, validatePasswordChange } from "@/utils/validation";
-import { ALERT_MESSAGES } from "@/constants/alert_message";
-import Cookies from "js-cookie";
+import React, { useState, useEffect } from 'react';
+import { useSession , signOut } from 'next-auth/react';
+import { API_URLS } from '@/constants/urls';
+import { getAuthHeader } from '@/utils/authUtils';
+import { axiosInstance } from '@/services/axiosInstance';
+import { useRouter } from 'next/navigation';
+import { validateNickname, validatePasswordChange } from '@/utils/validation';
+import { ALERT_MESSAGES } from '@/constants/alert_message';
+import Cookies from 'js-cookie';
 
 export default function UserInfo() {
   const { data: session } = useSession();
@@ -23,12 +23,12 @@ export default function UserInfo() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const emailResponse = await axios.get(`${API_URLS.MYPAGE}/email`, {
+        const emailResponse = await axiosInstance.get(`${API_URLS.MYPAGE}/email`, {
           headers: getAuthHeader(),
         });
         setEmail(emailResponse.data.email);
 
-        const usernameResponse = await axios.get(`${API_URLS.MYPAGE}/username`, {
+        const usernameResponse = await axiosInstance.get(`${API_URLS.MYPAGE}/username`, {
           headers: getAuthHeader(),
         });
         setUsername(usernameResponse.data.username);
@@ -48,7 +48,7 @@ export default function UserInfo() {
     }
 
     try {
-      await axios.put(
+      await axiosInstance.put(
         `${API_URLS.MYPAGE}/username`,
         { nickname },
         { headers: getAuthHeader() }
@@ -73,7 +73,7 @@ export default function UserInfo() {
     }
 
     try {
-      await axios.put(
+      await axiosInstance.put(
         `${API_URLS.MYPAGE}/password`,
         { oldPassword, newPassword, confirmPassword },
         { headers: getAuthHeader() }
@@ -95,7 +95,7 @@ export default function UserInfo() {
         const googleAccessToken = session.user.googleAccessToken;
 
         try {
-          const revokeResponse = await axios.post(
+          const revokeResponse = await axiosInstance.post(
             `${API_URLS.MYPAGE}/disconnectGoogle`,
             { token: googleAccessToken },
             { headers: getAuthHeader() }
@@ -114,7 +114,7 @@ export default function UserInfo() {
         }
       }
 
-      await axios.delete(`${API_URLS.MYPAGE}`, {
+      await axiosInstance.delete(`${API_URLS.MYPAGE}`, {
         headers: getAuthHeader(),
       });
 
