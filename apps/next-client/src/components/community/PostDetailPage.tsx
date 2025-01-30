@@ -19,25 +19,24 @@ const PostDetailPage = ({ postId }: Props) => {
   const { data: session } = useSession();
   const [comments, setComments] = useState([]);
   const [isRecommended, setIsRecommended] = useState(false);
-  const [recommendCount, setRecommendCount] = useState(0);
+  const [recommendationCount, setRecommendationCount] = useState(0);
   const currentUserId = session?.user?.id;
 
   const fetchComments = useCallback(async () => {
     try {
-      const response = await axiosInstance.get(`${API_URLS.POSTS}/${postId}/comments`, 
-        {
-          headers: { requiresAuth: true },
-        });
+      const response = await axiosInstance.get(`${API_URLS.POSTS}/${postId}/comments`, {
+        headers: { requiresAuth: true },
+      });
       setComments(response.data);
     } catch (error) {
       console.error('Error fetching comments:', error);
       alert(ALERT_MESSAGES.ERROR.COMMENT.FETCH_COMMENTS);
     }
   }, [postId]);
-  
+
   useEffect(() => {
     fetchComments();
-  }, [fetchComments]);  
+  }, [fetchComments]);
 
   useEffect(() => {
     const fetchRecommend = async () => {
@@ -45,24 +44,28 @@ const PostDetailPage = ({ postId }: Props) => {
         const response = await axiosInstance.get(`${API_URLS.POSTS}/${postId}/recommend`, {
           headers: { requiresAuth: true },
         });
+
         setIsRecommended(response.data.recommended);
-        setRecommendCount(response.data.recommendCount);
+        setRecommendationCount(response.data.recommendationCount);
       } catch (error) {
         console.error('Error fetching recommend:', error);
         alert(ALERT_MESSAGES.ERROR.UNKNOWN_ERROR);
       }
     };
-  
+
     fetchRecommend();
-  }, [postId]);  
+  }, [postId]);
 
   const toggleRecommend = async () => {
     try {
-      const response = await axiosInstance.post(`${API_URLS.POSTS}/${postId}/recommend`, {
-        headers: { requiresAuth: true },
-      });
+      const response = await axiosInstance.post(
+        `${API_URLS.POSTS}/${postId}/recommend`,
+        {},
+        { headers: { requiresAuth: true } }
+      );
+
       setIsRecommended(response.data.recommended);
-      setRecommendCount(response.data.recommendCount);
+      setRecommendationCount(response.data.recommendationCount);
     } catch (error) {
       console.error('Error toggling recommend:', error);
     }
@@ -72,10 +75,10 @@ const PostDetailPage = ({ postId }: Props) => {
     <div className='post_bottom_cont'>
       <div className="post_actions">
         <Link className="list_button" href="/community">목록으로</Link>
-        <button onClick={toggleRecommend}>
+        <button className='recommend_button' onClick={toggleRecommend}>
           {isRecommended ? <FaThumbsUp size={24} /> : <FaRegThumbsUp size={24} />}
         </button>
-        <span>{recommendCount}</span>
+        <span>{recommendationCount}</span>
       </div>
 
       <CommentForm postId={postId} fetchComments={fetchComments} />
