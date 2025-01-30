@@ -1,4 +1,3 @@
-import React from 'react';
 import { Post } from '@/types/post';
 import PostActions from '@/components/community/PostActions';
 
@@ -8,7 +7,7 @@ interface PostContentProps {
 
 const PostContent = ({ post }: PostContentProps) => {
   return (
-    <div>
+    <div className='post_top_cont'>
       <h2 className="post_title">{post.title}</h2>
       <div className="user_info">
         <span className="post_date">

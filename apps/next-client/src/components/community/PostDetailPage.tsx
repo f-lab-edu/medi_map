@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { API_URLS } from '@/constants/urls';
 import { ALERT_MESSAGES } from '@/constants/alert_message';
@@ -69,7 +69,7 @@ const PostDetailPage = ({ postId }: Props) => {
   };
 
   return (
-    <div>
+    <div className='post_bottom_cont'>
       <div className="post_actions">
         <Link className="list_button" href="/community">목록으로</Link>
         <button onClick={toggleRecommend}>

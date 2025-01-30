@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Comment } from '@/types/post';
 import { API_URLS } from '@/constants/urls';
 import { ALERT_MESSAGES } from '@/constants/alert_message';
@@ -84,7 +84,9 @@ const CommentList = ({ comments, userId, fetchComments }: CommentListProps) => {
             <div className='edit_comment'>
               <div className="top_cont">
                 <p>{comment.author}</p>
-                <p className='date'>{comment.createdAt}</p>
+                <p className='date'>
+                  {new Date(comment.createdAt).toLocaleString('ko-KR')}
+                </p>
               </div>
 
               <p>{comment.content}</p>

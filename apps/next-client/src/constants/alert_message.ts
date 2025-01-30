@@ -22,6 +22,10 @@ export const ALERT_MESSAGES = {
     GOOGLE: {
       DISCONNECT: 'Google 계정 연결이 성공적으로 해제되었습니다.',
     },
+
+    RECOMMENT: {
+      RECOMMENT_ADD: '추천이 완료되었습니다.'
+    }
   },
 
   ERROR: {
@@ -78,4 +82,4 @@ export const ALERT_MESSAGES = {
     CHECK_DELETE: '정말로 삭제하시겠습니까?',
     DELETE_FAVORITE: '이 약물을 즐겨찾기에서 삭제하시겠습니까?',
   },
-};
+}as const;
