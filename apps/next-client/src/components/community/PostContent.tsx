@@ -1,3 +1,4 @@
+import ReactMarkdown from 'react-markdown';
 import { Post } from '@/types/post';
 import PostActions from '@/components/community/PostActions';
 
@@ -16,9 +17,11 @@ const PostContent = ({ post }: PostContentProps) => {
         <span>{post.author}</span>
       </div>
 
-      <PostActions postId={post.id} authorId={post.userId} />
+      <PostActions postId={post.id} userId={post.userId} />
 
-      <div className="post_desc" dangerouslySetInnerHTML={{ __html: post.content }} />
+      <div className="post_desc">
+        <ReactMarkdown>{post.content}</ReactMarkdown>
+      </div>
     </div>
   );
 };

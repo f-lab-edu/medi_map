@@ -9,10 +9,10 @@ import { ALERT_MESSAGES } from '@/constants/alert_message';
 
 interface PostActionsProps {
   postId: number;
-  authorId: string;
+  userId: string;
 }
 
-const PostActions = ({ postId, authorId }: PostActionsProps) => {
+const PostActions = ({ postId, userId }: PostActionsProps) => {
   const router = useRouter();
   const { data: session } = useSession();
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -39,7 +39,7 @@ const PostActions = ({ postId, authorId }: PostActionsProps) => {
     }
   };
 
-  if (currentUserId !== authorId) return null;
+  if (currentUserId !== userId) return null;
 
   return (
     <div className="post_actions">

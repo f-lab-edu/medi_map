@@ -7,7 +7,10 @@ async function fetchPost(id: string) {
   const response = await fetch(`${API_URLS.POSTS}/${id}`, { cache: 'no-store' });
   
   if (!response.ok) {
-    throw new Error("게시글을 불러올 수 없습니다.");
+    const errorMessage = `게시글을 불러올 수 없습니다. ${response.status}`;
+    
+    console.error(errorMessage);
+    throw new Error(errorMessage);
   }
   return response.json();
 }
