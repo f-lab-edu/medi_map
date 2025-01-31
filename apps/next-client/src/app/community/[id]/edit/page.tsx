@@ -101,6 +101,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
 
       alert('게시글이 수정되었습니다.');
       router.push(`/community/${id}`);
+      router.refresh();
     } catch (error) {
       console.error('Error updating post:', error);
       alert('게시글 수정 중 문제가 발생했습니다.');

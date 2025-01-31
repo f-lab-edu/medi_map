@@ -1,4 +1,6 @@
-import ReactMarkdown from 'react-markdown';
+'use client';
+
+import createDOMPurify from 'isomorphic-dompurify';
 import { Post } from '@/types/post';
 import PostActions from '@/components/community/PostActions';
 
@@ -7,6 +9,9 @@ interface PostContentProps {
 }
 
 const PostContent = ({ post }: PostContentProps) => {
+  const DOMPurify = createDOMPurify();
+  const sanitizedContent = DOMPurify.sanitize(post.content);
+
   return (
     <div className='post_top_cont'>
       <h2 className="post_title">{post.title}</h2>
@@ -19,9 +24,7 @@ const PostContent = ({ post }: PostContentProps) => {
 
       <PostActions postId={post.id} userId={post.userId} />
 
-      <div className="post_desc">
-        <ReactMarkdown>{post.content}</ReactMarkdown>
-      </div>
+      <div className="post_desc" dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
     </div>
   );
 };

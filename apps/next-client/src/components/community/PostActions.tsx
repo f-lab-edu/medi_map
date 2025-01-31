@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { API_URLS } from '@/constants/urls';
@@ -15,16 +15,11 @@ interface PostActionsProps {
 const PostActions = ({ postId, userId }: PostActionsProps) => {
   const router = useRouter();
   const { data: session } = useSession();
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const currentUserId = session?.user?.id;
 
-  useEffect(() => {
-    if (session?.user?.id) {
-      setCurrentUserId(session.user.id);
-    }
-  }, [session]);
-
-  const handleDeletePost = async () => {
-    if (!window.confirm(ALERT_MESSAGES.CONFIRM.CHECK_DELETE)) return;
+  const handleDeletePost = useCallback(async () => {
+    const isConfirmed = window.confirm(ALERT_MESSAGES.CONFIRM.CHECK_DELETE);
+    if (!isConfirmed) return;
 
     try {
       await axiosInstance.delete(`${API_URLS.POSTS}/${postId}`, {
@@ -37,7 +32,7 @@ const PostActions = ({ postId, userId }: PostActionsProps) => {
       console.error('Error deleting post:', error);
       alert(ALERT_MESSAGES.ERROR.POST.POST_DELETE_ERROR);
     }
-  };
+  }, [postId, router]);
 
   if (currentUserId !== userId) return null;
 
