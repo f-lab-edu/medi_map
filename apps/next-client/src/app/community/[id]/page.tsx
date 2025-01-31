@@ -21,7 +21,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   return (
     <div className="post_detail">
       <PostContent post={post} />
-      <PostDetailPage postId={params.id} userId={post.userId} />
+      <PostDetailPage urlPostId={params.id} userId={post.userId} />
     </div>
   );
 }

@@ -6,11 +6,11 @@ import { ALERT_MESSAGES } from '@/constants/alert_message';
 import { axiosInstance } from '@/services/axiosInstance';
 
 interface CommentFormProps {
-  postId: string;
+  urlPostId: string;
   fetchComments: () => void;
 }
 
-const CommentForm = ({ postId, fetchComments }: CommentFormProps) => {
+const CommentForm = ({ urlPostId, fetchComments }: CommentFormProps) => {
   const [newComment, setNewComment] = useState('');
 
   const handleAddComment = async () => {
@@ -20,7 +20,7 @@ const CommentForm = ({ postId, fetchComments }: CommentFormProps) => {
     }
 
     try {
-      await axiosInstance.post(`${API_URLS.POSTS}/${postId}/comments`, { content: newComment }, 
+      await axiosInstance.post(`${API_URLS.POSTS}/${urlPostId}/comments`, { content: newComment }, 
         { headers: { requiresAuth: true } }
       );
       setNewComment('');

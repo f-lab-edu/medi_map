@@ -1,6 +1,5 @@
 'use client';
 
-import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { API_URLS } from '@/constants/urls';
@@ -14,10 +13,12 @@ interface PostActionsProps {
 
 const PostActions = ({ postId, userId }: PostActionsProps) => {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const currentUserId = session?.user?.id;
 
-  const handleDeletePost = useCallback(async () => {
+  if (status === 'loading' || currentUserId !== userId) return null;
+
+  const handleDeletePost = async () => {
     const isConfirmed = window.confirm(ALERT_MESSAGES.CONFIRM.CHECK_DELETE);
     if (!isConfirmed) return;
 
@@ -28,13 +29,12 @@ const PostActions = ({ postId, userId }: PostActionsProps) => {
 
       alert(ALERT_MESSAGES.SUCCESS.POST.POST_DELETE);
       router.push('/community');
-    } catch (error) {
+      
+    } catch (error: unknown) {
       console.error('Error deleting post:', error);
       alert(ALERT_MESSAGES.ERROR.POST.POST_DELETE_ERROR);
     }
-  }, [postId, router]);
-
-  if (currentUserId !== userId) return null;
+  };
 
   return (
     <div className="post_actions">

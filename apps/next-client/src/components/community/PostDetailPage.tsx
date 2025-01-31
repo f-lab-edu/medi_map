@@ -11,11 +11,11 @@ import CommentList from '@/components/community/CommentList';
 import CommentForm from '@/components/community/CommentForm';
 
 interface Props {
-  postId: string;
+  urlPostId: string;
   userId: string;
 }
 
-const PostDetailPage = ({ postId }: Props) => {
+const PostDetailPage = ({ urlPostId }: Props) => {
   const { data: session } = useSession();
   const [comments, setComments] = useState([]);
   const [isRecommended, setIsRecommended] = useState(false);
@@ -24,7 +24,7 @@ const PostDetailPage = ({ postId }: Props) => {
 
   const fetchComments = useCallback(async () => {
     try {
-      const response = await axiosInstance.get(`${API_URLS.POSTS}/${postId}/comments`, {
+      const response = await axiosInstance.get(`${API_URLS.POSTS}/${urlPostId}/comments`, {
         headers: { requiresAuth: true },
       });
       setComments(response.data);
@@ -32,7 +32,7 @@ const PostDetailPage = ({ postId }: Props) => {
       console.error('Error fetching comments:', error);
       alert(ALERT_MESSAGES.ERROR.COMMENT.FETCH_COMMENTS);
     }
-  }, [postId]);
+  }, [urlPostId]);
 
   useEffect(() => {
     fetchComments();
@@ -41,7 +41,7 @@ const PostDetailPage = ({ postId }: Props) => {
   useEffect(() => {
     const fetchRecommend = async () => {
       try {
-        const response = await axiosInstance.get(`${API_URLS.POSTS}/${postId}/recommend`, {
+        const response = await axiosInstance.get(`${API_URLS.POSTS}/${urlPostId}/recommend`, {
           headers: { requiresAuth: true },
         });
 
@@ -54,12 +54,12 @@ const PostDetailPage = ({ postId }: Props) => {
     };
 
     fetchRecommend();
-  }, [postId]);
+  }, [urlPostId]);
 
   const toggleRecommend = async () => {
     try {
       const response = await axiosInstance.post(
-        `${API_URLS.POSTS}/${postId}/recommend`,
+        `${API_URLS.POSTS}/${urlPostId}/recommend`,
         {},
         { headers: { requiresAuth: true } }
       );
@@ -81,7 +81,7 @@ const PostDetailPage = ({ postId }: Props) => {
         <span>{recommendationCount}</span>
       </div>
 
-      <CommentForm postId={postId} fetchComments={fetchComments} />
+      <CommentForm urlPostId={urlPostId} fetchComments={fetchComments} />
       <CommentList comments={comments} userId={currentUserId} fetchComments={fetchComments} />
     </div>
   );

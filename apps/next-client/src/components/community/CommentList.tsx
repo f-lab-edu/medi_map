@@ -14,7 +14,6 @@ const CommentList = ({ comments, userId, fetchComments }: CommentListProps) => {
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editedComment, setEditedComment] = useState<string>('');
 
-  // 댓글 삭제
   const handleDeleteComment = async (commentId: number) => {
     if (!window.confirm(ALERT_MESSAGES.CONFIRM.CHECK_DELETE)) return;
 
@@ -30,13 +29,11 @@ const CommentList = ({ comments, userId, fetchComments }: CommentListProps) => {
     }
   };
 
-  // 수정 버튼 클릭
   const startEditingComment = (commentId: number, currentContent: string) => {
     setEditingCommentId(commentId);
     setEditedComment(currentContent);
   };
 
-  // 댓글 수정 요청
   const handleEditComment = async (commentId: number) => {
     if (!editedComment.trim()) {
       alert(ALERT_MESSAGES.ERROR.COMMENT.COMMENT_EMPTY_FIELDS);
