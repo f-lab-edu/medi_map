@@ -3,7 +3,7 @@ import { updatePharmacyData } from '@/services/pharmacyService';
 import { Pharmacy } from '@/models';
 import { ValidationError, DatabaseError, UpdateError, UnexpectedError } from '@/error/PharmacyError';
 import { ERROR_MESSAGES } from '@/constants/errors';
-import { PharmacyItem } from '@/types/pharmacy.types';
+import { PharmacyAPIItem } from '@/types/pharmacy.types';
 
 const router = Router();
 
@@ -18,7 +18,7 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
   const deltaLon = toRadians(lon2 - lon1);
   const a
     = Math.sin(deltaLat / 2) ** 2
-    + Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.sin(deltaLon / 2) ** 2;
+      + Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.sin(deltaLon / 2) ** 2;
 
   return EARTH_RADIUS * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 };
@@ -49,7 +49,7 @@ router.get('/', async (req, res) => {
     }
 
     // 반경 내 약국 필터링
-    const filteredPharmacies = pharmacies.filter((pharmacy: PharmacyItem) =>
+    const filteredPharmacies = pharmacies.filter((pharmacy: PharmacyAPIItem) =>
       isWithinRadius(centerLat, centerLng, pharmacy.wgs84Lat, pharmacy.wgs84Lon));
 
     return res.status(200).json(filteredPharmacies);
@@ -73,7 +73,7 @@ router.post('/update-pharmacy', async (req, res) => {
     try {
       await updatePharmacyData();
     } catch (error) {
-      throw new UpdateError(ERROR_MESSAGES.PHARMACY_DATA_ERROR);
+      throw new UpdateError(ERROR_MESSAGES.PHARMACY.PHARMACY_DATA_ERROR);
     }
 
     return res.status(200).json({ message: 'Pharmacy data updated successfully!' });
