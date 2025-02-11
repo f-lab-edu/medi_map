@@ -7,7 +7,7 @@ import { getAuthHeader } from '@/utils/authUtils';
 import { axiosInstance } from '@/services/axiosInstance';
 import { useRouter } from 'next/navigation';
 import { validateNickname, validatePasswordChange } from '@/utils/validation';
-import { ALERT_MESSAGES } from '@/constants/alert_message';
+import { ALERT_MESSAGES } from '@/constants/alertMessage';
 import Cookies from 'js-cookie';
 
 export default function UserInfo() {

@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { axiosInstance } from '@/services/axiosInstance';
 import { API_URLS } from '@/constants/urls';
 import { getAuthHeader } from '@/utils/authUtils';
-import { ALERT_MESSAGES } from '@/constants/alert_message';
+import { ALERT_MESSAGES } from '@/constants/alertMessage';
 import { MedicineFavorite } from '@/types/medicine.types';
 
 export default function UserBookmark() {

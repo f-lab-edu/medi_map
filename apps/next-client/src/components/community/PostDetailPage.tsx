@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { API_URLS } from '@/constants/urls';
-import { ALERT_MESSAGES } from '@/constants/alert_message';
+import { ALERT_MESSAGES } from '@/constants/alertMessage';
 import { FaThumbsUp, FaRegThumbsUp } from "react-icons/fa6";
 import Link from 'next/link';
 import { axiosInstance } from '@/services/axiosInstance';

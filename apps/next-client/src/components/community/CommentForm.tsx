@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { API_URLS } from '@/constants/urls';
-import { ALERT_MESSAGES } from '@/constants/alert_message';
+import { ALERT_MESSAGES } from '@/constants/alertMessage';
 import { axiosInstance } from '@/services/axiosInstance';
 
 interface CommentFormProps {

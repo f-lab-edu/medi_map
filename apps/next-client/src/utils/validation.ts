@@ -1,4 +1,4 @@
-import { ALERT_MESSAGES } from '@/constants/alert_message';
+import { ALERT_MESSAGES } from '@/constants/alertMessage';
 
 export const validateNickname = (nickname: string): string | null => {
   if (!nickname || nickname.length < 3 || nickname.length > 30) {

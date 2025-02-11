@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { API_URLS } from '@/constants/urls';
 import { axiosInstance } from '@/services/axiosInstance';
-import { ALERT_MESSAGES } from '@/constants/alert_message';
+import { ALERT_MESSAGES } from '@/constants/alertMessage';
 
 interface PostActionsProps {
   postId: number;

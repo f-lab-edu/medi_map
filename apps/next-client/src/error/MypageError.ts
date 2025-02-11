@@ -1,4 +1,4 @@
-import { ALERT_MESSAGES } from '@/constants/alert_message';
+import { ALERT_MESSAGES } from '@/constants/alertMessage';
 
 export class FetchUsernameError extends Error {
   constructor(message = ALERT_MESSAGES.ERROR.FETCH_USERNAME) {
