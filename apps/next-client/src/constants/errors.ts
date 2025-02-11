@@ -14,4 +14,6 @@ export const ERROR_MESSAGES = {
   NETWORK_ERROR: "네트워크 연결에 문제가 있습니다. 잠시 후 다시 시도해 주세요.",
   GENERIC_ERROR: "오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
   EDITOR_NOT_INITIALIZED: "Quill 에디터 인스턴스가 아직 초기화되지 않았습니다.",
-};
+  POST_NOT_FOUNT: "요청하신 게시글을 찾을 수 없습니다.",
+  SERVER_ERROR: "서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요."
+}as const;
