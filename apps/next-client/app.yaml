@@ -7,13 +7,14 @@ automatic_scaling:
   max_num_instances: 5
 
 env_variables:
-  NEXT_PUBLIC_LOCAL_BACKEND_URL: "https://backend-dot-f-lab-project-440413.uc.r.appspot.com"
-  GOOGLE_CLIENT_ID: "560997285561-laq7qtne5qfo3uqvm7opijbvdpf05fdb.apps.googleusercontent.com"
-  GOOGLE_CLIENT_SECRET: "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"
-  NEXTAUTH_SECRET: "8b885ddb0a5da1f04784be72e27589c9fbfee22d20f4ef27f063d8ed7d8211bd"
-  NEXTAUTH_URL: "https://f-lab-project-440413.uc.r.appspot.com"
-  NEXT_PUBLIC_KAKAO_MAP_KEY: "23090c63da235aab83cf17abbb29bcab"
-  DATA_API_KEY: "YJ8so8uNR%2FiHv%2FB3FhjsGfy%2BxFhgfB9tv9grEqDfzPkkoWEx8tIiME6UarZefKqWPeHo%2BE3XxrtqA8BH0WOlnQ%3D%3D"
+  NEXT_PUBLIC_LOCAL_BACKEND_URL: "https://backend-dot-medi-map-449217.uc.r.appspot.com"
+  NEXT_PUBLIC_GOOGLE_CLIENT_ID: "projects/109725974101/secrets/NEXT_PUBLIC_LOCAL_BACKEND_URL/versions/latest"
+  GOOGLE_CLIENT_ID: "projects/109725974101/secrets/GOOGLE_CLIENT_ID/versions/latest"
+  GOOGLE_CLIENT_SECRET: "projects/109725974101/secrets/GOOGLE_CLIENT_SECRET/versions/latest"
+  NEXTAUTH_SECRET: "projects/109725974101/secrets/NEXTAUTH_SECRET/versions/latest"
+  NEXTAUTH_URL: "projects/109725974101/secrets/NEXTAUTH_URL/versions/latest"
+  NEXT_PUBLIC_KAKAO_MAP_KEY: "projects/109725974101/secrets/NEXT_PUBLIC_KAKAO_MAP_KEY/versions/latest"
+  DATA_API_KEY: "projects/109725974101/secrets/DATA_API_KEY/versions/latest"
 
 readiness_check:
   app_start_timeout_sec: 600

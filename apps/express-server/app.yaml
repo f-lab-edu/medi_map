@@ -3,23 +3,24 @@ env: flex
 
 manual_scaling:
   instances: 1
+
 resources:
   cpu: 1
   memory_gb: 0.5
   disk_size_gb: 10
 
 env_variables:
-  JWT_SECRET: 'b1fbf862fe5538e821c12ac9c45c9809f87e685e04ebe183ec061efd5a46820ea779b0d159732465ca36c97a62c4c7305e89df29b859cdabd5161b67548875fb'
+  JWT_SECRET: 'projects/109725974101/secrets/JWT_SECRET/versions/latest'
   DB_USER: 'postgres'
-  DB_HOST: '/cloudsql/f-lab-project-440413:us-central1:postgres'
+  DB_HOST: '/cloudsql/medi-map-449217:us-central1:postgress'
   DB_NAME: 'postgres'
   DB_PASSWORD: 'postgres'
   DB_PORT: 5432
-  FRONTEND_URL: 'https://f-lab-project-440413.uc.r.appspot.com'
-  DATA_API_KEY: 'YJ8so8uNR%2FiHv%2FB3FhjsGfy%2BxFhgfB9tv9grEqDfzPkkoWEx8tIiME6UarZefKqWPeHo%2BE3XxrtqA8BH0WOlnQ%3D%3D'
+  FRONTEND_URL: 'https://medi-map-449217.uc.r.appspot.com'
+  DATA_API_KEY: 'projects/109725974101/secrets/DATA_API_KEY/versions/latest'
 
 beta_settings:
-  cloud_sql_instances: "f-lab-project-440413:us-central1:postgres"
+  cloud_sql_instances: 'medi-map-449217:us-central1:postgress'
 
 readiness_check:
   app_start_timeout_sec: 600

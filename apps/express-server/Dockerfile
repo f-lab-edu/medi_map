@@ -1,43 +1,26 @@
-# Base Image
+# 베이스 이미지 설정
 FROM node:20-alpine3.18 AS phase1
 
+# 작업 디렉터리 설정
 WORKDIR /app
 
-# Copy necessary files
+# package.json이 변경될 경우에만 yarn 실행
 COPY --chown=node:node turbo.json .
 COPY --chown=node:node tsconfig.json .
 COPY --chown=node:node package.json .
 
-# Create the express-server directory and copy relevant files
+# 필요한 디렉터리 생성
 RUN mkdir -p apps/express-server
+
+# 필요한 패키지 파일만 복사
 COPY --chown=node:node ./apps/express-server/package.json apps/express-server
 COPY --chown=node:node ./apps/express-server apps/express-server
 
-# Environment variables for build arguments
-ARG JWT_SECRET
-ARG DB_USER
-ARG DB_HOST
-ARG DB_NAME
-ARG DB_PASSWORD
-ARG DB_PORT
-ARG FRONTEND_URL
-ARG DATA_API_KEY
-
-# Set environment variables for runtime
-ENV JWT_SECRET=$JWT_SECRET
-ENV DB_USER=$DB_USER
-ENV DB_HOST=$DB_HOST
-ENV DB_NAME=$DB_NAME
-ENV DB_PASSWORD=$DB_PASSWORD
-ENV DB_PORT=$DB_PORT
-ENV FRONTEND_URL=$FRONTEND_URL
-ENV DATA_API_KEY=$DATA_API_KEY
-
-# Install dependencies
+# 종속성 설치
 RUN yarn
 
-# Build express-server
+# express-server 빌드
 RUN yarn build
 
-# Start the server
+# 개발 환경에서 서버 실행
 CMD ["yarn", "workspace", "express-server", "start"]
