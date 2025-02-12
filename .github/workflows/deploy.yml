@@ -30,4 +30,3 @@ jobs:
       - name: Deploy to App Engine
         run: |
           gcloud app deploy apps/express-server/app.yaml --image-url=asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/project/express-server:latest
-          gcloud app deploy apps/next-client/app.yaml --image-url=asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/project/next-client:latest
