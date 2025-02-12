@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { API_URLS } from '@/constants/urls';
 import '@/styles/pages/community/community.scss';
 import { Post } from '@/types/post';
-import { ALERT_MESSAGES } from '@/constants/alert_message';
+import { ALERT_MESSAGES } from '@/constants/alertMessage';
 import Image from 'next/image';
 
 export default function CommunityList() {

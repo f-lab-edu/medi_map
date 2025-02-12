@@ -291,6 +291,7 @@
 }
 .delete_button,
 .save_button {
+  border: 1px solid var(--btn-color);
   background: var(--btn-color);
   color: #fff;
 }
@@ -340,6 +341,7 @@
 .actions {
   display: flex;
   gap: 2rem;
+
   button {
     border-radius: 0.5rem;
     padding: 1rem;

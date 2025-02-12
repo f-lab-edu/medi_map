@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { API_URLS } from '@/constants/urls';
 import 'react-quill/dist/quill.snow.css';
 import '@/styles/pages/community/community.scss';
-import { ALERT_MESSAGES } from '@/constants/alert_message';
+import { ALERT_MESSAGES } from '@/constants/alertMessage';
 
 // ReactQuill 동적 로드 (SSR 비활성화)
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
