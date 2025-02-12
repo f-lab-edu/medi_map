@@ -16,7 +16,7 @@ env_variables:
   DB_NAME: 'postgres'
   DB_PASSWORD: 'postgres'
   DB_PORT: 5432
-  FRONTEND_URL: 'https://medi-map-449217.uc.r.appspot.com'
+  FRONTEND_URL: 'https://medi-map-chi.vercel.app'
   DATA_API_KEY: 'projects/109725974101/secrets/DATA_API_KEY/versions/latest'
 
 beta_settings:
