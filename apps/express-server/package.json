@@ -32,7 +32,8 @@
     "sequelize-cli": "^6.6.2",
     "tsconfig-paths": "^4.2.0",
     "uuid": "^11.0.3",
-    "winston": "3.13.0"
+    "winston": "3.13.0",
+    "@medi-map/validation": "*"
   },
   "resolutions": {
     "@types/express": "4.17.21",
@@ -42,7 +43,9 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
+    "@types/dompurify": "^3.2.0",
     "@types/dotenv": "^8.2.0",
+    "@types/jsdom": "^21.1.7",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/multer": "^1.4.12",
     "@types/node": "^20.14.9",
