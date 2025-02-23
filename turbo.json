@@ -1,15 +1,11 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "tasks": {
-    "tsc": {
-      "dependsOn": [],
-      "cache": false,
-      "outputs": []
+    "lib:build": {
+      "dependsOn": []
     },
     "lint": {
-      "dependsOn": [
-        "@medi-map/tsconfig"
-      ]
+      "dependsOn": []
     },
     "dev": {
       "dependsOn": [

@@ -12,7 +12,7 @@
       "@/*": ["src/*"]
     },
     "typeRoots": ["./src/types", "./node_modules/@types"],
-    "moduleResolution": "node"
+    "moduleResolution": "node",
   },
   "ts-node": {
     "require": ["tsconfig-paths/register"],

@@ -1,0 +1,24 @@
+runtime: custom
+env: flex
+service: backend
+
+manual_scaling:
+  instances: 1
+
+resources:
+  cpu: 1
+  memory_gb: 0.5
+  disk_size_gb: 10
+
+env_variables:
+  JWT_SECRET: 'b1fbf862fe5538e821c12ac9c45c9809f87e685e04'
+  DB_USER: 'postgres'
+  DB_HOST: '34.132.121.229'
+  DB_NAME: 'postgres'
+  DB_PASSWORD: 'postgres'
+  DB_PORT: 5432
+  FRONTEND_URL: 'https://medi-map-next-client.vercel.app'
+  DATA_API_KEY: 'YJ8so8uNR%2FiHv%2FB3FhjsGfy%2BxFhgfB9tv9grEqDfzPkkoWEx8tIiME6UarZefKqWPeHo%2BE3XxrtqA8BH0WOlnQ%3D%3D'
+
+readiness_check:
+  app_start_timeout_sec: 600

@@ -13,7 +13,6 @@
     "tsc": "tsc --noEmit"
   },
   "dependencies": {
-    "@types/express": "4.17.21",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
@@ -22,6 +21,7 @@
     "express": "^4.21.2",
     "fast-xml-parser": "^4.5.0",
     "googleapis": "^144.0.0",
+    "jsdom": "^26.0.0",
     "jsonwebtoken": "^9.0.2",
     "moment": "^2.30.1",
     "multer": "^1.4.5-lts.1",
@@ -32,22 +32,16 @@
     "sequelize-cli": "^6.6.2",
     "tsconfig-paths": "^4.2.0",
     "uuid": "^11.0.3",
-    "winston": "3.13.0",
-    "@medi-map/validation": "*"
-  },
-  "resolutions": {
-    "@types/express": "4.17.21",
-    "@types/express-serve-static-core": "4.19.6",
-    "@types/multer": "1.4.2"
+    "winston": "3.13.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/dompurify": "^3.2.0",
     "@types/dotenv": "^8.2.0",
+    "@types/express": "4.17.21",
     "@types/jsdom": "^21.1.7",
     "@types/jsonwebtoken": "^9.0.7",
-    "@types/multer": "^1.4.12",
     "@types/node": "^20.14.9",
     "@types/pg": "^8.11.10",
     "@types/redis": "^4.0.11",
