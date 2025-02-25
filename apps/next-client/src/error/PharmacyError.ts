@@ -15,7 +15,7 @@ export class LocationError extends Error {
 }
 
 export class ValidationError extends Error {
-  constructor(message: string = ERROR_MESSAGES.REQUSET_ERROR) {
+  constructor(message: string = ERROR_MESSAGES.REQUEST_ERROR) {
     super(message);
     this.name = 'ValidationError';
   }
