@@ -11,11 +11,10 @@ async function fetchPost(id: string) {
     let errorMessage = `게시글을 불러올 수 없습니다. 상태 코드: ${response.status}`;
 
     if (response.status === 404) {
-      errorMessage = ERROR_MESSAGES.POST_NOT_FOUNT;
+      errorMessage = ERROR_MESSAGES.POST_NOT_FOUND;
     } else if (response.status === 500) {
       errorMessage = ERROR_MESSAGES.SERVER_ERROR;
     }
-
     console.error(errorMessage);
     throw new Error(errorMessage);
   }
