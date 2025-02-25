@@ -8,6 +8,7 @@ import KakaoMap from '@/components/pharmacy/KakaoMap';
 import PharmacyDetails from '@/components/pharmacy/PharmacyDetails';
 import { PharmacyDTO } from '@/dto/PharmacyDTO';
 import { usePharmacies } from '@/hooks/queries/usePharmacies';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
 
 export default function PharmacyPage() {
   const { location: initialLocation, locationError } = useGeoLocation();
@@ -51,13 +52,7 @@ export default function PharmacyPage() {
     }
 
     if (isLoading) {
-      return (
-        <div className="loading_spinner d-flex justify-content-center align-items-center">
-          <div className="spinner-grow text-info" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      );
+      return <LoadingSpinner />;
     }
 
     if (!Array.isArray(pharmacies) || pharmacies.length === 0) {
