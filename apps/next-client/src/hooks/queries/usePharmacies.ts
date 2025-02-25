@@ -30,7 +30,7 @@ const fetchPharmacies = async (lat: number, lng: number): Promise<PharmacyDTO[]>
       throw new Error(ERROR_MESSAGES.GENERIC_ERROR);
     }
 
-    // 데이터 구조 검증
+    // 데이터 구조(배열) 검증
     if (!Array.isArray(data)) {
       throw new Error(ERROR_MESSAGES.INVALID_RESPONSE_FORMAT);
     }
