@@ -8,7 +8,7 @@ import { PharmacyAPIItem } from '@/types/pharmacy.types';
 const router = Router();
 
 const EARTH_RADIUS = 6371e3; // 지구 반지름 (미터)
-const DEFAULT_RADIUS = 2500; // 기본 반경 (미터)
+const DEFAULT_RADIUS = 1500; // 기본 반경 (미터)
 
 // 유틸리티 함수: 거리 계산
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {

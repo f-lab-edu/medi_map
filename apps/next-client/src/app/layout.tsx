@@ -8,6 +8,7 @@ import ContentWrapper from '@/components/ContentWrapper';
 import { ReactNode } from 'react';
 import SessionCookieSetter from '@/components/SessionCookieSetter';
 import Script from 'next/script';
+import Providers from '@/app/provider';
 
 interface LayoutProps {
   children: ReactNode;
@@ -19,19 +20,21 @@ export default async function Layout({ children }: LayoutProps) {
   return (
     <html lang="en">
       <body>
-      <Script
+        <Script
           src="https://accounts.google.com/gsi/client"
           strategy="afterInteractive"
           async
           defer
         />
-        <SessionWrapper session={session}>
-          <Header />
-          <ContentWrapper>
-            {children}
-            <SessionCookieSetter />
-          </ContentWrapper>
-        </SessionWrapper>
+        <Providers>
+          <SessionWrapper session={session}>
+            <Header />
+            <ContentWrapper>
+              {children}
+              <SessionCookieSetter />
+            </ContentWrapper>
+          </SessionWrapper>
+        </Providers>
       </body>
     </html>
   );

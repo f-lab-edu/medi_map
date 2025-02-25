@@ -10,7 +10,7 @@ import { ERROR_MESSAGES } from '@/constants/errors';
 interface KakaoMapProps {
   pharmacies: PharmacyDTO[];
   location: { lat: number; lng: number } | null;
-  onSearch: (lat: number, lng: number) => Promise<void>;
+  onSearch: (lat: number, lng: number) => void;  // 검색을 요청할 콜백
   onPharmacyClick: (pharmacy: PharmacyDTO) => void;
 }
 
@@ -22,9 +22,10 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 }) => {
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const markersRef = useRef<kakao.maps.Marker[]>([]);
-  const [filter, setFilter] = useState<FilterType>("ALL");
+  const [filter, setFilter] = useState<FilterType>('ALL');
   const [mapLoaded, setMapLoaded] = useState(false);
 
+  // 카카오 맵 스크립트 로드
   useEffect(() => {
     const initialize = async () => {
       try {
@@ -37,6 +38,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     initialize();
   }, []);
 
+  // 약국 마커 갱신
   const updateMarkers = useCallback(
     (pharmacies: PharmacyDTO[]) => {
       if (Array.isArray(markersRef.current)) {
@@ -55,84 +57,91 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     [filter, onPharmacyClick]
   );
 
+  // 지도 초기화 (최초 로드 & location 변경 시)
   useEffect(() => {
     if (mapLoaded && location && mapRef.current === null) {
-      initializeMap("map", location, (map) => {
+      initializeMap('map', location, (map) => {
         mapRef.current = map;
         updateMarkers(pharmacies);
       });
     }
   }, [mapLoaded, location, pharmacies, updateMarkers]);
 
+  // filter 변경 시 마커 재생성
   useEffect(() => {
     if (mapRef.current) {
       updateMarkers(pharmacies);
     }
   }, [pharmacies, filter, updateMarkers]);
 
+  // 현재 지도 중심에서 검색 버튼
   const handleSearchInCurrentMap = () => {
     if (mapRef.current) {
       const center = mapRef.current.getCenter();
       const lat = center.getLat();
       const lng = center.getLng();
-      onSearch(lat, lng);
+      onSearch(lat, lng); // 부모에 콜백
     }
   };
 
+  // 필터 변경
   const handleFilterChange = (newFilter: FilterType) => {
     setFilter(newFilter);
   };
 
+  // 내 위치에서 검색 버튼
   const handleLocationSearch = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-
-          // 지도 위치를 현재 위치로 이동
+          // 지도 위치 이동
           if (mapRef.current) {
             const moveLatLon = new kakao.maps.LatLng(latitude, longitude);
             mapRef.current.setCenter(moveLatLon);
-
-            // 현재 위치 주변 약국 검색
-            onSearch(latitude, longitude);
           }
+          // 부모에 새로운 좌표 전달
+          onSearch(latitude, longitude);
         },
         (error) => {
-          console.error("현재 위치를 가져오는데 실패했습니다.", error);
+          console.error('현재 위치를 가져오는데 실패했습니다.', error);
         }
       );
     } else {
-      console.error("Geolocation API를 지원하지 않는 브라우저입니다.");
+      console.error('Geolocation API를 지원하지 않는 브라우저입니다.');
     }
   };
 
   return (
     <div className="map_cont">
-      <div id="map" style={{ width: "100%", height: "100vh" }}></div>
+      <div id="map" style={{ width: '100%', height: '100vh' }} />
+      
       <button className="map_search" onClick={handleSearchInCurrentMap}>
         현재 지도에서 검색
       </button>
+
       <ul className="load_info_list">
         <li
-          className={filter === "ALL" ? "selected" : ""}
-          onClick={() => handleFilterChange("ALL")}
+          className={filter === 'ALL' ? 'selected' : ''}
+          onClick={() => handleFilterChange('ALL')}
         >
           전체
         </li>
         <li
-          className={filter === "OPEN_NOW" ? "selected" : ""}
-          onClick={() => handleFilterChange("OPEN_NOW")}
+          className={filter === 'OPEN_NOW' ? 'selected' : ''}
+          onClick={() => handleFilterChange('OPEN_NOW')}
         >
           영업중
         </li>
         <li
-          className={filter === "NIGHT_PHARMACY" ? "selected" : ""}
-          onClick={() => handleFilterChange("NIGHT_PHARMACY")}
+          className={filter === 'NIGHT_PHARMACY' ? 'selected' : ''}
+          onClick={() => handleFilterChange('NIGHT_PHARMACY')}
         >
           공공심야약국
         </li>
-        <li onClick={handleLocationSearch} className="current_location">내 위치에서 검색</li>
+        <li onClick={handleLocationSearch} className="current_location">
+          내 위치에서 검색
+        </li>
       </ul>
     </div>
   );

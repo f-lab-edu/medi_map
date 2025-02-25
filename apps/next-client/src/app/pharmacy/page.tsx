@@ -1,63 +1,56 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import '@/styles/pages/pharmacy/pharmacy.scss';
 import useGeoLocation from '@/hooks/useGeoLocation';
-import { usePharmacy } from '@/hooks/usePharmacy';
 import PharmacyTimeList from '@/components/pharmacy/PharmacyTimeList';
 import KakaoMap from '@/components/pharmacy/KakaoMap';
 import PharmacyDetails from '@/components/pharmacy/PharmacyDetails';
 import { PharmacyDTO } from '@/dto/PharmacyDTO';
-import { ERROR_MESSAGES } from '@/constants/errors';
-import { API_URLS } from '@/constants/urls';
+import { usePharmacies } from '@/hooks/queries/usePharmacies';
 
 export default function PharmacyPage() {
-  const { location, locationError } = useGeoLocation();
-  const { pharmacies, setPharmacies, loading, error: pharmacyError, setLoading, setError } = usePharmacy();
+  const { location: initialLocation, locationError } = useGeoLocation();
+  const [searchLocation, setSearchLocation] = useState<{ lat: number; lng: number } | null>(null);
+  
+  useEffect(() => {
+    if (initialLocation) {
+      setSearchLocation(initialLocation);
+    }
+  }, [initialLocation]);
+
   const [selectedPharmacy, setSelectedPharmacy] = useState<PharmacyDTO | null>(null);
 
-  // 약국 검색 함수 (백엔드 API 호출)
-  const handleSearch = useCallback(async (lat: number, lng: number) => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_URLS.PHARMACY}?lat=${lat}&lng=${lng}`);
-      const data = await response.json();
+  const { 
+    data: pharmacies = [], 
+    error: pharmacyError, 
+    isLoading,
+  } = usePharmacies(searchLocation?.lat, searchLocation?.lng);
 
-      if (Array.isArray(data)) {
-        setPharmacies(data);
-      } else {
-        console.error('Invalid data format:', data);
-        setPharmacies([]);
-      }
-    } catch {
-      setError(ERROR_MESSAGES.PHARMACY_DATA_ERROR);
-    }
-    setLoading(false);
-  }, [setLoading, setPharmacies, setError]);
-
-  // 약국 클릭 핸들러
-  const handlePharmacyClick = (pharmacy: PharmacyDTO) => {
+  const handlePharmacyClick = useCallback((pharmacy: PharmacyDTO) => {
     setSelectedPharmacy(pharmacy);
-  };
+  }, []);
 
-  // 위치 정보가 변경될 때 검색 실행
-  useEffect(() => {
-    if (location) {
-      handleSearch(location.lat, location.lng);
-    }
-  }, [location, handleSearch]);
+  const handleSearch = useCallback((lat: number, lng: number) => {
+    setSearchLocation({ lat, lng });
+  }, []);
 
-  // UI 렌더링 로직
   const renderContent = () => {
     if (locationError) {
       return <p className="error_message">{locationError.message}</p>;
     }
 
     if (pharmacyError) {
-      return <p className="error_message">{pharmacyError}</p>;
+      return (
+        <p className="error_message">
+          {pharmacyError instanceof Error
+            ? pharmacyError.message
+            : '약국 정보를 가져오는 중 오류가 발생했습니다.'}
+        </p>
+      );
     }
 
-    if (loading) {
+    if (isLoading) {
       return (
         <div className="loading_spinner d-flex justify-content-center align-items-center">
           <div className="spinner-grow text-info" role="status">
@@ -74,11 +67,15 @@ export default function PharmacyPage() {
     return (
       <div className="pharmacies_box">
         <div className='pharmacies_desc'>
-          <p className="pharmacies_count">총 <span>{pharmacies.length}</span>
-            개의 약국이 검색되었습니다🍀</p>
+          <p className="pharmacies_count">
+            총 <span>{pharmacies.length}</span>개의 약국이 검색되었습니다🍀
+          </p>
           <ul className="pharmacies_list">
-            {pharmacies.map((pharmacy) => (
-              <li key={pharmacy.hpid} onClick={() => handlePharmacyClick(pharmacy)}>
+            {pharmacies.map((pharmacy, index) => (
+              <li
+                key={`${pharmacy.hpid}-${index}`}
+                onClick={() => handlePharmacyClick(pharmacy)}
+              >
                 <h2>{pharmacy.dutyName.trim()}</h2>
                 <p className="address">{pharmacy.dutyAddr}</p>
                 <PharmacyTimeList pharmacy={pharmacy} />
@@ -87,6 +84,7 @@ export default function PharmacyPage() {
             ))}
           </ul>
         </div>
+
         {selectedPharmacy && (
           <PharmacyDetails
             pharmacy={selectedPharmacy}
@@ -101,7 +99,7 @@ export default function PharmacyPage() {
     <div className="pharmacy_cont">
       <KakaoMap
         pharmacies={pharmacies}
-        location={location}
+        location={searchLocation}
         onSearch={handleSearch}
         onPharmacyClick={handlePharmacyClick}
       />
