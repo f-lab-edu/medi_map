@@ -4,13 +4,14 @@ import { Pharmacy } from '@/models';
 import { ValidationError, DatabaseError, UpdateError, UnexpectedError } from '@/error/CommonError';
 import { ERROR_MESSAGES } from '@/constants/errors';
 import { PharmacyAPIItem } from '@/types/pharmacy.types';
+import { Op } from 'sequelize';
 
 const router = Router();
 
 const EARTH_RADIUS = 6371e3; // 지구 반지름 (미터)
 const DEFAULT_RADIUS = 1500; // 기본 반경 (미터)
 
-// 유틸리티 함수: 거리 계산
+// 유틸리티 함수: 거리 계산 (Haversine Formula)
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
   const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
 
@@ -24,7 +25,13 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
 };
 
 // 유틸리티 함수: 반경 내 확인
-const isWithinRadius = (originLat: number, originLng: number, targetLat: number, targetLng: number, radius: number = DEFAULT_RADIUS): boolean => {
+const isWithinRadius = (
+  originLat: number,
+  originLng: number,
+  targetLat: number,
+  targetLng: number,
+  radius: number = DEFAULT_RADIUS
+): boolean => {
   return calculateDistance(originLat, originLng, targetLat, targetLng) <= radius;
 };
 
@@ -40,10 +47,22 @@ router.get('/', async (req, res) => {
     const centerLat = parseFloat(lat as string);
     const centerLng = parseFloat(lng as string);
 
-    // 데이터베이스에서 모든 약국 데이터 조회
+    const latDiff = 0.0225; // 위도 변화량 (약 2.5km)
+    const lngDiff = 0.0270; // 경도 변화량 (약 2.5km)
+
+    const latMin = centerLat - latDiff;
+    const latMax = centerLat + latDiff;
+    const lngMin = centerLng - lngDiff;
+    const lngMax = centerLng + lngDiff;
+
     let pharmacies;
     try {
-      pharmacies = await Pharmacy.findAll();
+      pharmacies = await Pharmacy.findAll({
+        where: {
+          wgs84Lat: { [Op.between]: [latMin, latMax] },
+          wgs84Lon: { [Op.between]: [lngMin, lngMax] },
+        },
+      });
     } catch (error) {
       throw new DatabaseError(ERROR_MESSAGES.DATABASE_ERROR);
     }
