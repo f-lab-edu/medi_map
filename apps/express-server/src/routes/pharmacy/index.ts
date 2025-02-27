@@ -67,6 +67,7 @@ router.get('/', async (req, res) => {
       throw new DatabaseError(ERROR_MESSAGES.DATABASE_ERROR);
     }
 
+    // 반경 내 약국 필터링
     const filteredPharmacies = pharmacies.filter((pharmacy: PharmacyAPIItem) =>
       isWithinRadius(centerLat, centerLng, pharmacy.wgs84Lat, pharmacy.wgs84Lon));
 
