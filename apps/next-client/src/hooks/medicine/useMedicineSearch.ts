@@ -1,7 +1,8 @@
 import { useCallback } from "react";
 import { medicineService } from "@/services/medicine/medicineService";
 import { useSearchStore } from "@/store/useSearchStore";
-import { ERROR_MESSAGES } from '@/constants/errors';
+import { NoResultsError, ApiRequestError } from "@/error/SearchError";
+import { ERROR_MESSAGES } from "@/constants/errors";
 
 export default function useMedicineSearch() {
   const {
@@ -31,26 +32,24 @@ export default function useMedicineSearch() {
           form,
           page,
         });
-  
-        let updatedResults = results;
-  
-        if (page === 1) {
-          updatedResults = newResults;
-        } else {
-          updatedResults = [...results, ...newResults];
+
+        if (!newResults || newResults.length === 0) {
+          setError(ERROR_MESSAGES.NO_SEARCH_RESULTS);
+          setResults([]);
+          setHasMore(false);
+          return;
         }
-  
+
+        const updatedResults = page === 1 ? newResults : [...results, ...newResults];
+
         setResults(updatedResults);
         setTotalResults(newTotal);
-        
-        if (page * 10 < newTotal) {
-          setHasMore(true);
-        } else {
-          setHasMore(false);
-        }
+        setHasMore(page * 10 < newTotal);
       } catch (error) {
-        if (error instanceof Error) {
-          setError(error.message);
+        if (error instanceof NoResultsError) {
+          setError(ERROR_MESSAGES.NO_SEARCH_RESULTS);
+        } else if (error instanceof ApiRequestError) {
+          setError(ERROR_MESSAGES.API_REQUEST_ERROR);
         } else {
           setError(ERROR_MESSAGES.UNKNOWN_ERROR);
         }

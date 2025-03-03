@@ -50,16 +50,8 @@ export async function medicineService({
       },
     });
 
-    let newResults: MedicineResultDto[] = [];
-    let newTotal: number = 0;
-    
-    if (Array.isArray(response.data.results)) {
-      newResults = response.data.results;
-    }
-    
-    if (typeof response.data.total === "number") {
-      newTotal = response.data.total;
-    }    
+    const newResults: MedicineResultDto[] = response.data.results || [];
+    const newTotal: number = response.data.total || 0;
 
     if (newTotal === 0 && page === 1) {
       throw new NoResultsError();
@@ -68,6 +60,11 @@ export async function medicineService({
     return { results: newResults, total: newTotal };
   } catch (error: unknown) {
     console.error("API 요청 실패:", error);
+
+    if (error instanceof NoResultsError) {
+      throw error;
+    }
+
     throw new ApiRequestError();
   }
 }

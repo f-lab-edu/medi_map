@@ -17,5 +17,7 @@ export const ERROR_MESSAGES = {
   EDITOR_NOT_INITIALIZED: "Quill 에디터 인스턴스가 아직 초기화되지 않았습니다.",
   POST_NOT_FOUND: "요청하신 게시글을 찾을 수 없습니다.",
   SERVER_ERROR: "서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.",
-  INVALID_RESPONSE_FORMAT: "API 응답 형식이 올바르지 않습니다. 배열이 아닙니다."
+  INVALID_RESPONSE_FORMAT: "API 응답 형식이 올바르지 않습니다. 배열이 아닙니다.",
+  NO_SEARCH_RESULTS: "검색 결과가 없습니다.",
+  API_REQUEST_ERROR: "API 요청 중 오류가 발생했습니다."
 } as const;
