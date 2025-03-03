@@ -1,19 +1,41 @@
+// abstracts
+@import '../../common/abstracts/mixins';
+@import '../../common/abstracts/responsive';
+
 .search {
-  h1 {
+  .title {
     font-size: 5rem;
     font-weight: bold;
     text-align: center;
+
+    @include mo {
+      font-size: 2.5rem;
+      letter-spacing: -1.5px;
+    }
   }
   .sub_title {
     font-size: 1.8rem;
     margin: 1rem 0 5rem;
     text-align: center;
+
+    @include mo {
+      font-size: 1.6rem;
+    }
+  }
+  .inner {
+    @include mo {
+      padding: 10rem 1.75rem;
+    }
   }
 }
 
 .medicine_search {
   width: 80rem;
   margin: 0 auto;
+
+  @include mo_989 {
+    width: 100%;
+  }
 
   p {
     margin: 0;
@@ -66,6 +88,14 @@
       gap: 1rem;
       border-bottom: 1px solid #ccc;
       padding: 3rem 0;
+
+      @include mo_989 {
+        grid-template-columns: repeat(8, 1fr);
+      }
+
+      @include mo {
+        grid-template-columns: repeat(4, 1fr);
+      }
 
       &.form_filters {
         border-bottom: none;
@@ -187,6 +217,10 @@
   display: flex;
   flex-direction: column;
   margin-top: 7rem;
+
+  @include mo {
+    padding: 0;
+  }
   .medicine_desc {
     a {
       display: flex;
@@ -196,6 +230,12 @@
       border-bottom: 1px solid #ccc;
       padding: 1rem;
       transition: all 0.3s;
+
+      @include mo {
+        flex-direction: column;
+        align-items: baseline;
+      }
+
       &:hover {
         background: #f5f5f5;
       }
@@ -229,6 +269,11 @@
     font-weight: bold;
     text-align: center;
     margin-bottom: 10rem;
+
+    @include mo {
+      font-size: 2.5rem;
+      letter-spacing: -1.5px;
+    }
   }
 
   .medi_bottom_result {
@@ -248,6 +293,10 @@
         padding: 1rem;
         font-weight: 500;
         transition: all 0.3s;
+
+        @include mo {
+          font-size: 1.5rem;
+        }
 
         &.active {
           background: var(--btn-color);
@@ -291,19 +340,34 @@
     gap: 2rem;
     margin-bottom: 10rem;
 
+    @include mo {
+      flex-direction: column;
+    }
+
     img {
       height: 100%;
       width: 40%;
       border-radius: 1rem;
       border: 1px solid #ccc;
+
+      @include mo {
+        width: 100%;
+      }
     }
     .details {
       width: 60%;
+      @include mo {
+        width: 100%;
+      }
     }
   }
   .medi_desc_bottom {
     padding: 2rem;
     border-bottom: 1px solid #ccc;
+
+    @include mo {
+      padding: 2rem 1rem;
+    }
   }
   .name {
     font-size: 2.5rem;
@@ -320,9 +384,24 @@
     text-align: center;
     width: 15rem;
     display: block;
+
+    @include mo {
+      font-size: 1.5rem;
+    }
   }
   .medi_info_list {
     margin-bottom: 2rem;
+    @include mo {
+      padding: 0;
+      margin: 0;
+    }
+    li {
+      p {
+        @include mo {
+          font-size: 1.4rem;
+        }
+      }
+    }
   }
   .medicine_table {
     width: 100%;
@@ -333,6 +412,10 @@
       padding: 1rem;
       border: 1px solid #ddd;
       text-align: left;
+
+      @include mo {
+        font-size: 1.5rem;
+      }
     }
 
     th {
