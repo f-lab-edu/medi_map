@@ -2,7 +2,8 @@
 @import '../../common/abstracts/mixins';
 @import '../../common/abstracts/responsive';
 
-.search {
+.search,
+.medicine {
   .title {
     font-size: 5rem;
     font-weight: bold;
