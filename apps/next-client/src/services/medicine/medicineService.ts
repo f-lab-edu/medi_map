@@ -70,8 +70,6 @@ export async function medicineService({
 
     return { results: newResults, total: newTotal, pagination };
   } catch (error: unknown) {
-    console.error("API 요청 실패:", error);
-
     if (error instanceof NoResultsError) {
       throw error;
     }

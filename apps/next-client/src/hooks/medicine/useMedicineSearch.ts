@@ -4,6 +4,7 @@ import { medicineService } from "@/services/medicine/medicineService";
 import { useSearchStore } from "@/store/useSearchStore";
 import { ERROR_MESSAGES } from "@/constants/errors";
 import { FetchDataParams, MedicineResponse } from "@/dto/MedicineResultDto";
+import { NoResultsError } from "@/error/SearchError";
 
 export default function useMedicineSearch() {
   const {
@@ -61,10 +62,19 @@ export default function useMedicineSearch() {
     gcTime: 24 * 60 * 60 * 1000,
   });
 
+  let errorMessage;
+  if (error) {
+    if (error instanceof NoResultsError) {
+      errorMessage = ERROR_MESSAGES.NO_SEARCH_RESULTS;
+    } else {
+      errorMessage = ERROR_MESSAGES.API_REQUEST_ERROR;
+    }
+  }
+
   return {
     results: data?.pages.flatMap((page) => page.results) || [],
     loading: isLoading,
-    error: error ? ERROR_MESSAGES.API_REQUEST_ERROR : null,
+    error: errorMessage,
     hasMore: hasNextPage,
     fetchNextPage,
     resetResults,
