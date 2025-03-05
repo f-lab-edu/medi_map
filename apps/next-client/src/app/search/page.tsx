@@ -27,26 +27,17 @@ export default function SearchPage() {
     setMedicineSearchTerm,
     setPage,
     setWarning,
-    results,
+    setIsSearchExecuted,
   } = useSearchStore();
 
-  const { medicineService, resetResults, loading, error, hasMore } =
-    useMedicineSearch();
+  const { fetchNextPage, resetResults, loading, error, hasMore, results } = useMedicineSearch();
 
   useEffect(() => {
     if (!keyword) return;
     setMedicineSearchTerm(keyword);
     resetResults();
     setPage(1);
-
-    medicineService({
-      name: keyword,
-      company: "",
-      color: [],
-      shape: [],
-      form: [],
-      page: 1,
-    });
+    setIsSearchExecuted(false);
   }, [keyword]);
 
   const handleSearch = () => {
@@ -63,15 +54,7 @@ export default function SearchPage() {
 
     resetResults();
     setPage(1);
-
-    medicineService({
-      name: medicineSearchTerm.trim(),
-      company: companySearchTerm.trim(),
-      color: selectedColors,
-      shape: selectedShapes,
-      form: selectedForms,
-      page: 1,
-    });
+    setIsSearchExecuted(true);
 
     setWarning(null);
   };
@@ -87,21 +70,9 @@ export default function SearchPage() {
     hasMore,
     onLoadMore: () => {
       setPage((prevPage) => prevPage + 1);
+      fetchNextPage();
     },
   });
-
-  useEffect(() => {
-    if (page > 1) {
-      medicineService({
-        name: medicineSearchTerm,
-        company: companySearchTerm,
-        color: selectedColors,
-        shape: selectedShapes,
-        form: selectedForms,
-        page,
-      });
-    }
-  }, [page]);
 
   return (
     <div className="medicine_search">

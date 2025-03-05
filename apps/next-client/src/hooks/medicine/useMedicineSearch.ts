@@ -1,71 +1,87 @@
 import { useCallback } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { medicineService } from "@/services/medicine/medicineService";
 import { useSearchStore } from "@/store/useSearchStore";
-import { NoResultsError, ApiRequestError } from "@/error/SearchError";
 import { ERROR_MESSAGES } from "@/constants/errors";
+import { MedicineResultDto } from "@/dto/MedicineResultDto";
+
+interface FetchDataParams {
+  page: number;
+}
+
+interface Pagination {
+  currentPage: number;
+  totalPages: number;
+  limit: number;
+}
+
+interface MedicineResponse {
+  results: MedicineResultDto[];
+  total: number;
+  pagination: Pagination;
+}
 
 export default function useMedicineSearch() {
   const {
-    results,
-    setResults,
+    medicineSearchTerm,
+    companySearchTerm,
+    selectedColors,
+    selectedShapes,
+    selectedForms,
     setTotalResults,
-    loading,
-    setLoading,
-    error,
-    setError,
-    hasMore,
-    setHasMore,
     resetResults,
+    isSearchExecuted,
   } = useSearchStore();
 
   const fetchData = useCallback(
-    async ({ name, company, color, shape, form, page }: Parameters<typeof medicineService>[0]) => {
-      setLoading(true);
-      setError(null);
-  
-      try {
-        const { results: newResults, total: newTotal } = await medicineService({
-          name,
-          company,
-          color,
-          shape,
-          form,
-          page,
-        });
+    async ({ page = 1 }: FetchDataParams): Promise<MedicineResponse> => {
+      const { results: newResults, total: newTotal, pagination } = await medicineService({
+        name: medicineSearchTerm,
+        company: companySearchTerm,
+        color: selectedColors,
+        shape: selectedShapes,
+        form: selectedForms,
+        page,
+      });
 
-        if (!newResults || newResults.length === 0) {
-          setError(ERROR_MESSAGES.NO_SEARCH_RESULTS);
-          setResults([]);
-          setHasMore(false);
-          return;
-        }
-
-        const updatedResults = page === 1 ? newResults : [...results, ...newResults];
-
-        setResults(updatedResults);
-        setTotalResults(newTotal);
-        setHasMore(page * 10 < newTotal);
-      } catch (error) {
-        if (error instanceof NoResultsError) {
-          setError(ERROR_MESSAGES.NO_SEARCH_RESULTS);
-        } else if (error instanceof ApiRequestError) {
-          setError(ERROR_MESSAGES.API_REQUEST_ERROR);
-        } else {
-          setError(ERROR_MESSAGES.UNKNOWN_ERROR);
-        }
-      } finally {
-        setLoading(false);
-      }
+      setTotalResults(newTotal);
+      return { results: newResults, total: newTotal, pagination };
     },
-    [results, setLoading, setError, setHasMore, setResults, setTotalResults]
+    [medicineSearchTerm, companySearchTerm, selectedColors, selectedShapes, selectedForms, setTotalResults]
   );
-  
-  return {
-    results,
-    loading,
+
+  const {
+    data,
     error,
-    hasMore,
-    medicineService: fetchData,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery<MedicineResponse, Error>({
+    queryKey: [
+      "medicineSearch",
+      medicineSearchTerm,
+      companySearchTerm,
+      selectedColors,
+      selectedShapes,
+      selectedForms,
+    ],
+    queryFn: ({ pageParam = 1 }) => fetchData({ page: pageParam as number }),
+    getNextPageParam: (lastPage: MedicineResponse) => {
+      const nextPage = lastPage.pagination.currentPage + 1;
+      return nextPage <= lastPage.pagination.totalPages ? nextPage : undefined;
+    },
+    initialPageParam: 1,
+    enabled: isSearchExecuted,
+    staleTime: 24 * 60 * 60 * 1000,
+    gcTime: 24 * 60 * 60 * 1000,
+  });
+
+  return {
+    results: data?.pages.flatMap((page) => page.results) || [],
+    loading: isLoading,
+    error: error ? ERROR_MESSAGES.API_REQUEST_ERROR : null,
+    hasMore: hasNextPage,
+    fetchNextPage,
     resetResults,
   };
 }

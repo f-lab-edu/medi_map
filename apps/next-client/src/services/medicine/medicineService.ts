@@ -13,6 +13,12 @@ interface FetchMedicineParams {
   page: number;
 }
 
+interface Pagination {
+  currentPage: number;
+  totalPages: number;
+  limit: number;
+}
+
 export async function medicineService({
   name = "",
   company = "",
@@ -20,7 +26,7 @@ export async function medicineService({
   shape = [],
   form = [],
   page = 1,
-}: FetchMedicineParams): Promise<{ results: MedicineResultDto[]; total: number }> {
+}: FetchMedicineParams): Promise<{ results: MedicineResultDto[]; total: number; pagination: Pagination }> {
   try {
     let filterColors: string | undefined;
     let filterShapes: string | undefined;
@@ -52,12 +58,17 @@ export async function medicineService({
 
     const newResults: MedicineResultDto[] = response.data.results || [];
     const newTotal: number = response.data.total || 0;
+    const pagination: Pagination = response.data.pagination || {
+      currentPage: page,
+      totalPages: Math.ceil(newTotal / 10),
+      limit: 10,
+    };
 
     if (newTotal === 0 && page === 1) {
       throw new NoResultsError();
     }
 
-    return { results: newResults, total: newTotal };
+    return { results: newResults, total: newTotal, pagination };
   } catch (error: unknown) {
     console.error("API 요청 실패:", error);
 
