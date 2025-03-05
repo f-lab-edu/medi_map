@@ -542,3 +542,10 @@
   bottom: 3rem;
   right: 3rem;
 }
+
+.medicine_image {
+  position: relative;
+  width: 10rem;
+  height: 5rem;
+  object-fit: cover;
+}

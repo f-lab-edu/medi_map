@@ -13,12 +13,18 @@ export function SearchResults({ results, lastElementRef }: SearchResultsProps) {
       {results.map((item, index) => (
         <li
           className="medicine_desc"
-          key={item.itemSeq}
+          key={`${item.itemSeq}-${index}`}
           ref={index === results.length - 1 ? lastElementRef : null}
         >
           <Link href={`/search/${item.itemSeq}`} passHref>
             {item.itemImage && (
-              <Image src={item.itemImage} alt={item.itemName} width={100} height={50} />
+              <Image
+                src={item.itemImage}
+                alt={item.itemName}
+                width={100}
+                height={50}
+                style={{ width: "auto", height: "auto" }}
+              />
             )}
             <div className="medicine_info">
               <h3 className="name">{item.itemName}</h3>
