@@ -58,3 +58,19 @@ export interface MedicineResultDto {
   udDocData?: DocData;      // 사용상 주의사항 데이터
   nbDocData?: DocData;      // 주의사항 데이터
 }
+
+export interface FetchDataParams {
+  page: number;
+}
+
+export interface MedicinePagination {
+  currentPage: number;
+  totalPages: number;
+  limit: number;
+}
+
+export interface MedicineResponse {
+  results: MedicineResultDto[];
+  total: number;
+  pagination: MedicinePagination;
+}

@@ -3,23 +3,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { medicineService } from "@/services/medicine/medicineService";
 import { useSearchStore } from "@/store/useSearchStore";
 import { ERROR_MESSAGES } from "@/constants/errors";
-import { MedicineResultDto } from "@/dto/MedicineResultDto";
-
-interface FetchDataParams {
-  page: number;
-}
-
-interface Pagination {
-  currentPage: number;
-  totalPages: number;
-  limit: number;
-}
-
-interface MedicineResponse {
-  results: MedicineResultDto[];
-  total: number;
-  pagination: Pagination;
-}
+import { FetchDataParams, MedicineResponse } from "@/dto/MedicineResultDto";
 
 export default function useMedicineSearch() {
   const {
