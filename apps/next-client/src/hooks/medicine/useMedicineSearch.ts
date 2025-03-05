@@ -48,6 +48,7 @@ export default function useMedicineSearch() {
       selectedColors,
       selectedShapes,
       selectedForms,
+      isSearchExecuted,
     ],
     queryFn: ({ pageParam = 1 }) => fetchData({ page: pageParam as number }),
     getNextPageParam: (lastPage: MedicineResponse) => {

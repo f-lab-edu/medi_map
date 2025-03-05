@@ -22,15 +22,15 @@ export default function SearchPage() {
     selectedColors,
     selectedShapes,
     selectedForms,
-    page,
     warning,
     setMedicineSearchTerm,
     setPage,
     setWarning,
     setIsSearchExecuted,
+    resetResults,
   } = useSearchStore();
 
-  const { fetchNextPage, resetResults, loading, error, hasMore, results } = useMedicineSearch();
+  const { fetchNextPage, loading, error, hasMore, results } = useMedicineSearch();
 
   useEffect(() => {
     if (!keyword) return;
@@ -81,7 +81,7 @@ export default function SearchPage() {
 
       <SearchBox onSearch={handleSearch} onKeyDown={handleKeyDown} />
 
-      {loading && <p>로딩 중...</p>}
+      {loading && <p className='loading_message'>로딩 중...</p>}
       {error && <p className="error_message">{error}</p>}
       {warning && <p className="warning_message">{warning}</p>}
 

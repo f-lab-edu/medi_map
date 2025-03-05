@@ -35,16 +35,19 @@ export const useSearchStore = create<SearchState>((set) => ({
   warning: null,
   isSearchExecuted: false,
 
-  setMedicineSearchTerm: (term) => set({ medicineSearchTerm: term }),
-  setCompanySearchTerm: (term) => set({ companySearchTerm: term }),
+  setMedicineSearchTerm: (term) => set({ medicineSearchTerm: term, isSearchExecuted: false }),
+  setCompanySearchTerm: (term) => set({ companySearchTerm: term, isSearchExecuted: false }),
   setSelectedColors: (colors) => set((state) => ({
-    selectedColors: typeof colors === 'function' ? colors(state.selectedColors) : colors
+    selectedColors: typeof colors === 'function' ? colors(state.selectedColors) : colors,
+    isSearchExecuted: false,
   })),
   setSelectedShapes: (shapes) => set((state) => ({
-    selectedShapes: typeof shapes === 'function' ? shapes(state.selectedShapes) : shapes
+    selectedShapes: typeof shapes === 'function' ? shapes(state.selectedShapes) : shapes,
+    isSearchExecuted: false,
   })),
   setSelectedForms: (forms) => set((state) => ({
-    selectedForms: typeof forms === 'function' ? forms(state.selectedForms) : forms
+    selectedForms: typeof forms === 'function' ? forms(state.selectedForms) : forms,
+    isSearchExecuted: false,
   })),
   setPage: (page) => set((state) => ({
     page: typeof page === 'function' ? page(state.page) : page
