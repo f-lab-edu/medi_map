@@ -6,13 +6,12 @@ interface SearchBoxProps {
   setLocalSearchTerm: (val: string) => void;
   localCompany: string;
   setLocalCompany: (val: string) => void;
-  localColors: string[];
-  setLocalColors: (val: string[]) => void;
-  localShapes: string[];
-  setLocalShapes: (val: string[]) => void;
-  localForms: string[];
-  setLocalForms: (val: string[]) => void;
-
+  filters: {
+    colors: string[];
+    shapes: string[];
+    forms: string[];
+  };
+  setFilters: (filters: { colors: string[]; shapes: string[]; forms: string[] }) => void;
   onSearch: () => void;
   onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
 }
@@ -22,33 +21,31 @@ export function SearchBox({
   setLocalSearchTerm,
   localCompany,
   setLocalCompany,
-  localColors,
-  setLocalColors,
-  localShapes,
-  setLocalShapes,
-  localForms,
-  setLocalForms,
+  filters,
+  setFilters,
   onSearch,
   onKeyDown,
 }: SearchBoxProps) {
   const handleMediChange = (e: ChangeEvent<HTMLInputElement>) => {
     setLocalSearchTerm(e.target.value);
   };
+
   const handleCompanyChange = (e: ChangeEvent<HTMLInputElement>) => {
     setLocalCompany(e.target.value);
   };
+  
+  const updateFilter = (filterType: 'colors' | 'shapes' | 'forms', newItem: string) => {
+    let updatedItems: string[];
 
-  const updateFilter = (selectedItems: string[], newItem: string) => {
     if (newItem === FILTER_ALL) {
-      return [FILTER_ALL];
-    }
-    let updated = selectedItems.filter((i) => i !== FILTER_ALL);
-    if (updated.includes(newItem)) {
-      updated = updated.filter((i) => i !== newItem);
+      updatedItems = [FILTER_ALL];
+    } else if (filters[filterType].includes(newItem)) {
+      updatedItems = filters[filterType].filter((item: string) => item !== newItem);
     } else {
-      updated = [...updated, newItem];
+      updatedItems = [...filters[filterType].filter((item: string) => item !== FILTER_ALL), newItem];
     }
-    return updated;
+
+    setFilters({ ...filters, [filterType]: updatedItems });
   };
 
   return (
@@ -72,8 +69,8 @@ export function SearchBox({
         {FILTERS.colors.map(({ name, className }) => (
           <button
             key={name}
-            className={`${className} ${localColors.includes(name) ? 'selected' : ''}`}
-            onClick={() => setLocalColors(updateFilter(localColors, name))}
+            className={`${className} ${filters.colors.includes(name) ? 'selected' : ''}`}
+            onClick={() => updateFilter('colors', name)}
           >
             {name}
           </button>
@@ -84,8 +81,8 @@ export function SearchBox({
         {FILTERS.shapes.map((shape) => (
           <button
             key={shape}
-            className={localShapes.includes(shape) ? 'selected' : ''}
-            onClick={() => setLocalShapes(updateFilter(localShapes, shape))}
+            className={filters.shapes.includes(shape) ? 'selected' : ''}
+            onClick={() => updateFilter('shapes', shape)}
           >
             {shape}
           </button>
@@ -96,8 +93,8 @@ export function SearchBox({
         {FILTERS.forms.map((form) => (
           <button
             key={form}
-            className={localForms.includes(form) ? 'selected' : ''}
-            onClick={() => setLocalForms(updateFilter(localForms, form))}
+            className={filters.forms.includes(form) ? 'selected' : ''}
+            onClick={() => updateFilter('forms', form)}
           >
             {form}
           </button>

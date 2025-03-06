@@ -16,12 +16,14 @@ export default function SearchPage() {
   const searchParams = useSearchParams();
   const keyword = searchParams.get('keyword') || '';
 
-  // 로컬 state(버튼 누르기 전 입력값)
   const [localSearchTerm, setLocalSearchTerm] = useState('');
   const [localCompany, setLocalCompany] = useState('');
-  const [localColors, setLocalColors] = useState<string[]>([]);
-  const [localShapes, setLocalShapes] = useState<string[]>([]);
-  const [localForms, setLocalForms] = useState<string[]>([]);
+  
+  const [filters, setFilters] = useState<{ colors: string[]; shapes: string[]; forms: string[] }>({
+    colors: [],
+    shapes: [],
+    forms: [],
+  });
 
   const { 
     setAppliedFilters,
@@ -40,16 +42,12 @@ export default function SearchPage() {
     resetSearchQuery,
   } = useMedicineSearch();
 
-  // keyword가 있으면 자동 검색 (원한다면)
   useEffect(() => {
     if (!keyword) return;
+  
     resetSearchQuery();
     resetAll();
-
-    // 검색어를 local state에 넣고
     setLocalSearchTerm(keyword);
-
-    // 곧바로 검색 실행을 원한다면:
     setAppliedFilters({
       medicineSearchTerm: keyword,
       companySearchTerm: '',
@@ -59,30 +57,30 @@ export default function SearchPage() {
     });
     setIsSearchExecuted(true);
     setWarning(null);
-  }, [keyword, resetSearchQuery, resetAll, setAppliedFilters, setIsSearchExecuted, setWarning]);
+  }, [keyword]);
 
-  // 검색 버튼 클릭 시
   const handleSearch = () => {
-    // 간단 검사
+    const { colors, shapes, forms } = filters;
+  
     if (
       localSearchTerm.trim().length < 2 &&
       localCompany.trim().length < 2 &&
-      localColors.every((color) => color === FILTER_ALL) &&
-      localShapes.every((shape) => shape === FILTER_ALL) &&
-      localForms.every((form) => form === FILTER_ALL)
+      colors.every((color) => color === FILTER_ALL) &&
+      shapes.every((shape) => shape === FILTER_ALL) &&
+      forms.every((form) => form === FILTER_ALL)
     ) {
       setWarning(SEARCH_ERROR_MESSAGES.SHORT_SEARCH_TERM);
       return;
     }
-
+  
     setAppliedFilters({
       medicineSearchTerm: localSearchTerm.trim(),
       companySearchTerm: localCompany.trim(),
-      selectedColors: localColors,
-      selectedShapes: localShapes,
-      selectedForms: localForms,
+      selectedColors: colors,
+      selectedShapes: shapes,
+      selectedForms: forms,
     });
-
+  
     setIsSearchExecuted(true);
     setWarning(null);
   };
@@ -111,16 +109,11 @@ export default function SearchPage() {
         setLocalSearchTerm={setLocalSearchTerm}
         localCompany={localCompany}
         setLocalCompany={setLocalCompany}
-        localColors={localColors}
-        setLocalColors={setLocalColors}
-        localShapes={localShapes}
-        setLocalShapes={setLocalShapes}
-        localForms={localForms}
-        setLocalForms={setLocalForms}
+        filters={filters}
+        setFilters={setFilters}
         onSearch={handleSearch}
         onKeyDown={handleKeyDown}
       />
-
       {loading && <p className="loading_message">로딩 중...</p>}
       {error && <p className="error_message">{error}</p>}
       {warning && <p className="warning_message">{warning}</p>}
