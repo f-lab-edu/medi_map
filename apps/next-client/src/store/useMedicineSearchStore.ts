@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-interface SearchState {
+interface MedicineSearchState {
   medicineSearchTerm: string;
   companySearchTerm: string;
   selectedColors: string[];
@@ -24,7 +24,7 @@ interface SearchState {
   resetResults: () => void;
 }
 
-export const useSearchStore = create<SearchState>((set) => ({
+export const useMedicineSearchStore = create<MedicineSearchState>((set) => ({
   medicineSearchTerm: '',
   companySearchTerm: '',
   selectedColors: [],

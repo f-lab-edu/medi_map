@@ -1,6 +1,6 @@
 import { ChangeEvent, KeyboardEvent } from "react";
 import { FILTERS, FILTER_ALL } from "@/constants/filters";
-import { useSearchStore } from "@/store/useSearchStore";
+import { useMedicineSearchStore } from "@/store/useMedicineSearchStore";
 
 interface SearchBoxProps {
   onSearch: () => void;
@@ -19,7 +19,7 @@ export function SearchBox({ onSearch, onKeyDown }: SearchBoxProps) {
     setSelectedColors,
     setSelectedShapes,
     setSelectedForms,
-  } = useSearchStore();
+  } = useMedicineSearchStore();
 
   const handleMediChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMedicineSearchTerm(e.target.value);

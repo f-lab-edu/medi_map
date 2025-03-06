@@ -7,7 +7,7 @@ import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import { SEARCH_ERROR_MESSAGES } from '@/constants/search_errors';
 import { FILTER_ALL } from '@/constants/filters';
 import '@/styles/pages/search/search.scss';
-import { useSearchStore } from '@/store/useSearchStore';
+import { useMedicineSearchStore } from '@/store/useMedicineSearchStore';
 import { ScrollToTopButton } from '@/components/common/ScrollToTopButton';
 import { SearchResults } from "@/components/medicine/MedicineResults";
 import { SearchBox } from "@/components/medicine/SearchBox"; 
@@ -28,7 +28,7 @@ export default function SearchPage() {
     setWarning,
     setIsSearchExecuted,
     resetResults,
-  } = useSearchStore();
+  } = useMedicineSearchStore();
 
   const { fetchNextPage, loading, error, hasMore, results } = useMedicineSearch();
 

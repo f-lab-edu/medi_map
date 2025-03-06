@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { medicineService } from "@/services/medicine/medicineService";
-import { useSearchStore } from "@/store/useSearchStore";
+import { useMedicineSearchStore } from "@/store/useMedicineSearchStore";
 import { ERROR_MESSAGES } from "@/constants/errors";
 import { FetchDataParams, MedicineResponse } from "@/dto/MedicineResultDto";
 import { NoResultsError } from "@/error/SearchError";
@@ -16,7 +16,7 @@ export default function useMedicineSearch() {
     setTotalResults,
     resetResults,
     isSearchExecuted,
-  } = useSearchStore();
+  } = useMedicineSearchStore();
 
   const fetchData = useCallback(
     async ({ page = 1 }: FetchDataParams): Promise<MedicineResponse> => {
