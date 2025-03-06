@@ -9,28 +9,19 @@ interface SearchFilters {
 }
 
 interface SearchState {
-  currentFilters: SearchFilters;
   appliedFilters: SearchFilters;
   isSearchExecuted: boolean;
   totalResults: number;
   warning: string | null;
 
-  setCurrentFilters: (filters: Partial<SearchFilters>) => void;
-  applyFilters: () => void;
+  setAppliedFilters: (filters: SearchFilters) => void;
   setIsSearchExecuted: (value: boolean) => void;
   setTotalResults: (count: number) => void;
   setWarning: (warning: string | null) => void;
   resetAll: () => void;
 }
 
-export const useSearchStore = create<SearchState>((set, get) => ({
-  currentFilters: {
-    medicineSearchTerm: '',
-    companySearchTerm: '',
-    selectedColors: [],
-    selectedShapes: [],
-    selectedForms: [],
-  },
+export const useSearchStore = create<SearchState>((set) => ({
   appliedFilters: {
     medicineSearchTerm: '',
     companySearchTerm: '',
@@ -43,33 +34,13 @@ export const useSearchStore = create<SearchState>((set, get) => ({
   totalResults: 0,
   warning: null,
 
-  setCurrentFilters: (updates) => {
-    set((state) => ({
-      currentFilters: {
-        ...state.currentFilters,
-        ...updates,
-      },
-    }));
-  },
-
-  applyFilters: () => {
-    set((state) => ({
-      appliedFilters: { ...state.currentFilters },
-    }));
-  },
-
+  setAppliedFilters: (filters) => set({ appliedFilters: filters }),
   setIsSearchExecuted: (value) => set({ isSearchExecuted: value }),
   setTotalResults: (count) => set({ totalResults: count }),
   setWarning: (warning) => set({ warning }),
+
   resetAll: () =>
     set({
-      currentFilters: {
-        medicineSearchTerm: '',
-        companySearchTerm: '',
-        selectedColors: [],
-        selectedShapes: [],
-        selectedForms: [],
-      },
       appliedFilters: {
         medicineSearchTerm: '',
         companySearchTerm: '',

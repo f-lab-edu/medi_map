@@ -1,74 +1,79 @@
 import { ChangeEvent, KeyboardEvent } from 'react';
 import { FILTERS, FILTER_ALL } from '@/constants/filters';
-import { useSearchStore } from '@/store/useSearchStore';
 
 interface SearchBoxProps {
+  localSearchTerm: string;
+  setLocalSearchTerm: (val: string) => void;
+  localCompany: string;
+  setLocalCompany: (val: string) => void;
+  localColors: string[];
+  setLocalColors: (val: string[]) => void;
+  localShapes: string[];
+  setLocalShapes: (val: string[]) => void;
+  localForms: string[];
+  setLocalForms: (val: string[]) => void;
+
   onSearch: () => void;
   onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
 }
 
-export function SearchBox({ onSearch, onKeyDown }: SearchBoxProps) {
-  const {
-    currentFilters: {
-      medicineSearchTerm,
-      companySearchTerm,
-      selectedColors,
-      selectedShapes,
-      selectedForms,
-    },
-    setCurrentFilters,
-  } = useSearchStore();
-
+export function SearchBox({
+  localSearchTerm,
+  setLocalSearchTerm,
+  localCompany,
+  setLocalCompany,
+  localColors,
+  setLocalColors,
+  localShapes,
+  setLocalShapes,
+  localForms,
+  setLocalForms,
+  onSearch,
+  onKeyDown,
+}: SearchBoxProps) {
   const handleMediChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setCurrentFilters({ medicineSearchTerm: e.target.value });
+    setLocalSearchTerm(e.target.value);
   };
-
   const handleCompanyChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setCurrentFilters({ companySearchTerm: e.target.value });
+    setLocalCompany(e.target.value);
   };
 
   const updateFilter = (selectedItems: string[], newItem: string) => {
     if (newItem === FILTER_ALL) {
       return [FILTER_ALL];
     }
-    let updatedItems = selectedItems.filter((item) => item !== FILTER_ALL);
-    if (updatedItems.includes(newItem)) {
-      updatedItems = updatedItems.filter((item) => item !== newItem);
+    let updated = selectedItems.filter((i) => i !== FILTER_ALL);
+    if (updated.includes(newItem)) {
+      updated = updated.filter((i) => i !== newItem);
     } else {
-      updatedItems = [...updatedItems, newItem];
+      updated = [...updated, newItem];
     }
-    return updatedItems;
+    return updated;
   };
 
   return (
     <div className="search_box">
       <input
         type="text"
-        value={medicineSearchTerm}
+        value={localSearchTerm}
         onChange={handleMediChange}
         onKeyDown={onKeyDown}
-        placeholder="약물 이름을 입력하세요"
+        placeholder="약물 이름"
       />
       <input
         type="text"
-        value={companySearchTerm}
+        value={localCompany}
         onChange={handleCompanyChange}
         onKeyDown={onKeyDown}
-        placeholder="업체 이름을 입력하세요"
+        placeholder="업체 이름"
       />
 
       <div className="filters color_filters">
         {FILTERS.colors.map(({ name, className }) => (
           <button
             key={name}
-            className={`${className} ${
-              selectedColors.includes(name) ? 'selected' : ''
-            }`}
-            onClick={() =>
-              setCurrentFilters({
-                selectedColors: updateFilter(selectedColors, name),
-              })
-            }
+            className={`${className} ${localColors.includes(name) ? 'selected' : ''}`}
+            onClick={() => setLocalColors(updateFilter(localColors, name))}
           >
             {name}
           </button>
@@ -79,12 +84,8 @@ export function SearchBox({ onSearch, onKeyDown }: SearchBoxProps) {
         {FILTERS.shapes.map((shape) => (
           <button
             key={shape}
-            className={selectedShapes.includes(shape) ? 'selected' : ''}
-            onClick={() =>
-              setCurrentFilters({
-                selectedShapes: updateFilter(selectedShapes, shape),
-              })
-            }
+            className={localShapes.includes(shape) ? 'selected' : ''}
+            onClick={() => setLocalShapes(updateFilter(localShapes, shape))}
           >
             {shape}
           </button>
@@ -95,12 +96,8 @@ export function SearchBox({ onSearch, onKeyDown }: SearchBoxProps) {
         {FILTERS.forms.map((form) => (
           <button
             key={form}
-            className={selectedForms.includes(form) ? 'selected' : ''}
-            onClick={() =>
-              setCurrentFilters({
-                selectedForms: updateFilter(selectedForms, form),
-              })
-            }
+            className={localForms.includes(form) ? 'selected' : ''}
+            onClick={() => setLocalForms(updateFilter(localForms, form))}
           >
             {form}
           </button>

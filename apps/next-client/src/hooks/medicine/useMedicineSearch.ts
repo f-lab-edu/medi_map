@@ -16,14 +16,9 @@ export default function useMedicineSearch() {
 
   const fetchData = useCallback(
     async ({ pageParam }: QueryFunctionContext) => {
-      const {
-        medicineSearchTerm,
-        companySearchTerm,
-        selectedColors,
-        selectedShapes,
-        selectedForms,
-      } = appliedFilters;
-  
+      const { medicineSearchTerm, companySearchTerm, selectedColors, selectedShapes, selectedForms }
+        = appliedFilters;
+
       const response = await medicineService({
         name: medicineSearchTerm.trim(),
         company: companySearchTerm.trim(),
@@ -32,9 +27,8 @@ export default function useMedicineSearch() {
         form: selectedForms,
         page: pageParam as number,
       });
-  
+
       setTotalResults(response.total);
-  
       return response;
     },
     [appliedFilters, setTotalResults],
@@ -59,13 +53,16 @@ export default function useMedicineSearch() {
     initialPageParam: 1,
   });
 
-  const errorMessage = error
-  ? error instanceof NoResultsError
-    ? ERROR_MESSAGES.NO_SEARCH_RESULTS
-    : ERROR_MESSAGES.API_REQUEST_ERROR
-  : null;
+  let errorMessage: string | null = null;
+  if (error) {
+    if (error instanceof NoResultsError) {
+      errorMessage = ERROR_MESSAGES.NO_SEARCH_RESULTS;
+    } else {
+      errorMessage = ERROR_MESSAGES.API_REQUEST_ERROR;
+    }
+  }
 
-  const mergedResults = data?.pages.flatMap((page) => page.results) || [];
+  const mergedResults = data?.pages.flatMap((p) => p.results) || [];
 
   return {
     results: mergedResults,
