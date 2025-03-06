@@ -1,38 +1,43 @@
-import { useCallback } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { medicineService } from "@/services/medicine/medicineService";
-import { useMedicineSearchStore } from "@/store/useMedicineSearchStore";
-import { ERROR_MESSAGES } from "@/constants/errors";
-import { FetchDataParams, MedicineResponse } from "@/dto/MedicineResultDto";
-import { NoResultsError } from "@/error/SearchError";
+import { useCallback } from 'react';
+import { useInfiniteQuery, useQueryClient, QueryFunctionContext } from '@tanstack/react-query';
+import { useSearchStore } from '@/store/useSearchStore';
+import { medicineService } from '@/services/medicine/medicineService';
+import { ERROR_MESSAGES } from '@/constants/errors';
+import { NoResultsError } from '@/error/SearchError';
+import { MedicineResponse } from '@/dto/MedicineResultDto';
 
 export default function useMedicineSearch() {
-  const {
-    medicineSearchTerm,
-    companySearchTerm,
-    selectedColors,
-    selectedShapes,
-    selectedForms,
-    setTotalResults,
-    resetResults,
-    isSearchExecuted,
-  } = useMedicineSearchStore();
+  const queryClient = useQueryClient();
+  const { appliedFilters, isSearchExecuted, setTotalResults } = useSearchStore();
+
+  const resetSearchQuery = useCallback(() => {
+    queryClient.removeQueries({ queryKey: ['medicineSearch'], exact: false });
+  }, [queryClient]);
 
   const fetchData = useCallback(
-    async ({ page = 1 }: FetchDataParams): Promise<MedicineResponse> => {
-      const { results: newResults, total: newTotal, pagination } = await medicineService({
-        name: medicineSearchTerm,
-        company: companySearchTerm,
+    async ({ pageParam }: QueryFunctionContext) => {
+      const {
+        medicineSearchTerm,
+        companySearchTerm,
+        selectedColors,
+        selectedShapes,
+        selectedForms,
+      } = appliedFilters;
+  
+      const response = await medicineService({
+        name: medicineSearchTerm.trim(),
+        company: companySearchTerm.trim(),
         color: selectedColors,
         shape: selectedShapes,
         form: selectedForms,
-        page,
+        page: pageParam as number,
       });
-
-      setTotalResults(newTotal);
-      return { results: newResults, total: newTotal, pagination };
+  
+      setTotalResults(response.total);
+  
+      return response;
     },
-    [medicineSearchTerm, companySearchTerm, selectedColors, selectedShapes, selectedForms, setTotalResults]
+    [appliedFilters, setTotalResults],
   );
 
   const {
@@ -42,41 +47,32 @@ export default function useMedicineSearch() {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery<MedicineResponse, Error>({
-    queryKey: [
-      "medicineSearch",
-      medicineSearchTerm,
-      companySearchTerm,
-      selectedColors,
-      selectedShapes,
-      selectedForms,
-      isSearchExecuted,
-    ],
-    queryFn: ({ pageParam = 1 }) => fetchData({ page: pageParam as number }),
-    getNextPageParam: (lastPage: MedicineResponse) => {
+    queryKey: ['medicineSearch', appliedFilters],
+    queryFn: fetchData,
+    enabled: isSearchExecuted,
+    getNextPageParam: (lastPage) => {
       const nextPage = lastPage.pagination.currentPage + 1;
       return nextPage <= lastPage.pagination.totalPages ? nextPage : undefined;
     },
-    initialPageParam: 1,
-    enabled: isSearchExecuted,
     staleTime: 24 * 60 * 60 * 1000,
     gcTime: 24 * 60 * 60 * 1000,
+    initialPageParam: 1,
   });
 
-  let errorMessage;
-  if (error) {
-    if (error instanceof NoResultsError) {
-      errorMessage = ERROR_MESSAGES.NO_SEARCH_RESULTS;
-    } else {
-      errorMessage = ERROR_MESSAGES.API_REQUEST_ERROR;
-    }
-  }
+  const errorMessage = error
+  ? error instanceof NoResultsError
+    ? ERROR_MESSAGES.NO_SEARCH_RESULTS
+    : ERROR_MESSAGES.API_REQUEST_ERROR
+  : null;
+
+  const mergedResults = data?.pages.flatMap((page) => page.results) || [];
 
   return {
-    results: data?.pages.flatMap((page) => page.results) || [],
+    results: mergedResults,
     loading: isLoading,
     error: errorMessage,
-    hasMore: hasNextPage,
+    hasMore: !!hasNextPage,
     fetchNextPage,
-    resetResults,
+    resetSearchQuery,
   };
 }

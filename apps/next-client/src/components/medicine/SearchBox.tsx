@@ -1,6 +1,6 @@
-import { ChangeEvent, KeyboardEvent } from "react";
-import { FILTERS, FILTER_ALL } from "@/constants/filters";
-import { useMedicineSearchStore } from "@/store/useMedicineSearchStore";
+import { ChangeEvent, KeyboardEvent } from 'react';
+import { FILTERS, FILTER_ALL } from '@/constants/filters';
+import { useSearchStore } from '@/store/useSearchStore';
 
 interface SearchBoxProps {
   onSearch: () => void;
@@ -9,41 +9,36 @@ interface SearchBoxProps {
 
 export function SearchBox({ onSearch, onKeyDown }: SearchBoxProps) {
   const {
-    medicineSearchTerm,
-    companySearchTerm,
-    selectedColors,
-    selectedShapes,
-    selectedForms,
-    setMedicineSearchTerm,
-    setCompanySearchTerm,
-    setSelectedColors,
-    setSelectedShapes,
-    setSelectedForms,
-  } = useMedicineSearchStore();
+    currentFilters: {
+      medicineSearchTerm,
+      companySearchTerm,
+      selectedColors,
+      selectedShapes,
+      selectedForms,
+    },
+    setCurrentFilters,
+  } = useSearchStore();
 
   const handleMediChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setMedicineSearchTerm(e.target.value);
+    setCurrentFilters({ medicineSearchTerm: e.target.value });
   };
 
   const handleCompanyChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setCompanySearchTerm(e.target.value);
+    setCurrentFilters({ companySearchTerm: e.target.value });
   };
 
   const updateFilter = (selectedItems: string[], newItem: string) => {
     if (newItem === FILTER_ALL) {
       return [FILTER_ALL];
     }
-  
     let updatedItems = selectedItems.filter((item) => item !== FILTER_ALL);
-  
     if (updatedItems.includes(newItem)) {
       updatedItems = updatedItems.filter((item) => item !== newItem);
     } else {
       updatedItems = [...updatedItems, newItem];
     }
-  
     return updatedItems;
-  };  
+  };
 
   return (
     <div className="search_box">
@@ -66,8 +61,14 @@ export function SearchBox({ onSearch, onKeyDown }: SearchBoxProps) {
         {FILTERS.colors.map(({ name, className }) => (
           <button
             key={name}
-            className={`${className} ${selectedColors.includes(name) ? "selected" : ""}`}
-            onClick={() => setSelectedColors((prev) => updateFilter(prev, name))}
+            className={`${className} ${
+              selectedColors.includes(name) ? 'selected' : ''
+            }`}
+            onClick={() =>
+              setCurrentFilters({
+                selectedColors: updateFilter(selectedColors, name),
+              })
+            }
           >
             {name}
           </button>
@@ -78,8 +79,12 @@ export function SearchBox({ onSearch, onKeyDown }: SearchBoxProps) {
         {FILTERS.shapes.map((shape) => (
           <button
             key={shape}
-            className={selectedShapes.includes(shape) ? "selected" : ""}
-            onClick={() => setSelectedShapes((prev) => updateFilter(prev, shape))}
+            className={selectedShapes.includes(shape) ? 'selected' : ''}
+            onClick={() =>
+              setCurrentFilters({
+                selectedShapes: updateFilter(selectedShapes, shape),
+              })
+            }
           >
             {shape}
           </button>
@@ -90,8 +95,12 @@ export function SearchBox({ onSearch, onKeyDown }: SearchBoxProps) {
         {FILTERS.forms.map((form) => (
           <button
             key={form}
-            className={selectedForms.includes(form) ? "selected" : ""}
-            onClick={() => setSelectedForms((prev) => updateFilter(prev, form))}
+            className={selectedForms.includes(form) ? 'selected' : ''}
+            onClick={() =>
+              setCurrentFilters({
+                selectedForms: updateFilter(selectedForms, form),
+              })
+            }
           >
             {form}
           </button>
