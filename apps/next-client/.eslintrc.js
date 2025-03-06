@@ -37,6 +37,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'off',
     '@next/next/no-html-link-for-pages': 'off',
     'import/no-named-as-default': 'off',
+    'quotes': ['error', 'single'],
   },
   settings: {
     'import/resolver': {
