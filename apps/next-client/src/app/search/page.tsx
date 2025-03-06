@@ -37,13 +37,15 @@ export default function SearchPage() {
 
   useEffect(() => {
     if (!keyword) return;
+  
     resetSearchQuery();
     resetAll();
     setCurrentFilters({ medicineSearchTerm: keyword });
-
-    setIsSearchExecuted(false);
-  }, [keyword, resetSearchQuery, resetAll, setCurrentFilters, setIsSearchExecuted]);
-
+    applyFilters();
+    setIsSearchExecuted(true);
+    setWarning(null);
+  }, [keyword]);
+  
   const handleSearch = () => {
     const {
       medicineSearchTerm,
