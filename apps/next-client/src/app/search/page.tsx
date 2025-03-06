@@ -56,9 +56,9 @@ export default function SearchPage() {
     if (
       medicineSearchTerm.trim().length < 2 &&
       companySearchTerm.trim().length < 2 &&
-      selectedColors.every((c) => c === FILTER_ALL) &&
-      selectedShapes.every((c) => c === FILTER_ALL) &&
-      selectedForms.every((c) => c === FILTER_ALL)
+      selectedColors.every((color) => color === FILTER_ALL) &&
+      selectedShapes.every((shape) => shape === FILTER_ALL) &&
+      selectedForms.every((form) => form === FILTER_ALL)
     ) {
       setWarning(SEARCH_ERROR_MESSAGES.SHORT_SEARCH_TERM);
       return;
