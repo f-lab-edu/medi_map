@@ -156,28 +156,30 @@ export default function UserInfo() {
         </div>
       </div>
 
-      <div className="item password">
-        <h3>비밀번호 변경</h3>
-        <input
-          type="password"
-          placeholder="현재 비밀번호"
-          value={oldPassword}
-          onChange={(e) => setOldPassword(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="새 비밀번호"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="새 비밀번호 확인"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-        <button onClick={handlePasswordChange}>비밀번호 변경</button>
-      </div>
+      {session?.user?.provider !== 'google' && (
+        <div className="item password">
+          <h3>비밀번호 변경</h3>
+          <input
+            type="password"
+            placeholder="현재 비밀번호"
+            value={oldPassword}
+            onChange={(e) => setOldPassword(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="새 비밀번호"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="새 비밀번호 확인"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+          <button onClick={handlePasswordChange}>비밀번호 변경</button>
+        </div>
+      )}
 
       <button onClick={handleDeleteAccount} className="resign">
         회원탈퇴
