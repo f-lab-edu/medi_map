@@ -1,8 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { AxiosError } from 'axios';
-import { useParams } from 'next/navigation';
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import '@/styles/pages/search/search.scss';
@@ -13,40 +11,36 @@ import { ScrollToTopButton } from '@/components/common/ScrollToTopButton';
 import { SEARCH_ERROR_MESSAGES } from '@/constants/searchErrors';
 import { FavoriteButton } from '@/components/medicine/FavoriteButton';
 
-export default function MedicineDetailPage() {
-  const { id } = useParams();
+export default async function MedicineDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   const medicineId = Array.isArray(id) ? id[0] : id;
-  const [medicine, setMedicine] = useState<MedicineResultDto | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"all" | "efficacy" | "dosage" | "precautions">("all");
 
-  useEffect(() => {
-    const loadMedicineDetails = async () => {
-      try {
-        setLoading(true);
+  let medicine: MedicineResultDto | null = null;
+  let error: string | null = null;
 
-        const medicineData = await fetchMedicineDetails(medicineId);
-        if (!medicineData) {
-          throw new Error(SEARCH_ERROR_MESSAGES.NO_MEDICINE_FOUND);
-        }
-        setMedicine(medicineData);
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          setError(error.message);
-        } else {
-          setError(SEARCH_ERROR_MESSAGES.UNKNOWN_ERROR);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
+  try {
+    medicine = await fetchMedicineDetails(medicineId);
+    if (!medicine) {
+      throw new Error(SEARCH_ERROR_MESSAGES.NO_MEDICINE_FOUND);
+    }
+  } catch (err) {
+    if (err instanceof Error) {
+      error = err.message;
+    } else {
+      error = SEARCH_ERROR_MESSAGES.UNKNOWN_ERROR;
+    }
+  }
 
-    loadMedicineDetails();
-  }, [medicineId]);
-
-  if (loading) return <p>로딩 중...</p>;
   if (error) return <p className="error_message">{error}</p>;
+  if (!medicine) return <p className="error_message">{SEARCH_ERROR_MESSAGES.NO_MEDICINE_FOUND}</p>;
+
+  return (
+    <MedicineDetailView medicine={medicine} />
+  );
+}
+
+function MedicineDetailView({ medicine }: { medicine: MedicineResultDto }) {
+  const [activeTab, setActiveTab] = React.useState<"all" | "efficacy" | "dosage" | "precautions">("all");
 
   return (
     <div className="medi_search_result">

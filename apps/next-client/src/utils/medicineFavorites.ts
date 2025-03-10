@@ -4,8 +4,6 @@ import { API_URLS } from '@/constants/urls';
 import { MedicineFavorite } from '@/types/medicine.types';
 
 export const addFavoriteApi = async (data: MedicineFavorite) => {
-
-  console.log('data:', data);
   const token = Cookies.get("accessToken");
   if (!token) {
     throw new Error("No token available");
