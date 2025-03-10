@@ -1,19 +1,23 @@
-'use client';
+import React from 'react';
+import { dehydrate, QueryClient } from '@tanstack/react-query';
+import { fetchMedicineDetails } from '@/utils/medicineApi';
+import MedicineDetailClient from './MedicineDetailClient';
 
-import React, { Suspense } from 'react';
-import '@/styles/pages/search/search.scss';
-import MedicineDetailView from '@/components/medicine/MedicineDetailView';
-import ErrorBoundary from '@/components/common/ErrorBoundary';
+async function getMedicineDetails(id: string) {
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ['medicineDetails', id],
+    queryFn: () => fetchMedicineDetails(id),
+  });
+  return dehydrate(queryClient);
+}
 
-export default function MedicineDetailPage({ params }: { params: { id: string } }) {
+export default async function MedicineDetailPage({ params }: { params: { id: string } }) {
   const { id } = params;
   const medicineId = Array.isArray(id) ? id[0] : id;
+  const dehydratedState = await getMedicineDetails(medicineId);
 
   return (
-    <ErrorBoundary>
-      <Suspense fallback={<p>로딩 중...</p>}>
-        <MedicineDetailView medicineId={medicineId} />
-      </Suspense>
-    </ErrorBoundary>
+    <MedicineDetailClient medicineId={medicineId} dehydratedState={dehydratedState} />
   );
 }
