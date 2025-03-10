@@ -10,9 +10,11 @@ export interface MedicineDetailClientProps {
   dehydratedState: DehydratedState;
 }
 
+const queryClient = new QueryClient();
+
 const MedicineDetailClient: React.FC<MedicineDetailClientProps> = ({ medicineId, dehydratedState }) => {
   return (
-    <QueryClientProvider client={new QueryClient()}>
+    <QueryClientProvider client={queryClient}>
       <HydrationBoundary state={dehydratedState}>
         <Suspense fallback={<p>로딩 중...</p>}>
           <ErrorBoundary>
