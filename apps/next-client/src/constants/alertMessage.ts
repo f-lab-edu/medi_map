@@ -17,6 +17,8 @@ export const ALERT_MESSAGES = {
 
     FAVORITE: {
       FAVORITE_DELETE: '즐겨찾기에서 삭제되었습니다.',
+      FAVORITE_ALREADY_ADDED: '이미 즐겨찾기에 추가되었습니다.',
+      FAVORITE_ADDED: '즐겨찾기에 추가되었습니다!'
     },
 
     GOOGLE: {
@@ -75,6 +77,7 @@ export const ALERT_MESSAGES = {
       DISCONNECT: 'Google 계정 연결 해제 중 오류가 발생했습니다.',
       DISCONNECT_FAILED: 'Google 계정 연결 해제에 실패했습니다.',
     },
+    FAVORITE_ADD_ERROR: '즐겨찾기 추가에 실패했습니다.',
   },
 
   CONFIRM: {

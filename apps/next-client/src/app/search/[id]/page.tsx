@@ -2,19 +2,21 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import axios from 'axios';
 import Link from 'next/link';
 import Image from 'next/image';
 import '@/styles/pages/search/search.scss';
 import MedicineInfo from '@/components/medicineDetail/MedicineInfo';
 import { MedicineResultDto } from '@/dto/MedicineResultDto';
-import { API_URLS } from '@/constants/urls';
 import { addFavoriteApi, checkFavoriteApi } from '@/utils/medicineFavorites';
+import { fetchMedicineDetails } from '@/utils/medicineApi';
 import { ScrollToTopButton } from '@/components/common/ScrollToTopButton';
-import { handleApiError } from '@/utils/apiErrorHandler';
+import { ApiRequestError } from '@/error/SearchError';
+import { SEARCH_ERROR_MESSAGES } from '@/constants/searchErrors';
+import { ALERT_MESSAGES } from '@/constants/alertMessage';
 
 export default function MedicineDetailPage() {
   const { id } = useParams();
+  const medicineId = Array.isArray(id) ? id[0] : id;
   const [medicine, setMedicine] = useState<MedicineResultDto | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,19 +24,21 @@ export default function MedicineDetailPage() {
   const [activeTab, setActiveTab] = useState<"all" | "efficacy" | "dosage" | "precautions">("all");
 
   const loadMedicineDetails = async () => {
-    if (!id) return;
+    if (!medicineId) return;
 
     try {
       setLoading(true);
 
-      const response = await axios.get(`${API_URLS.MEDICINE}/${id}`);
-      setMedicine(response.data);
+      const medicineData = await fetchMedicineDetails(medicineId);
+      if (!medicineData) {
+        throw new ApiRequestError(SEARCH_ERROR_MESSAGES.NO_MEDICINE_FOUND);
+      }
+      setMedicine(medicineData);
 
-      const medicineId = Array.isArray(id) ? id[0] : id;
       const isFav = await checkFavoriteApi(medicineId);
       setIsFavorite(isFav);
     } catch (error) {
-      const errorMessage = handleApiError(error, "의약품 정보를 불러오는 중 오류가 발생했습니다.");
+      const errorMessage = new ApiRequestError(SEARCH_ERROR_MESSAGES.NO_MEDICINE_FOUND).message;
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -42,12 +46,10 @@ export default function MedicineDetailPage() {
   };
 
   const handleAddFavorite = async () => {
-    if (!medicine || !id) return;
-
-    const medicineId = Array.isArray(id) ? id[0] : id;
+    if (!medicine || !medicineId) return;
 
     if (isFavorite) {
-      alert("이미 즐겨찾기에 추가되었습니다.");
+      alert(ALERT_MESSAGES.SUCCESS.FAVORITE.FAVORITE_ALREADY_ADDED);
       return;
     }
 
@@ -63,16 +65,15 @@ export default function MedicineDetailPage() {
 
       await addFavoriteApi(favoriteData);
       setIsFavorite(true); 
-      alert("즐겨찾기에 추가되었습니다!");
+      alert(ALERT_MESSAGES.SUCCESS.FAVORITE.FAVORITE_ADDED);
     } catch (error) {
-      const errorMessage = handleApiError(error, "즐겨찾기 추가에 실패했습니다.");
-      alert(errorMessage);
+      alert(ALERT_MESSAGES.ERROR.FAVORITE_ADD_ERROR);
     }
   };
 
   useEffect(() => {
     loadMedicineDetails();
-  }, [id]);
+  }, [medicineId]);
 
   if (loading) return <p>로딩 중...</p>;
   if (error) return <p className="error_message">{error}</p>;
