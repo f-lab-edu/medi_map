@@ -19,5 +19,6 @@ export const ERROR_MESSAGES = {
   SERVER_ERROR: "서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.",
   INVALID_RESPONSE_FORMAT: "API 응답 형식이 올바르지 않습니다. 배열이 아닙니다.",
   NO_SEARCH_RESULTS: "검색 결과가 없습니다.",
-  API_REQUEST_ERROR: "API 요청 중 오류가 발생했습니다."
+  API_REQUEST_ERROR: "API 요청 중 오류가 발생했습니다.",
+  CLIENT_ERROR: '잘못된 요청입니다. 다시 시도해주세요.',
 } as const;
