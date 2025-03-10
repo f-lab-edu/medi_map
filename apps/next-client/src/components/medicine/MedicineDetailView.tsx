@@ -11,11 +11,8 @@ import { FavoriteButton } from '@/components/medicine/FavoriteButton';
 import { MedicineDetailViewProps } from '@/dto/MedicineResultDto';
 
 const MedicineDetailView: React.FC<MedicineDetailViewProps> = ({ medicineId }) => {
-  const { data: medicine, isLoading, isError, error } = useMedicineDetails(medicineId);
+  const { data: medicine } = useMedicineDetails(medicineId);
   const [activeTab, setActiveTab] = useState<"all" | "efficacy" | "dosage" | "precautions">("all");
-
-  if (isLoading) return <p>로딩 중...</p>;
-  if (isError) return <p>오류 발생: {(error as Error).message}</p>;
 
   return (
     <div className="medi_search_result">

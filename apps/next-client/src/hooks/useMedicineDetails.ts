@@ -1,10 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { fetchMedicineDetails } from '@/utils/medicineApi';
 import { MedicineResultDto } from '@/dto/MedicineResultDto';
 import { SEARCH_ERROR_MESSAGES } from '@/constants/searchErrors';
 
 export const useMedicineDetails = (medicineId: string) => {
-  const medicineDetailsQuery = useQuery<MedicineResultDto>({
+  const medicineDetailsQuery = useSuspenseQuery<MedicineResultDto>({
     queryKey: ['medicineDetails', medicineId],
     queryFn: () => fetchMedicineDetails(medicineId),
     staleTime: 1000 * 60 * 60 * 24,
