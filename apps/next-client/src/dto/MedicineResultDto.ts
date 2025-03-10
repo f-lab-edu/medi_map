@@ -68,3 +68,7 @@ export interface FavoriteButtonProps {
   className?: string;
   itemImage?: string;
 }
+
+export interface MedicineDetailViewProps {
+  medicineId: string;
+}
