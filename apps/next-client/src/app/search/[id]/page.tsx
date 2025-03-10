@@ -11,17 +11,7 @@ import { MedicineResultDto } from '@/dto/MedicineResultDto';
 import { API_URLS } from '@/constants/urls';
 import { addFavoriteApi, checkFavoriteApi } from '@/utils/medicineFavorites';
 import { ScrollToTopButton } from '@/components/common/ScrollToTopButton';
-
-const handleApiError = (error: unknown, defaultMessage: string): string => {
-  if (axios.isAxiosError(error)) {
-    if (error.response?.data?.message) {
-      return error.response.data.message;
-    }
-    return error.message || defaultMessage;
-  }
-  console.error("[API Error] Unknown Error:", error);
-  return defaultMessage;
-};
+import { handleApiError } from '@/utils/apiErrorHandler';
 
 export default function MedicineDetailPage() {
   const { id } = useParams();
