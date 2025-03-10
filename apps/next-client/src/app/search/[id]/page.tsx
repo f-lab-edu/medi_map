@@ -13,18 +13,17 @@ export default function MedicineDetailPage({ params }: { params: { id: string } 
   const [dehydratedState, setDehydratedState] = useState<DehydratedState | null>(null);
 
   useEffect(() => {
-    const queryClient = new QueryClient();
-    queryClient.prefetchQuery({
-      queryKey: ['medicineDetails', medicineId],
-      queryFn: () => fetchMedicineDetails(medicineId),
-    }).then(() => {
+    const fetchData = async () => {
+      const queryClient = new QueryClient();
+      await queryClient.prefetchQuery({
+        queryKey: ['medicineDetails', medicineId],
+        queryFn: () => fetchMedicineDetails(medicineId),
+      });
       setDehydratedState(dehydrate(queryClient));
-    });
-  }, [medicineId]);
+    };
 
-  if (!dehydratedState) {
-    return <div>Loading...</div>;
-  }
+    fetchData();
+  }, [medicineId]);
 
   return (
     <HydrationBoundary state={dehydratedState}>

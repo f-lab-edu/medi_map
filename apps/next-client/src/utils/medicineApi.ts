@@ -12,7 +12,7 @@ export const fetchMedicineDetails = async (id: string): Promise<MedicineResultDt
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
-      let errorMessage = SEARCH_ERROR_MESSAGES.CLIENT_ERROR;
+      let errorMessage: string = SEARCH_ERROR_MESSAGES.CLIENT_ERROR;
 
       if (error.response?.status === 404) {
         errorMessage = SEARCH_ERROR_MESSAGES.NO_MEDICINE_FOUND;
