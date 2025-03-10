@@ -8,6 +8,7 @@ export type Post = {
   content: string;
   userId: string;
   createdAt: string;
+  updatedAt: string;
   author: string;
   commentCount: string;
 };
