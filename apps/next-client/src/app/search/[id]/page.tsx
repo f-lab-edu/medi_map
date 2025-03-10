@@ -1,18 +1,17 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { AxiosError } from 'axios';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import '@/styles/pages/search/search.scss';
 import MedicineInfo from '@/components/medicineDetail/MedicineInfo';
 import { MedicineResultDto } from '@/dto/MedicineResultDto';
-import { addFavoriteApi, checkFavoriteApi } from '@/utils/medicineFavorites';
 import { fetchMedicineDetails } from '@/utils/medicineApi';
 import { ScrollToTopButton } from '@/components/common/ScrollToTopButton';
-import { ApiRequestError } from '@/error/SearchError';
 import { SEARCH_ERROR_MESSAGES } from '@/constants/searchErrors';
-import { ALERT_MESSAGES } from '@/constants/alertMessage';
+import { FavoriteButton } from '@/components/medicine/FavoriteButton';
 
 export default function MedicineDetailPage() {
   const { id } = useParams();
@@ -20,58 +19,29 @@ export default function MedicineDetailPage() {
   const [medicine, setMedicine] = useState<MedicineResultDto | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<"all" | "efficacy" | "dosage" | "precautions">("all");
 
-  const loadMedicineDetails = async () => {
-    if (!medicineId) return;
-
-    try {
-      setLoading(true);
-
-      const medicineData = await fetchMedicineDetails(medicineId);
-      if (!medicineData) {
-        throw new ApiRequestError(SEARCH_ERROR_MESSAGES.NO_MEDICINE_FOUND);
-      }
-      setMedicine(medicineData);
-
-      const isFav = await checkFavoriteApi(medicineId);
-      setIsFavorite(isFav);
-    } catch (error) {
-      const errorMessage = new ApiRequestError(SEARCH_ERROR_MESSAGES.NO_MEDICINE_FOUND).message;
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAddFavorite = async () => {
-    if (!medicine || !medicineId) return;
-
-    if (isFavorite) {
-      alert(ALERT_MESSAGES.SUCCESS.FAVORITE.FAVORITE_ALREADY_ADDED);
-      return;
-    }
-
-    try {
-      const favoriteData = {
-        medicineId,
-        itemName: medicine.itemName,
-        entpName: medicine.entpName,
-        etcOtcName: medicine.etcOtcName ?? "",
-        className: medicine.className ?? "",
-        itemImage: medicine.itemImage ?? "",
-      };
-
-      await addFavoriteApi(favoriteData);
-      setIsFavorite(true); 
-      alert(ALERT_MESSAGES.SUCCESS.FAVORITE.FAVORITE_ADDED);
-    } catch (error) {
-      alert(ALERT_MESSAGES.ERROR.FAVORITE_ADD_ERROR);
-    }
-  };
-
   useEffect(() => {
+    const loadMedicineDetails = async () => {
+      try {
+        setLoading(true);
+
+        const medicineData = await fetchMedicineDetails(medicineId);
+        if (!medicineData) {
+          throw new Error(SEARCH_ERROR_MESSAGES.NO_MEDICINE_FOUND);
+        }
+        setMedicine(medicineData);
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          setError(error.message);
+        } else {
+          setError(SEARCH_ERROR_MESSAGES.UNKNOWN_ERROR);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
     loadMedicineDetails();
   }, [medicineId]);
 
@@ -86,12 +56,14 @@ export default function MedicineDetailPage() {
           <div className="top_cont">
             <h3 className="name">{medicine.itemName}</h3>
             <div className="bookmark">
-              <button
-                onClick={handleAddFavorite}
-                className={`favorite_button ${isFavorite ? "active" : ""}`}
-              >
-                {isFavorite ? "⭐ 이미 추가됨" : "⭐ 즐겨찾기 추가"}
-              </button>
+              <FavoriteButton
+                medicineId={medicine.itemSeq}
+                itemName={medicine.itemName}
+                entpName={medicine.entpName}
+                etcOtcName={medicine.etcOtcName}
+                className={medicine.className}
+                itemImage={medicine.itemImage}
+              />
             </div>
           </div>
 
