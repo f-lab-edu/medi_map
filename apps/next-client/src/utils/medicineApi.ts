@@ -1,28 +1,32 @@
+import { AxiosError } from 'axios';
+import { axiosInstance } from '@/services/axiosInstance';
 import { API_URLS } from "@/constants/urls";
 import { MedicineResultDto } from "@/dto/MedicineResultDto";
 import { SEARCH_ERROR_MESSAGES } from '@/constants/searchErrors';
 
 export const fetchMedicineDetails = async (id: string): Promise<MedicineResultDto | null> => {
   try {
-    const response = await fetch(`${API_URLS.MEDICINE}/${id}`, {
-      cache: "no-store",
+    const response = await axiosInstance.get(`${API_URLS.MEDICINE}/${id}`, {
+      headers: {
+        'Cache-Control': 'no-store',
+      },
     });
 
-    if (!response.ok) {
-      let errorMessage = `${SEARCH_ERROR_MESSAGES.CLIENT_ERROR} ${response.status}`;
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      let errorMessage = `${SEARCH_ERROR_MESSAGES.CLIENT_ERROR} ${error.response?.status}`;
 
-      if (response.status === 404) {
+      if (error.response?.status === 404) {
         errorMessage = SEARCH_ERROR_MESSAGES.NO_MEDICINE_FOUND;
-      } else if (response.status === 500) {
+      } else if (error.response?.status === 500) {
         errorMessage = SEARCH_ERROR_MESSAGES.SERVER_ERROR;
       }
       console.error(errorMessage);
       throw new Error(errorMessage);
+    } else {
+      console.error("Failed to fetch medicine details:", error);
+      throw new Error(SEARCH_ERROR_MESSAGES.UNKNOWN_ERROR);
     }
-
-    return response.json();
-  } catch (error) {
-    console.error("Failed to fetch medicine details:", error);
-    return null;
   }
 };
