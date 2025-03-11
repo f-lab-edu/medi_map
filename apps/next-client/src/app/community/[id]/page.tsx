@@ -1,23 +1,26 @@
 import '@/styles/pages/community/community.scss';
 import { fetchPost } from '@/utils/PostApi';
 import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
-import PostWrapper from './post-wrapper';
+import PostDetailClient from './PostDetailClient';
 
 interface PageProps {
   params: { id: string };
 }
 
-export default async function Page({ params }: PageProps) {
+async function getPostDetails(id: string) {
   const queryClient = new QueryClient();
-  
   await queryClient.prefetchQuery({
-    queryKey: ['post', params.id],
-    queryFn: () => fetchPost(params.id),
+    queryKey: ['post', id],
+    queryFn: () => fetchPost(id),
   });
+  return dehydrate(queryClient);
+}
+
+export default async function Page({ params }: PageProps) {
+  const { id } = params;
+  const dehydratedState = await getPostDetails(id);
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}> 
-      <PostWrapper urlPostId={params.id} />
-    </HydrationBoundary>
+    <PostDetailClient urlPostId={id} dehydratedState={dehydratedState} />
   );
 }

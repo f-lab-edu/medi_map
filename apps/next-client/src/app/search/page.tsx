@@ -4,7 +4,7 @@ import { useEffect, KeyboardEvent } from 'react';
 import { useSearchParams } from 'next/navigation';
 import useMedicineSearch from '@/hooks/medicine/useMedicineSearch';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
-import { SEARCH_ERROR_MESSAGES } from '@/constants/search_errors';
+import { SEARCH_ERROR_MESSAGES } from '@/constants/searchErrors';
 import { FILTER_ALL } from '@/constants/filters';
 import '@/styles/pages/search/search.scss';
 import { useSearchStore } from '@/store/useSearchStore';

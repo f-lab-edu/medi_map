@@ -1,4 +1,4 @@
-import { SEARCH_ERROR_MESSAGES } from '@/constants/search_errors';
+import { SEARCH_ERROR_MESSAGES } from '@/constants/searchErrors';
 
 // API 키 누락 에러
 export class ApiKeyMissingError extends Error {

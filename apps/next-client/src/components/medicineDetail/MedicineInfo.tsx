@@ -1,7 +1,7 @@
 import DOMPurify from 'isomorphic-dompurify';
 import { XMLParser } from 'fast-xml-parser';
 import { MedicineInfoProps, Paragraph, Article, Doc } from '@/dto/MedicineResultDto';
-import { SEARCH_ERROR_MESSAGES } from '@/constants/search_errors';
+import { SEARCH_ERROR_MESSAGES } from '@/constants/searchErrors';
 
 const ParagraphContent: React.FC<{ paragraph?: Paragraph }> = ({ paragraph }) => {
   if (!paragraph) return null;

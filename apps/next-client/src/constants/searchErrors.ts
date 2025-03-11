@@ -9,4 +9,6 @@ export const SEARCH_ERROR_MESSAGES = {
   NO_RESULTS_FOUND: '찾으시는 약물 정보가 없습니다.',
   XML_PARSING_ERROR: 'XML 데이터를 파싱하는 중 오류가 발생했습니다.',
   INVALID_DOC_DATA_FORMAT: '유효하지 않은 docData 형식입니다.',
-};
+  SERVER_ERROR: '서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.',
+  CLIENT_ERROR: '잘못된 요청입니다. 다시 시도해주세요.',
+}as const;
