@@ -7,6 +7,7 @@ export const ALERT_MESSAGES = {
     POST: {
       POST_DELETE: '게시글이 성공적으로 삭제되었습니다.',
       POST_CREATE: '게시글이 성공적으로 게시되었습니다.',
+      POST_UPDATE: '게시글이 수정되었습니다.',
     },
 
     COMMENT: {
@@ -50,6 +51,7 @@ export const ALERT_MESSAGES = {
       POST_DELETE_ERROR: '게시글 삭제 중 문제가 발생했습니다.',
       POST_PERMISSION_DENIED: '수정 권한이 없습니다.',
       POST_FETCH_ERROR: '게시글을 불러오는 중 문제가 발생했습니다.',
+      POST_UPDATE_ERROR: '게시글 수정 중 문제가 발생했습니다.',
     },
 
     COMMENT: {
