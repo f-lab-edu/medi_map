@@ -1,7 +1,7 @@
 'use client';
 
-import React, { Suspense } from 'react';
-import { QueryClient, QueryClientProvider, HydrationBoundary, DehydratedState } from '@tanstack/react-query';
+import React, { useEffect, Suspense } from 'react';
+import { QueryClientProvider, HydrationBoundary, DehydratedState, useQueryClient } from '@tanstack/react-query';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import PostDetail from './PostDetail';
 
@@ -10,9 +10,13 @@ interface Props {
   dehydratedState: DehydratedState;
 }
 
-const queryClient = new QueryClient();
-
 export default function PostDetailClient({ urlPostId, dehydratedState }: Props) {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ['post', urlPostId] });
+  }, [urlPostId, queryClient]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <HydrationBoundary state={dehydratedState}>

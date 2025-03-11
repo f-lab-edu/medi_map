@@ -9,7 +9,7 @@ interface PostContentProps {
 }
 
 const PostContent = ({ post }: PostContentProps) => {
-  const DOMPurify = createDOMPurify();
+  const DOMPurify = createDOMPurify(window);
   const sanitizedContent = DOMPurify.sanitize(post.content);
 
   return (
