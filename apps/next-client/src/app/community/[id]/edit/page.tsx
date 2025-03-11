@@ -7,6 +7,8 @@ import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import { API_URLS } from '@/constants/urls';
 import '@/styles/pages/community/community.scss';
+import { QueryClient } from '@tanstack/react-query';
+import { ALERT_MESSAGES } from '@/constants/alertMessage';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 import 'react-quill/dist/quill.snow.css';
@@ -30,7 +32,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         const post = response.data;
 
         if (post.userId !== userId) {
-          alert('수정 권한이 없습니다.');
+          alert(ALERT_MESSAGES.ERROR.POST.POST_PERMISSION_DENIED);
           router.push('/community');
           return;
         }
@@ -39,7 +41,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         setContent(post.content);
       } catch (error) {
         console.error('Error fetching post:', error);
-        alert('게시글을 불러오는 중 문제가 발생했습니다.');
+        alert(ALERT_MESSAGES.ERROR.POST.POST_FETCH_ERROR);
         router.push('/community');
       } finally {
         setLoading(false);
@@ -86,10 +88,12 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     []
   );
 
+  const queryClient = new QueryClient();
+
   const handleUpdatePost = async () => {
     try {
       if (!title.trim() || !content.trim()) {
-        alert('제목과 내용을 모두 입력해주세요.');
+        alert(ALERT_MESSAGES.ERROR.POST.POST_EMPTY_FIELDS);
         return;
       }
 
@@ -99,28 +103,29 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
 
-      alert('게시글이 수정되었습니다.');
+      alert(ALERT_MESSAGES.SUCCESS.POST.POST_CREATE);
+      queryClient.invalidateQueries({ queryKey: ['post', id] });
       router.push(`/community/${id}`);
       router.refresh();
     } catch (error) {
       console.error('Error updating post:', error);
-      alert('게시글 수정 중 문제가 발생했습니다.');
+      alert(ALERT_MESSAGES.ERROR.POST.POST_CREATE_ERROR);
     }
   };
 
   const handleDeletePost = async () => {
     try {
-      if (!window.confirm('정말 삭제하시겠습니까?')) return;
+      if (!window.confirm(ALERT_MESSAGES.CONFIRM.CHECK_DELETE)) return;
 
       await axiosInstance.delete(`${API_URLS.POSTS}/${id}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
-      alert('게시글이 삭제되었습니다.');
+      alert(ALERT_MESSAGES.SUCCESS.POST.POST_DELETE);
       router.push('/community');
     } catch (error) {
       console.error('Error deleting post:', error);
-      alert('게시글 삭제 중 문제가 발생했습니다.');
+      alert(ALERT_MESSAGES.ERROR.POST.POST_DELETE_ERROR);
     }
   };
 
