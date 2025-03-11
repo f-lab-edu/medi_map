@@ -1,15 +1,14 @@
-'use client';
-
-import { useQuery } from '@tanstack/react-query';
 import { API_URLS } from '@/constants/urls';
 import { ERROR_MESSAGES } from '@/constants/errors';
 import { AxiosError } from 'axios';
 import { axiosInstance } from '@/services/axiosInstance';
 import { Post } from '@/types/post';
 
-async function fetchPost(id: string): Promise<Post> {
+export async function fetchPost(id: string): Promise<Post> {
   try {
-    const response = await axiosInstance.get(`${API_URLS.POSTS}/${id}`);
+    const response = await axiosInstance.get(`${API_URLS.POSTS}/${id}`, {
+      headers: { 'Cache-Control': 'no-store' },
+    });
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -24,17 +23,8 @@ async function fetchPost(id: string): Promise<Post> {
       console.error(errorMessage);
       throw new Error(errorMessage);
     } else {
-      console.error("Failed to fetch post:", error);
+      console.error('Failed to fetch post:', error);
       throw new Error(ERROR_MESSAGES.UNKNOWN_ERROR);
     }
   }
-}
-
-export function useFetchPost(id: string) {
-  return useQuery({
-    queryKey: ['post', id],
-    queryFn: () => fetchPost(id),
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 10,
-  });
 }

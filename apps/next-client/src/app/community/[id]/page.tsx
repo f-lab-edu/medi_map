@@ -1,26 +1,23 @@
-'use client';
-
-import PostContent from '@/components/community/PostContent';
-import PostDetailPage from '@/components/community/PostDetailPage';
 import '@/styles/pages/community/community.scss';
-import { useFetchPost } from '@/hooks/queries/useFetchPost';
-import { Post } from '@/types/post';
+import { fetchPost } from '@/utils/PostApi';
+import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
+import PostWrapper from './post-wrapper';
 
-export default function Page({ params }: { params: { id: string } }) {
-  const { data: post, error } = useFetchPost(params.id);
+interface PageProps {
+  params: { id: string };
+}
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
-
-  if (!post) {
-    return <div>로딩 중...</div>;
-  }
+export default async function Page({ params }: PageProps) {
+  const queryClient = new QueryClient();
+  
+  await queryClient.prefetchQuery({
+    queryKey: ['post', params.id],
+    queryFn: () => fetchPost(params.id),
+  });
 
   return (
-    <div className="post_detail">
-      <PostContent post={post as Post} />
-      <PostDetailPage urlPostId={params.id} />
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}> 
+      <PostWrapper urlPostId={params.id} />
+    </HydrationBoundary>
   );
 }
