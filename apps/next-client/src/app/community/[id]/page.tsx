@@ -1,6 +1,6 @@
 import '@/styles/pages/community/community.scss';
 import { fetchPost } from '@/utils/PostApi';
-import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
+import { QueryClient, dehydrate } from '@tanstack/react-query';
 import PostDetailClient from './PostDetailClient';
 
 interface PageProps {

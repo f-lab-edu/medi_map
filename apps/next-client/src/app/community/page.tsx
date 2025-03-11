@@ -1,56 +1,34 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
-import { axiosInstance } from '@/services/axiosInstance';
+import React, { useState, useEffect } from 'react';
+import { useFetchPosts } from '@/hooks/queries/useFetchPostList';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
-import { API_URLS } from '@/constants/urls';
 import '@/styles/pages/community/community.scss';
-import { Post } from '@/types/post';
-import { ALERT_MESSAGES } from '@/constants/alertMessage';
 import Image from 'next/image';
+import { Post } from '@/types/post';
 
 export default function CommunityList() {
-  const [posts, setPosts] = useState<Post[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const postsPerPage = 10;
   const router = useRouter();
 
   useEffect(() => {
-    fetchPosts(currentPage);
+    setIsLoggedIn(Boolean(Cookies.get('accessToken')));
+  }, []);
 
-    const token = Cookies.get('accessToken');
-    if (token) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-    }
-  }, [currentPage]);
+  const { data, isLoading, isError, error } = useFetchPosts(currentPage, searchTerm);
+  
+  const posts: Post[] = data?.posts || [];
+  const totalPages = data?.totalPages || 1;
+  const postsPerPage = 10;
 
-  const fetchPosts = useCallback(async (page: number = 1) => {
-    try {
-      const response = await axiosInstance.get(
-        `${API_URLS.POSTS}?page=${page}&limit=${postsPerPage}&search=${searchTerm}`
-      );
-      setPosts(response.data.posts);
-      setTotalPages(response.data.totalPages);
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-      alert(ALERT_MESSAGES.ERROR.POST.FETCH_POSTS);
-    }
-  }, [postsPerPage, searchTerm]);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
+  const handlePageChange = (page: number) => setCurrentPage(page);
 
   const handleSearch = () => {
     setCurrentPage(1);
-    fetchPosts(1);
   };
 
   const handlePostClick = (postId: number) => {
@@ -76,46 +54,42 @@ export default function CommunityList() {
           className="inp-text"
           placeholder="제목을 입력해주세요."
           onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleSearch();
-            }
-          }}
+          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
         />
         <button className="btn-search" type="button" onClick={handleSearch}>
           <span className="dn">검색</span>
         </button>
       </div>
 
-      <div className="post_list">
-        {posts.length === 0 ? (
-          <p className="empty">게시글이 없습니다.</p>
-        ) : (
-          <table className="post_table">
-            <thead>
-              <tr>
-                <th>번호</th>
-                <th>제목</th>
-                <th>작성일</th>
-                <th>작성자</th>
+      {isLoading && <div className="loading_message">로딩 중...</div>}
+      {isError && <div className="error_message">⚠️ {error?.message}</div>}
+      {!isLoading && !isError && posts.length === 0 ? (
+        <p className="empty">게시글이 없습니다.</p>
+      ) : (
+        <table className="post_table">
+          <thead>
+            <tr>
+              <th>번호</th>
+              <th>제목</th>
+              <th>작성일</th>
+              <th>작성자</th>
+            </tr>
+          </thead>
+          <tbody>
+            {posts.map((post: Post, index: number) => (
+              <tr key={post.id}>
+                <td>{totalPages * postsPerPage - (index + (currentPage - 1) * postsPerPage)}</td>
+                <td className="title" onClick={() => handlePostClick(post.id)}>
+                  {post.title}
+                  <span className="comment">({post.commentCount || 0})</span>
+                </td>
+                <td className="date">{new Date(post.createdAt).toLocaleDateString()}</td>
+                <td className="author">{post.author}</td>
               </tr>
-            </thead>
-            <tbody>
-              {posts.map((post, index) => (
-                <tr key={post.id}>
-                  <td>{totalPages * postsPerPage - (index + (currentPage - 1) * postsPerPage)}</td>
-                  <td className="title" onClick={() => handlePostClick(post.id)}>
-                    {post.title}
-                    <span className="comment">({post.commentCount || 0})</span>
-                  </td>
-                  <td className="date">{new Date(post.createdAt).toLocaleDateString()}</td>
-                  <td className="author">{post.author}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+            ))}
+          </tbody>
+        </table>
+      )}
 
       {isLoggedIn && (
         <Link href="/community/create" className="create_post">
