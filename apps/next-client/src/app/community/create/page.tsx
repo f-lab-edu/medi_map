@@ -1,22 +1,20 @@
 'use client';
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import type Quill from 'quill'; 
-import { axiosInstance } from '@/services/axiosInstance';
 import Cookies from 'js-cookie';
-import { useRouter } from 'next/navigation';
+import { axiosInstance } from '@/services/axiosInstance';
 import { API_URLS } from '@/constants/urls';
-import 'react-quill/dist/quill.snow.css';
+import { useCreatePost } from '@/hooks/queries/useCreatePost';
+import 'react-quill-new/dist/quill.snow.css';
 import '@/styles/pages/community/community.scss';
-import { ALERT_MESSAGES } from '@/constants/alertMessage';
 
-// ReactQuill 동적 로드 (SSR 비활성화)
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
 export default function CreatePost() {
-  const router = useRouter();
   const [newPost, setNewPost] = useState({ title: "", content: "" });
+  const handleCreatePost = useCreatePost(newPost);
   
   function handleImageUpload(this: { quill: Quill }) {
     const editor = this.quill;
@@ -98,26 +96,6 @@ export default function CreatePost() {
     ],
     []
   );
-
-  // 글 작성 버튼 클릭 시 처리
-  const handleCreatePost = useCallback(async () => {
-    if (!newPost.title.trim() || !newPost.content.trim()) {
-      alert(ALERT_MESSAGES.ERROR.POST.POST_EMPTY_FIELDS);
-      return;
-    }
-    try {
-      await axiosInstance.post(API_URLS.POSTS, newPost, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get("accessToken")}`,
-        },
-      });
-      alert(ALERT_MESSAGES.SUCCESS.POST.POST_CREATE);
-      router.push("/community");
-    } catch (error) {
-      console.error("글 작성 실패:", error);
-      alert(ALERT_MESSAGES.ERROR.POST.POST_CREATE_ERROR);
-    }
-  }, [newPost, router]);
 
   return (
     <div className="community create_post">

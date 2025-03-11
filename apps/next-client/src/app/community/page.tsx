@@ -62,7 +62,7 @@ export default function CommunityList() {
       </div>
 
       {isLoading && <div className="loading_message">로딩 중...</div>}
-      {isError && <div className="error_message">⚠️ {error?.message}</div>}
+      {isError && <div className="error_message">{error?.message}</div>}
       {!isLoading && !isError && posts.length === 0 ? (
         <p className="empty">게시글이 없습니다.</p>
       ) : (

@@ -5,9 +5,9 @@ import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import { usePost } from '@/hooks/queries/usePostEdit';
 import '@/styles/pages/community/community.scss';
+import 'react-quill-new/dist/quill.snow.css';
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
-import 'react-quill/dist/quill.snow.css';
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
 export default function EditPostPage({ params }: { params: { id: string } }) {
   const { id } = params;

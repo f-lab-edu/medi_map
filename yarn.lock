@@ -5225,7 +5225,7 @@ quill@^1.3.7:
     parchment "^1.1.4"
     quill-delta "^3.6.2"
 
-quill@^2.0.3:
+quill@^2.0.3, quill@~2.0.2:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/quill/-/quill-2.0.3.tgz#752765a31d5a535cdc5717dc49d4e50099365eb1"
   integrity sha512-xEYQBqfYx/sfb33VJiKnSJp8ehloavImQ2A6564GAbqG55PGw1dAWUn1MUbQB62t0azawUS2CZZhWCjO8gRvTw==
@@ -5283,6 +5283,14 @@ react-markdown@^9.0.3:
     unified "^11.0.0"
     unist-util-visit "^5.0.0"
     vfile "^6.0.0"
+
+react-quill-new@^3.3.3:
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/react-quill-new/-/react-quill-new-3.3.3.tgz#f3b5f5f1c4398339e3da4f30fb19a53b8734cca7"
+  integrity sha512-jxbm1QUJlkuGUpc9/GUgGw5USLHdp43H0M7AufqS3V+zRLng9uqLeVBGjXYqEbUKi8QVOM4SClSV3F7kVNj68w==
+  dependencies:
+    lodash "^4.17.21"
+    quill "~2.0.2"
 
 react-quill@^2.0.0:
   version "2.0.0"
