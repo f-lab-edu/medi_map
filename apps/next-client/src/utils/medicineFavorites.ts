@@ -29,10 +29,6 @@ export const addFavoriteApi = async (data: MedicineFavorite) => {
 
 export const checkFavoriteApi = async (medicineId: string): Promise<boolean> => {
   const token = Cookies.get("accessToken");
-  if (!token) {
-    throw new Error("No token available");
-  }
-
   try {
     const response = await axiosInstance.get(`${API_URLS.FAVORITES}/${medicineId}`, {
       headers: {

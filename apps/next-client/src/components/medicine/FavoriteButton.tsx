@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { addFavoriteApi, checkFavoriteApi } from '@/utils/medicineFavorites';
 import { ALERT_MESSAGES } from '@/constants/alertMessage';
 import { FavoriteButtonProps } from '@/dto/MedicineResultDto';
+import Cookies from 'js-cookie';
 
 export const FavoriteButton: React.FC<FavoriteButtonProps> = ({ medicineId, itemName, entpName, etcOtcName, className, itemImage }) => {
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
@@ -18,6 +19,12 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({ medicineId, item
   }, [medicineId]);
 
   const handleAddFavorite = async () => {
+    const token = Cookies.get("accessToken");
+    if (!token) {
+      alert(ALERT_MESSAGES.ERROR.FAVORITES.LOGIN_REQUIRED);
+      return;
+    }
+
     if (isFavorite) {
       alert(ALERT_MESSAGES.SUCCESS.FAVORITE.FAVORITE_ALREADY_ADDED);
       return;

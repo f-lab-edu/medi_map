@@ -20,7 +20,9 @@ export default function Header() {
         });
       }
       Cookies.remove('accessToken');
-
+      Cookies.remove('refreshToken');
+      Cookies.remove('userId');
+      
       signOut({ callbackUrl: ROUTES.AUTH.SIGN_IN });
     } catch (error) {
       console.error('Failed to logout:', error);
