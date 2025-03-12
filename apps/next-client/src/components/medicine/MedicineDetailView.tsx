@@ -10,9 +10,18 @@ import { ScrollToTopButton } from '@/components/common/ScrollToTopButton';
 import { FavoriteButton } from '@/components/medicine/FavoriteButton';
 import { MedicineDetailViewProps } from '@/dto/MedicineResultDto';
 
+const Tabs = {
+  All: "all",
+  Efficacy: "efficacy",
+  Dosage: "dosage",
+  Precautions: "precautions",
+} as const;
+
+type Tab = typeof Tabs[keyof typeof Tabs];
+
 const MedicineDetailView: React.FC<MedicineDetailViewProps> = ({ medicineId }) => {
   const { data: medicine } = useMedicineDetails(medicineId);
-  const [activeTab, setActiveTab] = useState<"all" | "efficacy" | "dosage" | "precautions">("all");
+  const [activeTab, setActiveTab] = useState<Tab>(Tabs.All);
 
   return (
     <div className="medi_search_result">
@@ -120,51 +129,45 @@ const MedicineDetailView: React.FC<MedicineDetailViewProps> = ({ medicineId }) =
 
           <ul className="tab_menu">
             <li
-              className={`tab_item all ${activeTab === "all" ? "active" : ""}`}
-              onClick={() => setActiveTab("all")}
+              className={`tab_item all ${activeTab === Tabs.All ? "active" : ""}`}
+              onClick={() => setActiveTab(Tabs.All)}
             >
               전체
             </li>
             <li
-              className={`tab_item efficacy ${
-                activeTab === "efficacy" ? "active" : ""
-              }`}
-              onClick={() => setActiveTab("efficacy")}
+              className={`tab_item efficacy ${activeTab === Tabs.Efficacy ? "active" : ""}`}
+              onClick={() => setActiveTab(Tabs.Efficacy)}
             >
               효능효과
             </li>
             <li
-              className={`tab_item dosage ${
-                activeTab === "dosage" ? "active" : ""
-              }`}
-              onClick={() => setActiveTab("dosage")}
+              className={`tab_item dosage ${activeTab === Tabs.Dosage ? "active" : ""}`}
+              onClick={() => setActiveTab(Tabs.Dosage)}
             >
               용법용량
             </li>
             <li
-              className={`tab_item precautions ${
-                activeTab === "precautions" ? "active" : ""
-              }`}
-              onClick={() => setActiveTab("precautions")}
+              className={`tab_item precautions ${activeTab === Tabs.Precautions ? "active" : ""}`}
+              onClick={() => setActiveTab(Tabs.Precautions)}
             >
               주의사항
             </li>
           </ul>
 
-          {activeTab === "all" && (
+          {activeTab === Tabs.All && (
             <>
               <MedicineInfo docData={medicine.eeDocData} sectionTitle="효능효과" />
               <MedicineInfo docData={medicine.udDocData} sectionTitle="용법용량" />
               <MedicineInfo docData={medicine.nbDocData} sectionTitle="주의사항" />
             </>
           )}
-          {activeTab === "efficacy" && (
+          {activeTab === Tabs.Efficacy && (
             <MedicineInfo docData={medicine.eeDocData} sectionTitle="효능효과" />
           )}
-          {activeTab === "dosage" && (
+          {activeTab === Tabs.Dosage && (
             <MedicineInfo docData={medicine.udDocData} sectionTitle="용법용량" />
           )}
-          {activeTab === "precautions" && (
+          {activeTab === Tabs.Precautions && (
             <MedicineInfo docData={medicine.nbDocData} sectionTitle="주의사항" />
           )}
         </div>
