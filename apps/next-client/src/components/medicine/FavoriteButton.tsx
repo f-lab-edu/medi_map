@@ -1,47 +1,33 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { addFavoriteApi, checkFavoriteApi } from '@/utils/medicineFavorites';
+import React, { Suspense } from 'react';
+import { useCheckFavorite, useAddFavorite } from '@/hooks/queries/useFavorite';
 import { ALERT_MESSAGES } from '@/constants/alertMessage';
 import { FavoriteButtonProps } from '@/dto/MedicineResultDto';
-import Cookies from 'js-cookie';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
 
-export const FavoriteButton: React.FC<FavoriteButtonProps> = ({ medicineId, itemName, entpName, etcOtcName, className, itemImage }) => {
-  const [isFavorite, setIsFavorite] = useState<boolean>(false);
-
-  useEffect(() => {
-    const checkFavoriteStatus = async () => {
-      const isFav = await checkFavoriteApi(medicineId);
-      setIsFavorite(isFav);
-    };
-
-    checkFavoriteStatus();
-  }, [medicineId]);
+const FavoriteButtonContent: React.FC<FavoriteButtonProps> = ({
+  medicineId, itemName, entpName, etcOtcName, className, itemImage,
+}) => {
+  const { data: isFavorite } = useCheckFavorite(medicineId);
+  const addFavoriteMutation = useAddFavorite();
 
   const handleAddFavorite = async () => {
-    const token = Cookies.get("accessToken");
-    if (!token) {
-      alert(ALERT_MESSAGES.ERROR.FAVORITES.LOGIN_REQUIRED);
-      return;
-    }
-
     if (isFavorite) {
       alert(ALERT_MESSAGES.SUCCESS.FAVORITE.FAVORITE_ALREADY_ADDED);
       return;
     }
 
     try {
-      const favoriteData = {
+      await addFavoriteMutation.mutateAsync({
         medicineId,
         itemName,
         entpName,
         etcOtcName: etcOtcName ?? "",
         className: className ?? "",
         itemImage: itemImage ?? "",
-      };
+      });
 
-      await addFavoriteApi(favoriteData);
-      setIsFavorite(true); 
       alert(ALERT_MESSAGES.SUCCESS.FAVORITE.FAVORITE_ADDED);
     } catch (error) {
       alert(ALERT_MESSAGES.ERROR.FAVORITE_ADD_ERROR);
@@ -57,3 +43,11 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({ medicineId, item
     </button>
   );
 };
+
+export const FavoriteButton: React.FC<FavoriteButtonProps> = (props) => (
+  <ErrorBoundary>
+    <Suspense fallback={<button className="favorite_button">로딩 중...</button>}>
+      <FavoriteButtonContent {...props} />
+    </Suspense>
+  </ErrorBoundary>
+);

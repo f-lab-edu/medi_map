@@ -27,4 +27,5 @@ export const FAVORITE_MESSAGES = {
   LOGIN_REQUIRED: '로그인이 필요한 서비스입니다.',
   ALREADY_EXISTS: '이미 즐겨찾기에 추가되었습니다.',
   STATUS_FETCH_ERROR: '즐겨찾기 상태를 불러오지 못했습니다.',
+  ID_NOT_FOUND: 'medicineId가 존재하지 않습니다.',
 } as const;
