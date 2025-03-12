@@ -1,7 +1,7 @@
 'use client';
 
 import React, { Suspense } from 'react';
-import { HydrationBoundary, QueryClient, QueryClientProvider, DehydratedState } from '@tanstack/react-query';
+import { HydrationBoundary, QueryClient, DehydratedState } from '@tanstack/react-query';
 import MedicineDetailView from '@/components/medicine/MedicineDetailView';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 
@@ -14,7 +14,6 @@ const queryClient = new QueryClient();
 
 const MedicineDetailClient: React.FC<MedicineDetailClientProps> = ({ medicineId, dehydratedState }) => {
   return (
-    <QueryClientProvider client={queryClient}>
       <HydrationBoundary state={dehydratedState}>
         <Suspense fallback={<p>로딩 중...</p>}>
           <ErrorBoundary>
@@ -22,7 +21,6 @@ const MedicineDetailClient: React.FC<MedicineDetailClientProps> = ({ medicineId,
           </ErrorBoundary>
         </Suspense>
       </HydrationBoundary>
-    </QueryClientProvider>
   );
 };
 

@@ -6,9 +6,7 @@ import { SEARCH_ERROR_MESSAGES } from '@/constants/searchErrors';
 
 export const fetchMedicineDetails = async (id: string): Promise<MedicineResultDto> => {
   try {
-    const response = await axiosInstance.get(`${API_URLS.MEDICINE}/${id}`, {
-      headers: { 'Cache-Control': 'no-store' },
-    });
+    const response = await axiosInstance.get(`${API_URLS.MEDICINE}/${id}`);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {

@@ -1,20 +1,20 @@
 import React from 'react';
 import { dehydrate, QueryClient } from '@tanstack/react-query';
 import { fetchMedicineDetails } from '@/utils/medicineApi';
-import MedicineDetailClient from './MedicineDetailClient';
+import MedicineDetailClient from '@/components/medicineDetail/MedicineDetailClient';
 
-async function getMedicineDetails(id: string) {
+async function getMedicineDetails(medicineId: string) {
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
-    queryKey: ['medicineDetails', id],
-    queryFn: () => fetchMedicineDetails(id),
+    queryKey: ['medicineDetails', medicineId],
+    queryFn: () => fetchMedicineDetails(medicineId),
   });
   return dehydrate(queryClient);
 }
 
 export default async function MedicineDetailPage({ params }: { params: { id: string } }) {
   const { id } = params;
-  const medicineId = Array.isArray(id) ? id[0] : id;
+  const medicineId = id;
   const dehydratedState = await getMedicineDetails(medicineId);
 
   return (

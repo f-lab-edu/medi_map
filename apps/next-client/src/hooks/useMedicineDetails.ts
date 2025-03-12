@@ -7,8 +7,8 @@ export const useMedicineDetails = (medicineId: string) => {
   const medicineDetailsQuery = useSuspenseQuery<MedicineResultDto>({
     queryKey: ['medicineDetails', medicineId],
     queryFn: () => fetchMedicineDetails(medicineId),
-    staleTime: 1000 * 60 * 60 * 24,
-    gcTime: 1000 * 60 * 60 * 24,
+    staleTime: 24 * 60 * 60 * 1000,
+    gcTime: 24 * 60 * 60 * 1000,
   });
 
   if (medicineDetailsQuery.error) {
