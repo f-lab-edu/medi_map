@@ -64,13 +64,15 @@ export default function UserBookmark() {
           {favorites.map((item) => (
             <li className="medicine_desc" key={item.medicineId}>
               <Link href={`/search/${item.medicineId}`} passHref>
-                  {item.itemImage && (
+                  {item.itemImage ? (
                     <Image
                       src={item.itemImage}
                       alt={item.itemName}
                       width={100}
                       height={50}
                     />
+                  ) : (
+                    <p>이미지를 불러올 수 없습니다.</p>
                   )}
                   <div className="medicine_info">
                     <h3 className="name">{item.itemName}</h3>

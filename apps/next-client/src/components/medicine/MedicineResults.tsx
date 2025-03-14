@@ -17,7 +17,7 @@ export function SearchResults({ results, lastElementRef }: SearchResultsProps) {
           ref={index === results.length - 1 ? lastElementRef : null}
         >
           <Link href={`/search/${item.itemSeq}`} passHref>
-            {item.itemImage && (
+            {item.itemImage ? (
               <Image
                 src={item.itemImage}
                 alt={item.itemName}
@@ -25,6 +25,8 @@ export function SearchResults({ results, lastElementRef }: SearchResultsProps) {
                 height={50}
                 style={{ width: "auto", height: "auto" }}
               />
+            ) : (
+              <p>이미지를 불러올 수 없습니다.</p>
             )}
             <div className="medicine_info">
               <h3 className="name">{item.itemName}</h3>

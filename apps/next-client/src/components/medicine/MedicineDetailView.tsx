@@ -43,13 +43,15 @@ const MedicineDetailView: React.FC<MedicineDetailViewProps> = ({ medicineId }) =
           </div>
 
           <div className="medi_desc">
-            {medicine.itemImage && (
+            {medicine.itemImage ? (
               <Image
                 src={medicine.itemImage}
                 alt={medicine.itemName}
                 width={500}
                 height={280}
               />
+            ) : (
+              <p>이미지를 불러올 수 없습니다.</p>
             )}
 
             <div className="details">
