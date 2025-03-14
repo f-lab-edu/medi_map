@@ -15,6 +15,12 @@
 @import './layout/footer';
 @import './layout/grid';
 
+* {
+  @include mo {
+    font-size: 1.4rem;
+  }
+}
+
 .dn {
   display: none;
 }

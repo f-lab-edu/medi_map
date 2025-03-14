@@ -72,3 +72,19 @@ export interface FavoriteButtonProps {
 export interface MedicineDetailViewProps {
   medicineId: string;
 }
+
+export interface FetchDataParams {
+  page: number;
+}
+
+export interface MedicinePagination {
+  currentPage: number;
+  totalPages: number;
+  limit: number;
+}
+
+export interface MedicineResponse {
+  results: MedicineResultDto[];
+  total: number;
+  pagination: MedicinePagination;
+}
