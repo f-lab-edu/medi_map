@@ -6,7 +6,7 @@ import { useSearchStore } from '@/store/useSearchStore';
 import useMedicineSearch from '@/hooks/medicine/useMedicineSearch';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import { FILTER_ALL } from '@/constants/filters';
-import { SEARCH_ERROR_MESSAGES } from '@/constants/search_errors';
+import { SEARCH_ERROR_MESSAGES } from '@/constants/searchErrors';
 import { SearchBox } from '@/components/medicine/SearchBox';
 import { SearchResults } from '@/components/medicine/MedicineResults';
 import { ScrollToTopButton } from '@/components/common/ScrollToTopButton';
@@ -14,7 +14,7 @@ import '@/styles/pages/search/search.scss';
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
-  const keyword = searchParams.get('keyword') || '';
+  const keyword = searchParams?.get('keyword') || '';
 
   const [localSearchTerm, setLocalSearchTerm] = useState('');
   const [localCompany, setLocalCompany] = useState('');

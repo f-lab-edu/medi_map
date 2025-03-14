@@ -14,10 +14,9 @@ async function getMedicineDetails(medicineId: string) {
 
 export default async function MedicineDetailPage({ params }: { params: { id: string } }) {
   const { id } = params;
-  const medicineId = id;
-  const dehydratedState = await getMedicineDetails(medicineId);
+  const dehydratedState = await getMedicineDetails(id);
 
   return (
-    <MedicineDetailClient medicineId={medicineId} dehydratedState={dehydratedState} />
+    <MedicineDetailClient dehydratedState={dehydratedState} />
   );
 }
