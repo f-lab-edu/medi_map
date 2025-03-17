@@ -35,7 +35,6 @@ export function SearchResults({ results, lastElementRef }: SearchResultsProps) {
                 alt={item.itemName || "약품 이미지"}
                 width={100}
                 height={50}
-                style={{ width: "auto", height: "auto" }}
                 onError={() => handleImageError(item.itemSeq)}
                 unoptimized={imageHasError}
               />

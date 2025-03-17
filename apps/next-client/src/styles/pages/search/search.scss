@@ -242,6 +242,13 @@
     }
     img {
       border-radius: 0.5rem;
+      width: 20%;
+      height: 100%;
+      object-fit: cover;
+
+      @include mo {
+        width: 100%;
+      }
     }
     .name {
       font-weight: 600;
