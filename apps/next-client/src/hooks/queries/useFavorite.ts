@@ -20,24 +20,27 @@ export const useAddFavorite = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: MedicineFavorite) => addFavoriteApi(data),
+    mutationFn: addFavoriteApi,
 
-    onMutate: async (newFavorite) => {
-      await queryClient.cancelQueries({ queryKey: ['favoriteStatus', newFavorite.medicineId] });
-      const previousData = queryClient.getQueryData(['favoriteStatus', newFavorite.medicineId]);
-      queryClient.setQueryData(['favoriteStatus', newFavorite.medicineId], true);
+    onMutate: async ({ medicineId }) => {
+      const queryKey = ['favoriteStatus', medicineId];
+      await queryClient.cancelQueries({ queryKey });
+
+      const previousData = queryClient.getQueryData(queryKey);
+
+      queryClient.setQueryData(queryKey, true);
 
       return { previousData };
     },
 
-    onError: (err, variables, context) => {
+    onError: (err, { medicineId }, context) => {
       if (context?.previousData) {
-        queryClient.setQueryData(['favoriteStatus', variables.medicineId], context.previousData);
+        queryClient.setQueryData(['favoriteStatus', medicineId], context.previousData);
       }
     },
 
-    onSettled: (_, __, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['favoriteStatus', variables.medicineId] }); 
+    onSettled: (_, __, { medicineId }) => {
+      queryClient.invalidateQueries({ queryKey: ['favoriteStatus', medicineId] });
     },
   });
 };
