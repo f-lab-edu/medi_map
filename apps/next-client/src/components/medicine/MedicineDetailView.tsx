@@ -55,8 +55,8 @@ const MedicineDetailView: React.FC<MedicineDetailViewProps> = ({ medicineId }) =
               alt={medicine.itemName || "약품 이미지"}
               width={500}
               height={280}
-              onError={() => handleImageError()}
-              unoptimized={hasImageError}
+              onError={handleImageError}
+              unoptimized={hasImageError || !medicine.itemImage}
             />
 
             <div className="details">

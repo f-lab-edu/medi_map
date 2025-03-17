@@ -76,12 +76,12 @@ export default function UserBookmark() {
               <li className="medicine_desc" key={item.medicineId}>
                 <Link href={`/search/${item.medicineId}`} passHref>
                   <Image
-                    src={imageToShow}
+                    src={imageHasError || !item.itemImage ? DEFAULT_IMAGE_PATH : item.itemImage}
                     alt={item.itemName || "약품 이미지"}
                     width={100}
                     height={50}
                     onError={() => handleImageError(item.medicineId)}
-                    unoptimized={imageHasError}
+                    unoptimized={imageHasError || !item.itemImage}
                   />
                   <div className="medicine_info">
                     <h3 className="name">{item.itemName}</h3>
