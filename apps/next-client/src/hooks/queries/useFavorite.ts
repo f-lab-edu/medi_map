@@ -11,8 +11,8 @@ export const useCheckFavorite = (medicineId?: string) => {
   return useSuspenseQuery({
     queryKey: ['favoriteStatus', medicineId],
     queryFn: () => checkFavoriteApi(medicineId),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
+    staleTime: 30 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
   });
 };
 
@@ -21,7 +21,22 @@ export const useAddFavorite = () => {
 
   return useMutation({
     mutationFn: (data: MedicineFavorite) => addFavoriteApi(data),
-    onSuccess: (_, variables) => {
+
+    onMutate: async (newFavorite) => {
+      await queryClient.cancelQueries({ queryKey: ['favoriteStatus', newFavorite.medicineId] });
+      const previousData = queryClient.getQueryData(['favoriteStatus', newFavorite.medicineId]);
+      queryClient.setQueryData(['favoriteStatus', newFavorite.medicineId], true);
+
+      return { previousData };
+    },
+
+    onError: (err, variables, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(['favoriteStatus', variables.medicineId], context.previousData);
+      }
+    },
+
+    onSettled: (_, __, variables) => {
       queryClient.invalidateQueries({ queryKey: ['favoriteStatus', variables.medicineId] }); 
     },
   });

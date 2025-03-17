@@ -12,27 +12,23 @@ const FavoriteButtonContent: React.FC<FavoriteButtonProps> = ({
   const { data: isFavorite } = useCheckFavorite(medicineId);
   const addFavoriteMutation = useAddFavorite();
 
-  const handleAddFavorite = async () => {
+  const handleAddFavorite = () => {
     if (isFavorite) {
       alert(ALERT_MESSAGES.SUCCESS.FAVORITE.FAVORITE_ALREADY_ADDED);
       return;
     }
-
-    try {
-      await addFavoriteMutation.mutateAsync({
-        medicineId,
-        itemName,
-        entpName,
-        etcOtcName: etcOtcName ?? "",
-        className: className ?? "",
-        itemImage: itemImage ?? "",
-      });
-
-      alert(ALERT_MESSAGES.SUCCESS.FAVORITE.FAVORITE_ADDED);
-    } catch (error) {
-      alert(ALERT_MESSAGES.ERROR.FAVORITE_ADD_ERROR);
-    }
-  };
+  
+    addFavoriteMutation.mutate({
+      medicineId,
+      itemName,
+      entpName,
+      etcOtcName: etcOtcName ?? "",
+      className: className ?? "",
+      itemImage: itemImage ?? "",
+    });
+  
+    alert(ALERT_MESSAGES.SUCCESS.FAVORITE.FAVORITE_ADDED);
+  };  
 
   return (
     <button
