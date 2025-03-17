@@ -10,6 +10,8 @@ import { ScrollToTopButton } from '@/components/common/ScrollToTopButton';
 import { FavoriteButton } from '@/components/medicine/FavoriteButton';
 import { MedicineDetailViewProps } from '@/dto/MedicineResultDto';
 
+const DEFAULT_IMAGE_PATH = "/images/not-image.png";
+
 const Tabs = {
   All: "all",
   Efficacy: "efficacy",
@@ -22,6 +24,11 @@ type Tab = typeof Tabs[keyof typeof Tabs];
 const MedicineDetailView: React.FC<MedicineDetailViewProps> = ({ medicineId }) => {
   const { data: medicine } = useMedicineDetails(medicineId);
   const [activeTab, setActiveTab] = useState<Tab>(Tabs.All);
+  const [hasImageError, setHasImageError] = useState(false);
+
+  const handleImageError = () => {
+    setHasImageError(true);
+  };
 
   return (
     <div className="medi_search_result">
@@ -29,7 +36,7 @@ const MedicineDetailView: React.FC<MedicineDetailViewProps> = ({ medicineId }) =
       {medicine && (
         <div className="medi_bottom_result">
           <div className="top_cont">
-            <h3 className="name">{medicine.itemName}</h3>
+            <h3 className="name">{medicine.itemName || "이름 정보 없음"}</h3>
             <div className="bookmark">
               <FavoriteButton
                 medicineId={medicine.itemSeq}
@@ -43,50 +50,49 @@ const MedicineDetailView: React.FC<MedicineDetailViewProps> = ({ medicineId }) =
           </div>
 
           <div className="medi_desc">
-            {medicine.itemImage ? (
-              <Image
-                src={medicine.itemImage}
-                alt={medicine.itemName}
-                width={500}
-                height={280}
-              />
-            ) : (
-              <p>이미지를 불러올 수 없습니다.</p>
-            )}
+            <Image
+              src={hasImageError || !medicine.itemImage ? DEFAULT_IMAGE_PATH : medicine.itemImage}
+              alt={medicine.itemName || "약품 이미지"}
+              width={500}
+              height={280}
+              onError={() => handleImageError()}
+              unoptimized={hasImageError}
+            />
 
             <div className="details">
               <table className="medicine_table">
                 <tbody>
                   <tr>
                     <th>분류</th>
-                    <td>{medicine.className}</td>
+                    <td>{medicine.className || "정보 없음"}</td>
                   </tr>
                   <tr>
                     <th>외형</th>
-                    <td>{medicine.chart}</td>
+                    <td>{medicine.chart || "정보 없음"}</td>
                   </tr>
                   <tr>
                     <th>제조사</th>
-                    <td>{medicine.entpName}</td>
+                    <td>{medicine.entpName || "정보 없음"}</td>
                   </tr>
                   <tr>
                     <th>크기</th>
                     <td>
-                      {medicine.lengLong} mm x {medicine.lengShort} mm x{" "}
-                      {medicine.thick} mm
+                      {medicine.lengLong 
+                        ? `${medicine.lengLong} mm x ${medicine.lengShort || 0} mm x ${medicine.thick || 0} mm`
+                        : "정보 없음"}
                     </td>
                   </tr>
                   <tr>
                     <th>제형</th>
-                    <td>{medicine.formCodeName}</td>
+                    <td>{medicine.formCodeName || "정보 없음"}</td>
                   </tr>
                   <tr>
                     <th>모양</th>
-                    <td>{medicine.drugShape}</td>
+                    <td>{medicine.drugShape || "정보 없음"}</td>
                   </tr>
                   <tr>
                     <th>색상</th>
-                    <td>{medicine.colorClass1}</td>
+                    <td>{medicine.colorClass1 || "정보 없음"}</td>
                   </tr>
                   {medicine.storageMethod && (
                     <tr>
@@ -114,14 +120,14 @@ const MedicineDetailView: React.FC<MedicineDetailViewProps> = ({ medicineId }) =
                   )}
                   <tr>
                     <th>전문/일반 구분</th>
-                    <td>{medicine.etcOtcName}</td>
+                    <td>{medicine.etcOtcName || "정보 없음"}</td>
                   </tr>
                   <tr>
                     <th>허가 날짜</th>
                     <td>
                       {medicine.itemPermitDate
                         ? new Date(medicine.itemPermitDate).toISOString().split("T")[0]
-                        : "N/A"}
+                        : "정보 없음"}
                     </td>
                   </tr>
                 </tbody>
