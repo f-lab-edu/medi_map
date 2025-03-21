@@ -7,10 +7,10 @@ import Cookies from 'js-cookie';
 import { axiosInstance } from '@/services/axiosInstance';
 import { API_URLS } from '@/constants/urls';
 import { useCreatePost } from '@/hooks/queries/useCreatePost';
-import 'react-quill-new/dist/quill.snow.css';
+import 'react-quill/dist/quill.snow.css';
 import '@/styles/pages/community/community.scss';
 
-const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 export default function CreatePost() {
   const [newPost, setNewPost] = useState({ title: "", content: "" });
