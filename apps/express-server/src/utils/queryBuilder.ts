@@ -8,10 +8,7 @@ export function buildWhereClause(query: QueryParams): WhereOptions {
   try {
     // 약물 이름 검색 조건 추가
     if (query.medicineName) {
-      const formattedName = query.medicineName.replace(/\s+/g, ' & ');
-      whereClause.itemName = Sequelize.literal(`
-        to_tsvector('simple', "Medicine"."itemName") @@ to_tsquery('simple', '${formattedName}:*')
-      `);
+      whereClause.itemName = { [Op.iLike]: `%${query.medicineName}%` };
     }
 
     // 회사 이름 검색 조건 추가

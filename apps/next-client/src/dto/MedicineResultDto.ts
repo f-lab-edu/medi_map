@@ -31,6 +31,7 @@ export interface MedicineInfoProps {
 
 export interface MedicineResultDto {
   id: number;               // 고유 ID
+  medicineId: string;       // 약물 고유 식별 번호
   itemSeq: string;          // 약물 고유 식별 번호
   itemName: string;         // 약물 이름
   entpName: string;         // 제조사 이름
@@ -57,4 +58,33 @@ export interface MedicineResultDto {
   eeDocData?: DocData;      // 효능 효과 데이터
   udDocData?: DocData;      // 사용상 주의사항 데이터
   nbDocData?: DocData;      // 주의사항 데이터
+}
+
+export interface FavoriteButtonProps {
+  medicineId: string;
+  itemName: string;
+  entpName: string;
+  etcOtcName?: string;
+  className?: string;
+  itemImage?: string;
+}
+
+export interface MedicineDetailViewProps {
+  medicineId: string;
+}
+
+export interface FetchDataParams {
+  page: number;
+}
+
+export interface MedicinePagination {
+  currentPage: number;
+  totalPages: number;
+  limit: number;
+}
+
+export interface MedicineResponse {
+  results: MedicineResultDto[];
+  total: number;
+  pagination: MedicinePagination;
 }

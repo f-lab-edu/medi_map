@@ -60,8 +60,8 @@ export default function PharmacyPage() {
     }
 
     return (
-      <div className="pharmacies_box">
-        <div className='pharmacies_desc'>
+      <div className={`pharmacies_box ${selectedPharmacy ? 'open' : ''}`}>
+        <div className='pharmacies_desc phar_list'>
           <p className="pharmacies_count">
             총 <span>{pharmacies.length}</span>개의 약국이 검색되었습니다🍀
           </p>

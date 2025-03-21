@@ -75,6 +75,7 @@ export const ALERT_MESSAGES = {
     FAVORITES: {
       FAVORITE_DELETE: '즐겨찾기 삭제에 실패했습니다.',
       FAVORITES_FETCH: '즐겨찾기 정보를 불러오지 못했습니다.',
+      LOGIN_REQUIRED: '로그인이 필요한 서비스입니다.',
     },
 
     GOOGLE: {

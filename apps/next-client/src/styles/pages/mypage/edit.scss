@@ -1,3 +1,7 @@
+// abstracts
+@import '../../common/abstracts/mixins';
+@import '../../common/abstracts/responsive';
+
 .mypage {
   .inner {
     max-width: 128rem;
@@ -7,15 +11,28 @@
     font-weight: bold;
     text-align: center;
     margin-bottom: 10rem;
+    @include mo {
+      font-size: 2.5rem;
+      margin-bottom: 5rem;
+    }
   }
   h2.title {
     font-size: 2.6rem;
     font-weight: bold;
+
+    @include mo {
+      font-size: 2rem;
+    }
   }
   .sub_title {
     font-size: 1.8rem;
     margin: 5rem 0 5rem;
     text-align: left;
+
+    @include mo {
+      font-size: 1.6rem;
+      margin: 3rem 0 3rem;
+    }
 
     span {
       font-weight: 600;
@@ -58,6 +75,10 @@
     color: #fff;
     background: var(--btn-color);
 
+    @include mo {
+      font-size: 1.5rem;
+    }
+
     &.resign {
       color: #888;
       background: #fff;
@@ -76,6 +97,9 @@
     &.username {
       button {
         width: 18rem;
+        @include mo {
+          width: 100%;
+        }
       }
     }
     &.password {
@@ -90,6 +114,10 @@
   .item_desc {
     display: flex;
     gap: 1rem;
+
+    @include mo {
+      flex-direction: column;
+    }
   }
 }
 
@@ -98,8 +126,16 @@
   justify-content: space-between;
   gap: 7rem;
 
+  @include mo {
+    flex-direction: column;
+  }
+
   .left_cont {
     width: 30%;
+
+    @include mo {
+      width: 100%;
+    }
 
     .menu_list {
       margin: 0;
@@ -114,6 +150,10 @@
           display: block;
           transition: all 0.3s;
 
+          @include mo {
+            padding: 1rem;
+          }
+
           &:hover {
             background: #fafafa;
           }
@@ -124,6 +164,10 @@
 
   .right_cont {
     width: 70%;
+
+    @include mo {
+      width: 100%;
+    }
   }
 }
 

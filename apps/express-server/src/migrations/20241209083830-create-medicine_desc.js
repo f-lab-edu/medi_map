@@ -59,25 +59,9 @@ module.exports = {
         defaultValue: Sequelize.fn('NOW'),
       },
     });
-
-    await queryInterface.addIndex('MedicineDesc', ['itemSeq'], {
-      name: 'MedicineDesc_itemSeq_index',
-    });
-
-    await queryInterface.addIndex('MedicineDesc', ['itemName'], {
-      name: 'MedicineDesc_itemName_index',
-    });
-
-    await queryInterface.addIndex('MedicineDesc', ['itemEngName'], {
-      name: 'MedicineDesc_itemEngName_index',
-    });
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.removeIndex('MedicineDesc', 'MedicineDesc_itemSeq_index');
-    await queryInterface.removeIndex('MedicineDesc', 'MedicineDesc_itemName_index');
-    await queryInterface.removeIndex('MedicineDesc', 'MedicineDesc_itemEngName_index');
-
     await queryInterface.dropTable('MedicineDesc');
   },
 };
