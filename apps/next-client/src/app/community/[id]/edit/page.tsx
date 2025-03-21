@@ -5,9 +5,9 @@ import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import { usePost } from '@/hooks/queries/usePostEdit';
 import '@/styles/pages/community/community.scss';
-import 'react-quill-new/dist/quill.snow.css';
+import 'react-quill/dist/quill.snow.css';
 
-const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 export default function EditPostPage({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -71,22 +71,21 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           onChange={(e) => setTitle(e.target.value)}
         />
       </div>
-     <div className="form_group">
-      <ReactQuill
-            theme="snow"
-            modules={modules}
-            formats={formats}
-            value={content}
-            onChange={(val) => setContent(val)}
-          />
+      <div className="form_group">
+        <ReactQuill
+          theme="snow"
+          modules={modules}
+          formats={formats}
+          value={content}
+          onChange={(val) => setContent(val)}
+        />
       </div>
-
-        <div className="actions">
-          <button  onClick={handleUpdatePost} className='create_button'>수정 완료</button>
-          <button onClick={handleDeletePost} className="delete_button">
-            삭제
-          </button>
-        </div>
+      <div className="actions">
+        <button onClick={handleUpdatePost} className='create_button'>수정 완료</button>
+        <button onClick={handleDeletePost} className="delete_button">
+          삭제
+        </button>
+      </div>
     </div>
   );
 }
