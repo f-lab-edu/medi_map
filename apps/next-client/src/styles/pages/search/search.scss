@@ -53,7 +53,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.6rem;
       cursor: pointer;
 
       &:first-child {
@@ -220,6 +219,7 @@
 
   @include mo {
     padding: 0;
+    margin-top: 3rem;
   }
   .medicine_desc {
     a {
@@ -242,10 +242,16 @@
     }
     img {
       border-radius: 0.5rem;
+      width: 20%;
+      height: 100%;
+      object-fit: cover;
+
+      @include mo {
+        width: 100%;
+      }
     }
     .name {
       font-weight: 600;
-      font-size: 1.6rem;
     }
     .classification {
       font-size: 1.4rem;
@@ -273,11 +279,16 @@
     @include mo {
       font-size: 2.5rem;
       letter-spacing: -1.5px;
+      margin-bottom: 5rem;
     }
   }
 
   .medi_bottom_result {
     margin-bottom: 10rem;
+
+    @include mo {
+      margin-bottom: 5rem;
+    }
 
     .top_cont {
       display: flex;
@@ -296,6 +307,7 @@
 
         @include mo {
           font-size: 1.5rem;
+          padding: 0.5rem;
         }
 
         &.active {
@@ -324,7 +336,6 @@
         width: 100%;
         height: 100%;
         border-right: 1px solid #ccc;
-        font-size: 1.6rem;
         cursor: pointer;
 
         &.active {
@@ -342,6 +353,7 @@
 
     @include mo {
       flex-direction: column;
+      margin-bottom: 5rem;
     }
 
     img {
@@ -373,6 +385,11 @@
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 2rem;
+
+    @include mo {
+      font-size: 2rem;
+      margin: 0;
+    }
   }
   .back_btn {
     background: var(--btn-color);
@@ -412,10 +429,6 @@
       padding: 1rem;
       border: 1px solid #ddd;
       text-align: left;
-
-      @include mo {
-        font-size: 1.5rem;
-      }
     }
 
     th {
@@ -541,4 +554,17 @@
   position: fixed;
   bottom: 3rem;
   right: 3rem;
+}
+
+.medicine_image {
+  position: relative;
+  width: 10rem;
+  height: 5rem;
+  object-fit: cover;
+}
+
+.inner {
+  @include mo {
+    padding: 10rem 1.75rem;
+  }
 }

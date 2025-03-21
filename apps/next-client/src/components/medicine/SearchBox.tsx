@@ -1,73 +1,76 @@
-import { ChangeEvent, KeyboardEvent } from "react";
-import { FILTERS, FILTER_ALL } from "@/constants/filters";
-import { useSearchStore } from "@/store/useSearchStore";
+import { ChangeEvent, KeyboardEvent } from 'react';
+import { FILTERS, FILTER_ALL } from '@/constants/filters';
 
 interface SearchBoxProps {
+  localSearchTerm: string;
+  setLocalSearchTerm: (val: string) => void;
+  localCompany: string;
+  setLocalCompany: (val: string) => void;
+  filters: {
+    colors: string[];
+    shapes: string[];
+    forms: string[];
+  };
+  setFilters: (filters: { colors: string[]; shapes: string[]; forms: string[] }) => void;
   onSearch: () => void;
   onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
 }
 
-export function SearchBox({ onSearch, onKeyDown }: SearchBoxProps) {
-  const {
-    medicineSearchTerm,
-    companySearchTerm,
-    selectedColors,
-    selectedShapes,
-    selectedForms,
-    setMedicineSearchTerm,
-    setCompanySearchTerm,
-    setSelectedColors,
-    setSelectedShapes,
-    setSelectedForms,
-  } = useSearchStore();
-
+export function SearchBox({
+  localSearchTerm,
+  setLocalSearchTerm,
+  localCompany,
+  setLocalCompany,
+  filters,
+  setFilters,
+  onSearch,
+  onKeyDown,
+}: SearchBoxProps) {
   const handleMediChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setMedicineSearchTerm(e.target.value);
+    setLocalSearchTerm(e.target.value);
   };
 
   const handleCompanyChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setCompanySearchTerm(e.target.value);
+    setLocalCompany(e.target.value);
   };
+  
+  const updateFilter = (filterType: 'colors' | 'shapes' | 'forms', newItem: string) => {
+    let updatedItems: string[];
 
-  const updateFilter = (selectedItems: string[], newItem: string) => {
     if (newItem === FILTER_ALL) {
-      return [FILTER_ALL];
-    }
-  
-    let updatedItems = selectedItems.filter((item) => item !== FILTER_ALL);
-  
-    if (updatedItems.includes(newItem)) {
-      updatedItems = updatedItems.filter((item) => item !== newItem);
+      updatedItems = [FILTER_ALL];
+    } else if (filters[filterType].includes(newItem)) {
+      updatedItems = filters[filterType].filter((item: string) => item !== newItem);
     } else {
-      updatedItems = [...updatedItems, newItem];
+      updatedItems = [...filters[filterType].filter((item: string) => item !== FILTER_ALL), newItem];
     }
-  
-    return updatedItems;
-  };  
+
+    setFilters({ ...filters, [filterType]: updatedItems });
+  };
 
   return (
     <div className="search_box">
       <input
         type="text"
-        value={medicineSearchTerm}
+        value={localSearchTerm}
         onChange={handleMediChange}
         onKeyDown={onKeyDown}
-        placeholder="약물 이름을 입력하세요"
+        placeholder="약물 이름"
       />
       <input
         type="text"
-        value={companySearchTerm}
+        value={localCompany}
         onChange={handleCompanyChange}
         onKeyDown={onKeyDown}
-        placeholder="업체 이름을 입력하세요"
+        placeholder="업체 이름"
       />
 
       <div className="filters color_filters">
         {FILTERS.colors.map(({ name, className }) => (
           <button
             key={name}
-            className={`${className} ${selectedColors.includes(name) ? "selected" : ""}`}
-            onClick={() => setSelectedColors((prev) => updateFilter(prev, name))}
+            className={`${className} ${filters.colors.includes(name) ? 'selected' : ''}`}
+            onClick={() => updateFilter('colors', name)}
           >
             {name}
           </button>
@@ -78,8 +81,8 @@ export function SearchBox({ onSearch, onKeyDown }: SearchBoxProps) {
         {FILTERS.shapes.map((shape) => (
           <button
             key={shape}
-            className={selectedShapes.includes(shape) ? "selected" : ""}
-            onClick={() => setSelectedShapes((prev) => updateFilter(prev, shape))}
+            className={filters.shapes.includes(shape) ? 'selected' : ''}
+            onClick={() => updateFilter('shapes', shape)}
           >
             {shape}
           </button>
@@ -90,8 +93,8 @@ export function SearchBox({ onSearch, onKeyDown }: SearchBoxProps) {
         {FILTERS.forms.map((form) => (
           <button
             key={form}
-            className={selectedForms.includes(form) ? "selected" : ""}
-            onClick={() => setSelectedForms((prev) => updateFilter(prev, form))}
+            className={filters.forms.includes(form) ? 'selected' : ''}
+            onClick={() => updateFilter('forms', form)}
           >
             {form}
           </button>

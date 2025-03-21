@@ -7,8 +7,15 @@ import { getAuthHeader } from '@/utils/authUtils';
 import { ALERT_MESSAGES } from '@/constants/alertMessage';
 import { MedicineFavorite } from '@/types/medicine.types';
 
+const DEFAULT_IMAGE_PATH = "/images/not-image.png";
+
 export default function UserBookmark() {
   const [favorites, setFavorites] = useState<MedicineFavorite[]>([]);
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+
+  const handleImageError = (medicineId: string) => {
+    setImageErrors((prev) => ({ ...prev, [medicineId]: true }));
+  };
 
   // 즐겨찾기 데이터 가져오기
   const fetchFavorites = async () => {
@@ -61,42 +68,47 @@ export default function UserBookmark() {
       <h2 className="title">약물 정보 즐겨찾기</h2>
       {favorites.length > 0 ? (
         <ul className="medicine_results">
-          {favorites.map((item) => (
-            <li className="medicine_desc" key={item.medicineId}>
-              <Link href={`/search/${item.medicineId}`} passHref>
-                  {item.itemImage && (
-                    <Image
-                      src={item.itemImage}
-                      alt={item.itemName}
-                      width={100}
-                      height={50}
-                    />
-                  )}
+          {favorites.map((item) => {
+            const imageHasError = imageErrors[item.medicineId];
+            const imageToShow = imageHasError || !item.itemImage ? DEFAULT_IMAGE_PATH : item.itemImage;
+
+            return (
+              <li className="medicine_desc" key={item.medicineId}>
+                <Link href={`/search/${item.medicineId}`} passHref>
+                  <Image
+                    src={imageHasError || !item.itemImage ? DEFAULT_IMAGE_PATH : item.itemImage}
+                    alt={item.itemName || "약품 이미지"}
+                    width={100}
+                    height={50}
+                    onError={() => handleImageError(item.medicineId)}
+                    unoptimized={imageHasError || !item.itemImage}
+                  />
                   <div className="medicine_info">
                     <h3 className="name">{item.itemName}</h3>
                     <div className="details">
                       <p className="classification">
-                        약물 분류: {item.className}
+                        약물 분류: {item.className || "정보 없음"}
                       </p>
                       <p className="type">
-                        전문/일반 구분: {item.etcOtcName}
+                        전문/일반 구분: {item.etcOtcName || "정보 없음"}
                       </p>
-                      <p className="manufacturer">제조사: {item.entpName}</p>
+                      <p className="manufacturer">제조사: {item.entpName || "정보 없음"}</p>
                     </div>
                   </div>
-              </Link>
-              <button
-                className="delete_button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  handleDeleteFavorite(item.medicineId);
-                }}
-              >
-                삭제
-              </button>
-            </li>
-          ))}
+                </Link>
+                <button
+                  className="delete_button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    handleDeleteFavorite(item.medicineId);
+                  }}
+                >
+                  삭제
+                </button>
+              </li>
+            );
+          })}
         </ul>
       ) : (
         <p>즐겨찾기한 약물이 없습니다.</p>

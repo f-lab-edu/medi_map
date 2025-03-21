@@ -21,4 +21,13 @@ export const ERROR_MESSAGES = {
   NO_SEARCH_RESULTS: "검색 결과가 없습니다.",
   API_REQUEST_ERROR: "API 요청 중 오류가 발생했습니다.",
   CLIENT_ERROR: '잘못된 요청입니다. 다시 시도해주세요.',
+  API_REQUEST_ERROR: "API 요청 중 오류가 발생했습니다."
+} as const;
+
+export const FAVORITE_MESSAGES = {
+  ADD_FAILURE: '즐겨찾기 추가에 실패했습니다.',
+  LOGIN_REQUIRED: '로그인이 필요한 서비스입니다.',
+  ALREADY_EXISTS: '이미 즐겨찾기에 추가되었습니다.',
+  STATUS_FETCH_ERROR: '즐겨찾기 상태를 불러오지 못했습니다.',
+  ID_NOT_FOUND: 'medicineId가 존재하지 않습니다.',
 } as const;
