@@ -13,6 +13,7 @@ import { ALERT_MESSAGES } from '@/constants/alertMessage';
 export default function CommunityList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
 
@@ -20,13 +21,16 @@ export default function CommunityList() {
     setIsLoggedIn(Boolean(Cookies.get('accessToken')));
   }, []);
 
-  const { data } = useFetchPosts(currentPage, searchTerm);
+  const { data } = useFetchPosts(currentPage, searchQuery);
   const posts: Post[] = data.posts || [];
   const totalPages = data.totalPages || 1;
   const postsPerPage = 10;
 
   const handlePageChange = (page: number) => setCurrentPage(page);
-  const handleSearch = () => setCurrentPage(1);
+  const handleSearch = () => {
+    setSearchQuery(searchTerm);
+    setCurrentPage(1);
+  };
 
   const handlePostClick = (postId: number) => {
     if (!isLoggedIn) {

@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
 
 function Fallback({ error }: { error: Error }) {
