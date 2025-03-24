@@ -6,6 +6,10 @@ import { useSession } from 'next-auth/react';
 import { usePost } from '@/hooks/queries/usePostEdit';
 import '@/styles/pages/community/community.scss';
 import 'react-quill/dist/quill.snow.css';
+import type Quill from 'quill';
+import { axiosInstance } from '@/services/axiosInstance';
+import { API_URLS } from '@/constants/urls';
+import Cookies from 'js-cookie';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -18,21 +22,60 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
 
   const { title, setTitle, content, setContent, loading, handleUpdatePost, handleDeletePost } = usePost(id, userId, accessToken);
 
+  function handleImageUpload(this: { quill: Quill }) {
+    const editor = this.quill;
+
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.click();
+
+    input.onchange = async () => {
+      if (input.files && input.files.length > 0) {
+        const file = input.files[0];
+        try {
+          const formData = new FormData();
+          formData.append("image", file);
+
+          const response = await axiosInstance.post(API_URLS.UPLOADS, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${Cookies.get("accessToken")}`,
+            },
+          });
+
+          const imageUrl = response.data.url;
+          const range = editor.getSelection(true);
+          editor.insertEmbed(range.index, "image", imageUrl);
+          editor.setSelection(range.index + 1);
+        } catch (error) {
+          console.error("Image upload failed:", error);
+          alert("이미지 업로드 중 오류가 발생했습니다.");
+        }
+      }
+    };
+  }
+
   const modules = useMemo(() => {
     return {
-      toolbar: [
-        [{ header: '1' }, { header: '2' }, { font: [] }],
-        [{ size: [] }],
-        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-        [
-          { list: 'ordered' },
-          { list: 'bullet' },
-          { indent: '-1' },
-          { indent: '+1' },
+      toolbar: {
+        container: [
+          [{ header: '1' }, { header: '2' }, { font: [] }],
+          [{ size: [] }],
+          ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+          [
+            { list: 'ordered' },
+            { list: 'bullet' },
+            { indent: '-1' },
+            { indent: '+1' },
+          ],
+          ['link', 'image'],
+          ['clean'],
         ],
-        ['link', 'image'],
-        ['clean'],
-      ],
+        handlers: {
+          image: handleImageUpload,
+        },
+      },
     };
   }, []);
 
