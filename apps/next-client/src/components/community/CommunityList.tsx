@@ -4,18 +4,20 @@ import React, { useState, useEffect } from 'react';
 import { useFetchPosts } from '@/hooks/queries/useFetchPostList';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import '@/styles/pages/community/community.scss';
 import Image from 'next/image';
 import { Post } from '@/types/post';
 import { ALERT_MESSAGES } from '@/constants/alertMessage';
 
 export default function CommunityList() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [currentPage, setCurrentPage] = useState(Number(searchParams?.get('page')) || 1);
+  const [searchTerm, setSearchTerm] = useState(searchParams?.get('search') || '');
+  const [searchQuery, setSearchQuery] = useState(searchParams?.get('search') || '');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     setIsLoggedIn(Boolean(Cookies.get('accessToken')));
@@ -26,10 +28,22 @@ export default function CommunityList() {
   const totalPages = data.totalPages || 1;
   const postsPerPage = 10;
 
-  const handlePageChange = (page: number) => setCurrentPage(page);
+  const updateURL = (page: number, search: string) => {
+    const params = new URLSearchParams();
+    if (page > 1) params.set('page', page.toString());
+    if (search) params.set('search', search);
+    router.push(`/community?${params.toString()}`);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    updateURL(page, searchQuery);
+  };
+
   const handleSearch = () => {
     setSearchQuery(searchTerm);
     setCurrentPage(1);
+    updateURL(1, searchTerm);
   };
 
   const handlePostClick = (postId: number) => {
