@@ -1,34 +1,17 @@
-import React, { Component, ReactNode, ErrorInfo } from 'react';
+'use client';
 
-interface ErrorBoundaryProps {
-  children: ReactNode;
+import React from 'react';
+import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
+
+function Fallback({ error }: { error: Error }) {
+  console.error("Uncaught error:", error);
+  return <p>오류가 발생했습니다. 나중에 다시 시도해주세요.</p>;
 }
 
-interface ErrorBoundaryState {
-  hasError: boolean;
+export default function ErrorBoundary({ children }: { children: React.ReactNode }) {
+  return (
+    <ReactErrorBoundary FallbackComponent={Fallback}>
+      {children}
+    </ReactErrorBoundary>
+  );
 }
-
-class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(_: Error): ErrorBoundaryState {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Uncaught error:", error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return <p>오류가 발생했습니다. 나중에 다시 시도해주세요.</p>;
-    }
-
-    return this.props.children;
-  }
-}
-
-export default ErrorBoundary;

@@ -1,10 +1,8 @@
-'use client';
-
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { fetchPosts } from '@/utils/PostListApi';
 
 export function useFetchPosts(page: number, search: string) {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: ['posts', page, search],
     queryFn: () => fetchPosts({ page, limit: 10, search }),
     staleTime: 1000 * 60 * 5,
