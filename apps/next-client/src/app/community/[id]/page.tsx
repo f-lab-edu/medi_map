@@ -1,7 +1,7 @@
 import '@/styles/pages/community/community.scss';
 import { fetchPost } from '@/utils/PostApi';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
-import PostDetailClient from './PostDetailClient';
+import PostDetailClient from '@/components/community/PostDetailClient';
 
 interface PageProps {
   params: { id: string };

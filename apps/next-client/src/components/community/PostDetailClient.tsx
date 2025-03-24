@@ -3,7 +3,7 @@
 import React, { Suspense } from 'react';
 import { QueryClientProvider, HydrationBoundary, DehydratedState, useQueryClient } from '@tanstack/react-query';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
-import PostDetail from './PostDetail';
+import PostDetail from '@/components/community/PostDetail';
 
 interface Props {
   urlPostId: string;
