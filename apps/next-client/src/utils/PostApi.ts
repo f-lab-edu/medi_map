@@ -6,9 +6,7 @@ import { Post } from '@/types/post';
 
 export async function fetchPost(id: string): Promise<Post> {
   try {
-    const response = await axiosInstance.get(`${API_URLS.POSTS}/${id}`, {
-      headers: { 'Cache-Control': 'no-store' },
-    });
+    const response = await axiosInstance.get(`${API_URLS.POSTS}/${id}`);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
