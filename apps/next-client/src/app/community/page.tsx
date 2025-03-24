@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import '@/styles/pages/community/community.scss';
 import Image from 'next/image';
 import { Post } from '@/types/post';
+import { ALERT_MESSAGES } from '@/constants/alertMessage';
 
 export default function CommunityList() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,7 +34,7 @@ export default function CommunityList() {
 
   const handlePostClick = (postId: number) => {
     if (!isLoggedIn) {
-      alert('로그인해야 글을 확인할 수 있습니다. 로그인해주세요.');
+      alert(ALERT_MESSAGES.ERROR.AUTH.LOGIN_REQUIRED);
       return;
     }
     router.push(`/community/${postId}`);

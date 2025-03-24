@@ -52,6 +52,7 @@ export const ALERT_MESSAGES = {
       POST_PERMISSION_DENIED: '수정 권한이 없습니다.',
       POST_FETCH_ERROR: '게시글을 불러오는 중 문제가 발생했습니다.',
       POST_UPDATE_ERROR: '게시글 수정 중 문제가 발생했습니다.',
+      IMAGE_UPLOAD_ERROR: '이미지 업로드 중 오류가 발생했습니다.',
     },
 
     COMMENT: {
@@ -70,6 +71,7 @@ export const ALERT_MESSAGES = {
       CONFIRM_PASSWORD_REQUIRED: '새 비밀번호 확인을 입력해주세요.',
       PASSWORD_MISMATCH: '새 비밀번호와 비밀번호 확인이 일치하지 않습니다.',
       FETCH_USER_INFO: "사용자 정보를 불러오는 도중 문제가 발생했습니다",
+      LOGIN_REQUIRED: '로그인해야 글을 확인할 수 있습니다. 로그인해주세요.',
     },
 
     FAVORITES: {
@@ -82,6 +84,11 @@ export const ALERT_MESSAGES = {
       DISCONNECT: 'Google 계정 연결 해제 중 오류가 발생했습니다.',
       DISCONNECT_FAILED: 'Google 계정 연결 해제에 실패했습니다.',
     },
+
+    SEARCH: {
+      MIN_LENGTH: '2자 이상의 검색어를 입력해주세요.',
+    },
+
     FAVORITE_ADD_ERROR: '즐겨찾기 추가에 실패했습니다.',
   },
 

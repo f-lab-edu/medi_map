@@ -10,6 +10,7 @@ import type Quill from 'quill';
 import { axiosInstance } from '@/services/axiosInstance';
 import { API_URLS } from '@/constants/urls';
 import Cookies from 'js-cookie';
+import { ALERT_MESSAGES } from '@/constants/alertMessage';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -50,7 +51,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           editor.setSelection(range.index + 1);
         } catch (error) {
           console.error("Image upload failed:", error);
-          alert("이미지 업로드 중 오류가 발생했습니다.");
+          alert(ALERT_MESSAGES.ERROR.POST.IMAGE_UPLOAD_ERROR);
         }
       }
     };

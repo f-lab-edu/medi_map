@@ -9,6 +9,7 @@ import { API_URLS } from '@/constants/urls';
 import { useCreatePost } from '@/hooks/queries/useCreatePost';
 import 'react-quill/dist/quill.snow.css';
 import '@/styles/pages/community/community.scss';
+import { ALERT_MESSAGES } from '@/constants/alertMessage';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -46,7 +47,7 @@ export default function CreatePost() {
           editor.setSelection(range.index + 1);
         } catch (error) {
           console.error("Image upload failed:", error);
-          alert("이미지 업로드 중 오류가 발생했습니다.");
+          alert(ALERT_MESSAGES.ERROR.POST.IMAGE_UPLOAD_ERROR);
         }
       }
     };

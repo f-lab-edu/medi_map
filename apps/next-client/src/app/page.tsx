@@ -4,14 +4,15 @@ import React, { useState, ChangeEvent, KeyboardEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import '@/styles/pages/main.scss'; 
+import { ALERT_MESSAGES } from '@/constants/alertMessage';
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
 
   const handleSearch = () => {
-    if (searchTerm.trim().length < 2) {
-      alert("2자 이상의 검색어를 입력해주세요.");
+    if (searchTerm.length < 2) {
+      alert(ALERT_MESSAGES.ERROR.SEARCH.MIN_LENGTH);
       return;
     }
     router.push(`/search?keyword=${encodeURIComponent(searchTerm.trim())}`);
