@@ -78,7 +78,7 @@ export default function CommunityList() {
           <tbody>
             {posts.map((post: Post, index: number) => (
               <tr key={post.id}>
-                <td>{totalPages * postsPerPage - (index + (currentPage - 1) * postsPerPage)}</td>
+                <td>{(currentPage - 1) * postsPerPage + index + 1}</td>
                 <td className="title" onClick={() => handlePostClick(post.id)}>
                   {post.title}
                   <span className="comment">({post.commentCount || 0})</span>
