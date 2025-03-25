@@ -5,7 +5,7 @@ export function useFetchPosts(page: number, search: string) {
   return useSuspenseQuery({
     queryKey: ['posts', page, search],
     queryFn: () => fetchPosts({ page, limit: 10, search }),
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 10,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 }
