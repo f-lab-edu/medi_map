@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { findUserByEmail } from '@/services/authService';
-import { generateAccessToken, generateRefreshToken } from '@/utils/generateToken';
+import { generateAccessToken } from '@/utils/generateToken';
 import { AUTH_MESSAGES } from '@/constants/auth_message';
-import { storeRefreshToken } from '@/services/refreshTokenService';
 
 export const login = async (req: Request, res: Response): Promise<Response> => {
   const { email, password } = req.body;
@@ -25,14 +24,9 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
 
     // 토큰 생성
     const accessToken = generateAccessToken(user.id, user.email);
-    const { refreshToken, refreshExpiresAt } = generateRefreshToken(user.id, user.email);
-
-    // 리프레시 토큰 저장
-    await storeRefreshToken(user.id, refreshToken, refreshExpiresAt);
 
     return res.status(200).json({
       token: accessToken,
-      refreshToken,
       user,
     });
   } catch (error) {

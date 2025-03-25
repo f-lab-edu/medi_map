@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { User } from '@/models';
-import { generateAccessToken, generateRefreshToken } from '@/utils/generateToken';
+import { generateAccessToken } from '@/utils/generateToken';
 
 export const googleLogin = async (req: Request, res: Response) => {
   const { googleId, email, username } = req.body;
@@ -24,7 +24,6 @@ export const googleLogin = async (req: Request, res: Response) => {
     }
 
     const accessToken = generateAccessToken(user.id, user.email);
-    const { refreshToken, refreshExpiresAt } = generateRefreshToken(user.id, user.email);
 
     return res.status(200).json({
       user: {
@@ -34,8 +33,6 @@ export const googleLogin = async (req: Request, res: Response) => {
         username: user.username,
       },
       accessToken,
-      refreshToken,
-      refreshExpiresAt,
     });
   } catch (error) {
     console.error('Error processing Google login:', error);

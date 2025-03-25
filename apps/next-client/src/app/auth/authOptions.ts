@@ -1,14 +1,12 @@
 import { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { JWT } from 'next-auth/jwt';
 import { axiosInstance } from '@/services/axiosInstance';
 import { ERROR_MESSAGES } from '@/constants/errors';
 import { API_URLS } from '@/constants/urls';
 import { CredError } from '@/error/CredError';
-import { refreshAccessToken } from '@/utils/authUtils';
 
-const ACCESS_TOKEN_EXPIRES_IN = 60 * 60 * 1000; // 1시간 만료
+const ACCESS_TOKEN_EXPIRES_IN = 60 * 60 * 1000; // 1시간 유효 기간
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -33,13 +31,13 @@ export const authOptions: NextAuthOptions = {
             password: credentials.password,
           });
 
-          const { token, refreshToken, user } = data;
-          if (status === 200 && user && token && refreshToken) {
+          const { token, user } = data;
+          if (status === 200 && user && token) {
             return {
               id: user.id,
               email: user.email,
               accessToken: token,
-              refreshToken,
+              refreshToken: '',
               provider: 'credentials',
             };
           }
@@ -62,9 +60,8 @@ export const authOptions: NextAuthOptions = {
             username: profile.name,
           });
 
-          if (response.data.accessToken && response.data.refreshToken) {
+          if (response.data.accessToken) {
             account.access_token = response.data.accessToken;
-            account.refresh_token = response.data.refreshToken;
             account.provider = 'google';
           }
           return true;
@@ -85,7 +82,6 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.email = user.email;
         token.accessToken = user.accessToken;
-        token.refreshToken = user.refreshToken;
         token.accessTokenExpires = Date.now() + ACCESS_TOKEN_EXPIRES_IN;
       }
 
@@ -94,14 +90,6 @@ export const authOptions: NextAuthOptions = {
           token.accessToken = account.access_token;
           token.accessTokenExpires = Date.now() + ACCESS_TOKEN_EXPIRES_IN;
         }
-        if (account.refresh_token) {
-          token.refreshToken = account.refresh_token;
-        }
-      }
-
-      if (token.refreshToken && token.accessTokenExpires && Date.now() > token.accessTokenExpires) {
-        const refreshedToken = await refreshAccessToken(token as JWT);
-        return refreshedToken;
       }
 
       return token;
@@ -113,7 +101,7 @@ export const authOptions: NextAuthOptions = {
         email: token.email as string,
         provider: token.provider || '',
         accessToken: token.accessToken as string,
-        refreshToken: token.refreshToken as string || '',
+        refreshToken: token.refreshToken || '',
         googleAccessToken: token.googleAccessToken || '',
       };
 

@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { createUser, findUserByEmail } from '@/services/authService';
-import { generateAccessToken, generateRefreshToken } from '@/utils/generateToken';
+import { generateAccessToken } from '@/utils/generateToken';
 import { AUTH_MESSAGES } from '@/constants/auth_message';
-import { storeRefreshToken } from '@/services/refreshTokenService';
 
 // 유효성 검사 함수
 const validateSignupInput = (username: string, email: string, password: string): string | null => {
@@ -48,12 +47,8 @@ export const signup = async (req: Request, res: Response): Promise<Response> => 
 
     // 토큰 생성
     const accessToken = generateAccessToken(newUser.id, newUser.email);
-    const { refreshToken, refreshExpiresAt } = generateRefreshToken(newUser.id, newUser.email);
 
-    // 리프레시 토큰 저장
-    await storeRefreshToken(newUser.id, refreshToken, refreshExpiresAt);
-
-    return res.status(201).json({ token: accessToken, refreshToken, user: newUser });
+    return res.status(201).json({ token: accessToken, user: newUser });
   } catch (error) {
     console.error('Signup error:', error);
     return res.status(500).json({ message: AUTH_MESSAGES.SIGN_UP_ERROR });
