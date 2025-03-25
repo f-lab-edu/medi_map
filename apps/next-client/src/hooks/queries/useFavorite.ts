@@ -12,7 +12,7 @@ export const useCheckFavorite = (medicineId?: string) => {
     throw new Error(FAVORITE_MESSAGES.ID_NOT_FOUND);
   }
 
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: ['favoriteStatus', medicineId],
     queryFn: () => checkFavoriteApi(medicineId),
     staleTime: 5 * 60 * 1000,
