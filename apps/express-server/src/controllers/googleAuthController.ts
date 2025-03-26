@@ -47,7 +47,11 @@ export const googleCallback = async (req: Request, res: Response) => {
     // 사용자 찾기 또는 생성
     let user = await User.findOne({ where: { email } });
     if (!user) {
-      user = await createUser(name, email, null);
+      user = await createUser({
+        username: name,
+        email,
+        password: null,
+      });
     }
 
     // JWT 토큰 생성
