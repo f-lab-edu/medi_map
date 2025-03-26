@@ -3,7 +3,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import axios from 'axios';
 import { JWT_SECRET } from '@/app-constants/constants';
 import { User } from '@/models';
-import { AUTH_MESSAGES } from '@/constants/auth_message';
+import { AUTH_MESSAGES } from '@/constants/authMessage';
 
 export interface CustomJwtPayload extends JwtPayload {
   id: string;
