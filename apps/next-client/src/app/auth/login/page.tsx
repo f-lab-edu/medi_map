@@ -3,12 +3,12 @@
 import { useLoginForm } from '@/hooks/useLoginForm';
 import { useLoginActions } from '@/hooks/useLoginActions';
 import Link from 'next/link';
-import Image from 'next/image';
 import '@/styles/pages/auth/login.scss';
+import { GoogleLoginButton } from '@/components/GoogleLoginButton';
 
 export default function LoginPage() {
   const { email, setEmail, password, setPassword, error, setError } = useLoginForm();
-  const { handleLogin, handleGoogleLogin } = useLoginActions({ email, password, setError });
+  const { handleLogin } = useLoginActions({ email, password, setError });
 
   return (
     <>
@@ -43,15 +43,9 @@ export default function LoginPage() {
 
       <Link href="/auth/signup">회원가입</Link>
 
-      <button className="social_button" onClick={handleGoogleLogin}>
-        <Image
-          src="https://img.icons8.com/color/200/google-logo.png"
-          alt="구글로고 이미지"
-          width={24}
-          height={24}
-        />
-          Google로 계속하기
-      </button>
+      <div className="social_login">
+        <GoogleLoginButton />
+      </div>
     </>
   );
 }

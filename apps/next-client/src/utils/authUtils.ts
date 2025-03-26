@@ -1,29 +1,26 @@
 import { axiosInstance } from '@/services/axiosInstance';
 import { API_URLS } from '@/constants/urls';
-import { JWT } from 'next-auth/jwt';
 import { ALERT_MESSAGES } from "@/constants/alertMessage";
 import Cookies from "js-cookie";
 
 const ACCESS_TOKEN_EXPIRES_IN = 60 * 60 * 1000;
 
-export async function refreshAccessToken(jwtToken: JWT): Promise<JWT> {
+export async function refreshAccessToken(refreshToken: string) {
   try {
     const { data } = await axiosInstance.post(API_URLS.REFRESH, {
-      refreshToken: jwtToken.refreshToken,
+      refreshToken,
     });
 
     const { accessToken: newAccessToken, refreshToken: newRefreshToken } = data;
 
     return {
-      ...jwtToken,
       accessToken: newAccessToken,
-      refreshToken: newRefreshToken ?? jwtToken.refreshToken,
+      refreshToken: newRefreshToken ?? refreshToken,
       accessTokenExpires: Date.now() + ACCESS_TOKEN_EXPIRES_IN,
     };
   } catch (error) {
     console.error('Error refreshing access token:', error);
     return {
-      ...jwtToken,
       error: 'RefreshAccessTokenError',
     };
   }

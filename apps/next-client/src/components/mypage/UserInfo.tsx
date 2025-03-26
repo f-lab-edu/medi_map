@@ -1,17 +1,18 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useSession , signOut } from 'next-auth/react';
+import { useAuth } from '@/hooks/useAuth';
+import { axiosInstance } from '@/services/axiosInstance';
 import { API_URLS } from '@/constants/urls';
 import { getAuthHeader } from '@/utils/authUtils';
-import { axiosInstance } from '@/services/axiosInstance';
 import { useRouter } from 'next/navigation';
 import { validateNickname, validatePasswordChange } from '@/utils/validation';
 import { ALERT_MESSAGES } from '@/constants/alertMessage';
 import Cookies from 'js-cookie';
+import { signOut } from 'next-auth/react';
 
 export default function UserInfo() {
-  const { data: session } = useSession();
+  const { user, checkAuth } = useAuth();
   const [username, setUsername] = useState("");
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
@@ -32,13 +33,16 @@ export default function UserInfo() {
           headers: getAuthHeader(),
         });
         setUsername(usernameResponse.data.username);
+        setNickname(usernameResponse.data.nickname || "");
       } catch (error) {
         alert(ALERT_MESSAGES.ERROR.AUTH.FETCH_USER_INFO);
       }
     };
 
-    fetchUserInfo();
-  }, []);
+    if (user) {
+      fetchUserInfo();
+    }
+  }, [user]);
 
   const handleNicknameChange = async () => {
     const validationError = validateNickname(nickname);
@@ -91,8 +95,8 @@ export default function UserInfo() {
     if (!window.confirm(ALERT_MESSAGES.CONFIRM.ACCOUNT_DELETE)) return;
 
     try {
-      if (session?.user?.provider === "google" && session?.user?.googleAccessToken) {
-        const googleAccessToken = session.user.googleAccessToken;
+      if (user && user.provider === "google" && user.googleAccessToken) {
+        const googleAccessToken = user.googleAccessToken;
 
         try {
           const revokeResponse = await axiosInstance.post(

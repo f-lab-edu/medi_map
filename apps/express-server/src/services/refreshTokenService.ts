@@ -1,7 +1,11 @@
 import { RefreshToken } from '@/models';
 
 // 리프레시 토큰 저장
-export function storeRefreshToken(userId: string, token: string, expiresAt: Date) {
+export async function storeRefreshToken(userId: string, token: string, expiresAt: Date) {
+  // 기존 토큰 삭제
+  await RefreshToken.destroy({ where: { userId } });
+
+  // 새로운 토큰 생성
   return RefreshToken.create({ userId, token, expiresAt });
 }
 

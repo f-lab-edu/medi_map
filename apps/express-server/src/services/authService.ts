@@ -1,12 +1,20 @@
 import { User } from '@/models';
 
+interface CreateUserInput {
+  username: string;
+  email: string;
+  password: string | null;
+  googleId?: string;
+}
+
 // 사용자 생성 함수
-export const createUser = async (username: string, email: string, password: string) => {
+export const createUser = async ({ username, email, password, googleId }: CreateUserInput) => {
   try {
     const user = await User.create({
       username,
       email,
       password,
+      googleId,
     });
     return user;
   } catch (error) {

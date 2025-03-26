@@ -44,7 +44,11 @@ export const signup = async (req: Request, res: Response): Promise<Response> => 
 
     // 비밀번호 암호화 및 사용자 생성
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await createUser(username, email, hashedPassword);
+    const newUser = await createUser({
+      username,
+      email,
+      password: hashedPassword,
+    });
 
     // 토큰 생성
     const accessToken = generateAccessToken(newUser.id, newUser.email);
