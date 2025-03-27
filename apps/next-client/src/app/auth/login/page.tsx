@@ -11,11 +11,18 @@ export default function LoginPage() {
   const { email, setEmail, password, setPassword, error, setError } = useLoginForm();
   const { handleLogin, handleGoogleLogin } = useLoginActions({ email, password, setError });
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isGoogleLoggingIn, setIsGoogleLoggingIn] = useState(false);
 
   const onLoginClick = async () => {
     setIsLoggingIn(true);
     await handleLogin();
     setIsLoggingIn(false);
+  };
+
+  const onGoogleLoginClick = async () => {
+    setIsGoogleLoggingIn(true);
+    await handleGoogleLogin();
+    setIsGoogleLoggingIn(false);
   };
 
   return (
@@ -56,14 +63,18 @@ export default function LoginPage() {
 
       <Link href="/auth/signup">회원가입</Link>
 
-      <button className="social_button" onClick={handleGoogleLogin}>
+      <button
+        className="social_button"
+        onClick={onGoogleLoginClick}
+        disabled={isGoogleLoggingIn}
+      >
         <Image
           src="https://img.icons8.com/color/200/google-logo.png"
           alt="구글로고 이미지"
           width={24}
           height={24}
         />
-        Google로 계속하기
+        {isGoogleLoggingIn ? "Google 로그인 중..." : "Google로 계속하기"}
       </button>
     </>
   );
