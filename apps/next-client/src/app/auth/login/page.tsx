@@ -29,6 +29,7 @@ export default function LoginPage() {
     <>
       <h2>로그인</h2>
       <p>SNS로 간편하게 로그인하고 더 많은 서비스로 즐겨보세요!</p>
+      <span className='test_txt'>[테스트 계정] 이메일: test@test.com 비밀번호: test1234</span>
 
       {error && <p className="error">{error}</p>}
 
