@@ -20,6 +20,7 @@ export default async function Layout({ children }: LayoutProps) {
   return (
     <html lang="en">
       <head>
+        <title>MediMap+ | Your Health Companion</title>
         <link rel="icon" href="/images/favicon.ico" />
       </head>
       <body>
