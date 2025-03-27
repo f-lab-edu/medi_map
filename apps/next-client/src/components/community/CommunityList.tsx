@@ -9,6 +9,7 @@ import '@/styles/pages/community/community.scss';
 import Image from 'next/image';
 import { Post } from '@/types/post';
 import { ALERT_MESSAGES } from '@/constants/alertMessage';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
 
 export default function CommunityList() {
   const router = useRouter();
@@ -18,6 +19,7 @@ export default function CommunityList() {
   const [searchTerm, setSearchTerm] = useState(searchParams?.get('search') || '');
   const [searchQuery, setSearchQuery] = useState(searchParams?.get('search') || '');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setIsLoggedIn(Boolean(Cookies.get('accessToken')));
@@ -46,12 +48,14 @@ export default function CommunityList() {
     updateURL(1, searchTerm);
   };
 
-  const handlePostClick = (postId: number) => {
+  const handlePostClick = async (postId: number) => {
     if (!isLoggedIn) {
       alert(ALERT_MESSAGES.ERROR.AUTH.LOGIN_REQUIRED);
       return;
     }
-    router.push(`/community/${postId}`);
+    setIsLoading(true);
+    await router.push(`/community/${postId}`);
+    setIsLoading(false);
   };
 
   return (
@@ -76,7 +80,9 @@ export default function CommunityList() {
         </button>
       </div>
 
-      {posts.length === 0 ? (
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : posts.length === 0 ? (
         <p className="empty">게시글이 없습니다.</p>
       ) : (
         <table className="post_table">
@@ -145,4 +151,4 @@ export default function CommunityList() {
       </div>
     </div>
   );
-} 
+}
