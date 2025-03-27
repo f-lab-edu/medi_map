@@ -1,16 +1,31 @@
+// abstracts
+@import '../../common/abstracts/mixins';
+@import '../../common/abstracts/responsive';
+
 .auth_login {
   .inner {
     max-width: 60rem;
+    @include mo {
+      max-width: 100%;
+      padding: 10rem 1.75rem;
+    }
   }
   h2 {
     font-size: 5rem;
     font-weight: bold;
     text-align: center;
+    @include mo {
+      font-size: 2.5rem;
+    }
   }
   p {
     font-size: 1.8rem;
     text-align: center;
     margin: 1rem 0 5rem;
+    @include mo {
+      font-size: 1.6rem;
+      margin: 1rem 0 5rem;
+    }
     &.error {
       color: rgb(255, 0, 98);
       margin-bottom: 0;
@@ -19,7 +34,6 @@
   }
   button {
     border: 1px solid rgba(0, 0, 0, 0.1);
-    font-size: 1.7rem;
     border-radius: 0.7rem;
     padding: 1rem 3rem;
     display: flex;
@@ -41,7 +55,6 @@
   }
   a {
     border: 1px solid rgba(0, 0, 0, 0.1);
-    font-size: 1.7rem;
     border-radius: 0.7rem;
     padding: 1rem 3rem;
     display: flex;
@@ -55,12 +68,10 @@
     margin-bottom: 1rem;
     legend {
       margin-bottom: 1rem;
-      font-size: 1.8rem;
       font-weight: 500;
     }
     input {
       border: 1px solid rgba(0, 0, 0, 0.1);
-      font-size: 1.8rem;
       border-radius: 0.7rem;
       padding: 1rem 2rem;
       display: flex;
@@ -69,7 +80,6 @@
       width: 100%;
       margin-bottom: 3rem;
       &::placeholder {
-        font-size: 1.6rem;
         font-weight: 400;
         color: #a6b1bf;
       }
