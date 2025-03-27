@@ -115,6 +115,7 @@ export default function SearchPage() {
         onSearch={handleSearch}
         onKeyDown={handleKeyDown}
       />
+      
       {loading && <LoadingSpinner />}
       {error && <p className="error_message">{error}</p>}
       {warning && <p className="warning_message">{warning}</p>}
