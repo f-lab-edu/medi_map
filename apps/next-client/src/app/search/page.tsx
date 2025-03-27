@@ -10,6 +10,7 @@ import { SEARCH_ERROR_MESSAGES } from '@/constants/searchErrors';
 import { SearchBox } from '@/components/medicine/SearchBox';
 import { SearchResults } from '@/components/medicine/MedicineResults';
 import { ScrollToTopButton } from '@/components/common/ScrollToTopButton';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
 import '@/styles/pages/search/search.scss';
 
 export default function SearchPage() {
@@ -114,7 +115,7 @@ export default function SearchPage() {
         onSearch={handleSearch}
         onKeyDown={handleKeyDown}
       />
-      {loading && <p className="loading_message">로딩 중...</p>}
+      {loading && <LoadingSpinner />}
       {error && <p className="error_message">{error}</p>}
       {warning && <p className="warning_message">{warning}</p>}
 

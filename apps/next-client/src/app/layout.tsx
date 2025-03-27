@@ -19,6 +19,9 @@ export default async function Layout({ children }: LayoutProps) {
 
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/images/favicon.ico" />
+      </head>
       <body>
         <Script
           src="https://accounts.google.com/gsi/client"

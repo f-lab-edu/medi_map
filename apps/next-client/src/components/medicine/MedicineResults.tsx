@@ -2,6 +2,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { MedicineResultDto } from "@/dto/MedicineResultDto";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 interface SearchResultsProps {
   results: MedicineResultDto[];
@@ -12,13 +13,19 @@ const DEFAULT_IMAGE_PATH = "/images/not-image.png";
 
 export function SearchResults({ results, lastElementRef }: SearchResultsProps) {
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleImageError = (itemSeq: string) => {
     setImageErrors((prev) => ({ ...prev, [itemSeq]: true }));
   };
 
+  const handleLinkClick = () => {
+    setIsLoading(true);
+  };
+
   return (
     <ul className="medicine_results">
+      {isLoading && <LoadingSpinner />}
       {results.map((item, index) => {
         const imageHasError = imageErrors[item.itemSeq];
 
@@ -28,7 +35,7 @@ export function SearchResults({ results, lastElementRef }: SearchResultsProps) {
             key={`${item.itemSeq}-${index}`}
             ref={index === results.length - 1 ? lastElementRef : null}
           >
-            <Link href={`/search/${item.itemSeq}`} passHref>
+            <Link href={`/search/${item.itemSeq}`} onClick={handleLinkClick}>
               <Image
                 src={imageHasError || !item.itemImage ? DEFAULT_IMAGE_PATH : item.itemImage}
                 alt={item.itemName || "약품 이미지"}

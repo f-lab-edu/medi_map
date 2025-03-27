@@ -30,6 +30,11 @@ const MedicineDetailView: React.FC<MedicineDetailViewProps> = ({ medicineId }) =
     setHasImageError(true);
   };
 
+  const hasEfficacy = !!medicine?.eeDocData;
+  const hasDosage = !!medicine?.udDocData;
+  const hasPrecautions = !!medicine?.nbDocData;
+  const hasAnyContent = hasEfficacy || hasDosage || hasPrecautions;
+
   return (
     <div className="medi_search_result">
       <h2 className="title">의약품 상세정보</h2>
@@ -135,48 +140,58 @@ const MedicineDetailView: React.FC<MedicineDetailViewProps> = ({ medicineId }) =
             </div>
           </div>
 
-          <ul className="tab_menu">
-            <li
-              className={`tab_item all ${activeTab === Tabs.All ? "active" : ""}`}
-              onClick={() => setActiveTab(Tabs.All)}
-            >
-              전체
-            </li>
-            <li
-              className={`tab_item efficacy ${activeTab === Tabs.Efficacy ? "active" : ""}`}
-              onClick={() => setActiveTab(Tabs.Efficacy)}
-            >
-              효능효과
-            </li>
-            <li
-              className={`tab_item dosage ${activeTab === Tabs.Dosage ? "active" : ""}`}
-              onClick={() => setActiveTab(Tabs.Dosage)}
-            >
-              용법용량
-            </li>
-            <li
-              className={`tab_item precautions ${activeTab === Tabs.Precautions ? "active" : ""}`}
-              onClick={() => setActiveTab(Tabs.Precautions)}
-            >
-              주의사항
-            </li>
-          </ul>
-
-          {activeTab === Tabs.All && (
+          {hasAnyContent && (
             <>
-              <MedicineInfo docData={medicine.eeDocData} sectionTitle="효능효과" />
-              <MedicineInfo docData={medicine.udDocData} sectionTitle="용법용량" />
-              <MedicineInfo docData={medicine.nbDocData} sectionTitle="주의사항" />
+              <ul className="tab_menu">
+                <li
+                  className={`tab_item all ${activeTab === Tabs.All ? "active" : ""}`}
+                  onClick={() => setActiveTab(Tabs.All)}
+                >
+                  전체
+                </li>
+                {hasEfficacy && (
+                  <li
+                    className={`tab_item efficacy ${activeTab === Tabs.Efficacy ? "active" : ""}`}
+                    onClick={() => setActiveTab(Tabs.Efficacy)}
+                  >
+                    효능효과
+                  </li>
+                )}
+                {hasDosage && (
+                  <li
+                    className={`tab_item dosage ${activeTab === Tabs.Dosage ? "active" : ""}`}
+                    onClick={() => setActiveTab(Tabs.Dosage)}
+                  >
+                    용법용량
+                  </li>
+                )}
+                {hasPrecautions && (
+                  <li
+                    className={`tab_item precautions ${activeTab === Tabs.Precautions ? "active" : ""}`}
+                    onClick={() => setActiveTab(Tabs.Precautions)}
+                  >
+                    주의사항
+                  </li>
+                )}
+              </ul>
+
+              {activeTab === Tabs.All && (
+                <>
+                  {hasEfficacy && <MedicineInfo docData={medicine.eeDocData} sectionTitle="효능효과" />}
+                  {hasDosage && <MedicineInfo docData={medicine.udDocData} sectionTitle="용법용량" />}
+                  {hasPrecautions && <MedicineInfo docData={medicine.nbDocData} sectionTitle="주의사항" />}
+                </>
+              )}
+              {activeTab === Tabs.Efficacy && hasEfficacy && (
+                <MedicineInfo docData={medicine.eeDocData} sectionTitle="효능효과" />
+              )}
+              {activeTab === Tabs.Dosage && hasDosage && (
+                <MedicineInfo docData={medicine.udDocData} sectionTitle="용법용량" />
+              )}
+              {activeTab === Tabs.Precautions && hasPrecautions && (
+                <MedicineInfo docData={medicine.nbDocData} sectionTitle="주의사항" />
+              )}
             </>
-          )}
-          {activeTab === Tabs.Efficacy && (
-            <MedicineInfo docData={medicine.eeDocData} sectionTitle="효능효과" />
-          )}
-          {activeTab === Tabs.Dosage && (
-            <MedicineInfo docData={medicine.udDocData} sectionTitle="용법용량" />
-          )}
-          {activeTab === Tabs.Precautions && (
-            <MedicineInfo docData={medicine.nbDocData} sectionTitle="주의사항" />
           )}
         </div>
       )}
