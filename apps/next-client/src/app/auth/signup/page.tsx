@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import '@/styles/pages/auth/signup.scss';
 import { useSignupForm } from '@/hooks/useSignupForm';
@@ -7,13 +8,19 @@ import { useSignupActions } from '@/hooks/useSignupActions';
 
 export default function SignupPage() {
   const { username, setUsername, email, setEmail, password, setPassword, error, setError } = useSignupForm();
-
   const { handleSignup } = useSignupActions({
     username,
     email,
     password,
     setError,
   });
+  const [isSigningUp, setIsSigningUp] = useState(false);
+
+  const onSignupClick = async () => {
+    setIsSigningUp(true);
+    await handleSignup();
+    setIsSigningUp(false);
+  };
 
   return (
     <>
@@ -50,8 +57,13 @@ export default function SignupPage() {
             placeholder="비밀번호를 입력해주세요."
           />
         </fieldset>
-        <button type="button" className="signup_button" onClick={handleSignup}>
-          회원가입
+        <button
+          type="button"
+          className="signup_button"
+          onClick={onSignupClick}
+          disabled={isSigningUp}
+        >
+          {isSigningUp ? "회원가입 중..." : "회원가입"}
         </button>
       </form>
       <Link href="/auth/login">

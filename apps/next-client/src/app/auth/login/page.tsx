@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useLoginForm } from '@/hooks/useLoginForm';
 import { useLoginActions } from '@/hooks/useLoginActions';
 import Link from 'next/link';
@@ -9,6 +10,13 @@ import '@/styles/pages/auth/login.scss';
 export default function LoginPage() {
   const { email, setEmail, password, setPassword, error, setError } = useLoginForm();
   const { handleLogin, handleGoogleLogin } = useLoginActions({ email, password, setError });
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  const onLoginClick = async () => {
+    setIsLoggingIn(true);
+    await handleLogin();
+    setIsLoggingIn(false);
+  };
 
   return (
     <>
@@ -36,8 +44,13 @@ export default function LoginPage() {
             placeholder="비밀번호를 입력해주세요."
           />
         </fieldset>
-        <button type="button" className="login_button" onClick={handleLogin}>
-          로그인
+        <button
+          type="button"
+          className="login_button"
+          onClick={onLoginClick}
+          disabled={isLoggingIn}
+        >
+          {isLoggingIn ? "로그인 중..." : "로그인"}
         </button>
       </form>
 
@@ -50,7 +63,7 @@ export default function LoginPage() {
           width={24}
           height={24}
         />
-          Google로 계속하기
+        Google로 계속하기
       </button>
     </>
   );
