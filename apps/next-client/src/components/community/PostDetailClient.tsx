@@ -4,6 +4,7 @@ import React, { Suspense } from 'react';
 import { QueryClientProvider, HydrationBoundary, DehydratedState, useQueryClient } from '@tanstack/react-query';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import PostDetail from '@/components/community/PostDetail';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
 
 interface Props {
   urlPostId: string;
@@ -16,7 +17,7 @@ export default function PostDetailClient({ urlPostId, dehydratedState }: Props) 
   return (
     <QueryClientProvider client={queryClient}>
       <HydrationBoundary state={dehydratedState}>
-        <Suspense fallback={<div>로딩 중...</div>}>
+        <Suspense fallback={<LoadingSpinner />}>
           <ErrorBoundary>
             <PostDetail urlPostId={urlPostId} />
           </ErrorBoundary>

@@ -5,6 +5,7 @@ import { HydrationBoundary, DehydratedState } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import MedicineDetailView from '@/components/medicine/MedicineDetailView';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
 
 export interface MedicineDetailClientProps {
   dehydratedState: DehydratedState;
@@ -16,7 +17,7 @@ const MedicineDetailClient: React.FC<MedicineDetailClientProps> = ({ dehydratedS
 
   return (
       <HydrationBoundary state={dehydratedState}>
-        <Suspense fallback={<p>로딩 중...</p>}>
+        <Suspense fallback={<LoadingSpinner />}>
           <ErrorBoundary>
             <MedicineDetailView medicineId={medicineId} />
           </ErrorBoundary>

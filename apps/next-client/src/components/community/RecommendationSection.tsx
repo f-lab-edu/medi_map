@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { FaThumbsUp, FaRegThumbsUp } from "react-icons/fa6";
 import { useRecommend, useToggleRecommend } from '@/hooks/queries/useRecommend';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
 
 interface Props {
   urlPostId: string;
@@ -28,7 +29,7 @@ const RecommendationContent = ({ urlPostId }: Props) => {
 const Recommendations = ({ urlPostId }: Props) => {
   return (
     <ErrorBoundary>
-      <Suspense fallback={<div className='loading_message'>로딩 중...</div>}>
+      <Suspense fallback={<LoadingSpinner />}>
         <RecommendationContent urlPostId={urlPostId} />
       </Suspense>
     </ErrorBoundary>
