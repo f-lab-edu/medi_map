@@ -16,9 +16,9 @@ export default function LoginPage() {
   const [isGoogleLoggingIn, setIsGoogleLoggingIn] = useState(false);
 
   const onLoginClick = async () => {
-    const validationError = validateLogin(email, password);
-    if (validationError) {
-      toast.error(validationError);
+    const error = validateLogin(email, password);
+    if (error) {
+      toast.error(error);
       return;
     }
   
