@@ -1,20 +1,20 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { useEffect } from 'react';
 import { loginWithCredentials, loginWithGoogle } from '@/services/loginService';
 import { ERROR_MESSAGES } from '@/constants/errors';
 import { ROUTES } from '@/constants/urls';
 import { useSession } from 'next-auth/react';
 import { setSessionCookies } from '@/utils/sessionCookies';
+import { toast } from 'react-toastify';
 
 interface AuthActionsParams {
   email: string;
   password: string;
-  setError: Dispatch<SetStateAction<string>>;
 }
 
-export const useLoginActions = ({ email, password, setError }: AuthActionsParams) => {
+export const useLoginActions = ({ email, password }: AuthActionsParams) => {
   const router = useRouter();
   const { data: session, status } = useSession();
 
@@ -27,7 +27,7 @@ export const useLoginActions = ({ email, password, setError }: AuthActionsParams
 
   const handleLogin = async () => {
     if (!email || !password) {
-      setError(ERROR_MESSAGES.LOGIN_FAILED);
+      toast.error(ERROR_MESSAGES.LOGIN_FAILED);
       return;
     }
 
@@ -35,10 +35,10 @@ export const useLoginActions = ({ email, password, setError }: AuthActionsParams
       const authResult = await loginWithCredentials(email, password);
 
       if (authResult?.error) {
-        setError(authResult.error);
+        toast.error(authResult.error);
       }
     } catch (err) {
-      setError(ERROR_MESSAGES.LOGIN_FAILED);
+      toast.error(ERROR_MESSAGES.LOGIN_FAILED);
     }
   };
 
@@ -47,10 +47,11 @@ export const useLoginActions = ({ email, password, setError }: AuthActionsParams
       const authResult = await loginWithGoogle();
 
       if (authResult?.error && !authResult?.url) {
-        setError(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
+        toast.error(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
       }
     } catch (err) {
       console.error(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR, err);
+      toast.error(ERROR_MESSAGES.GOOGLE_LOGIN_ERROR);
     }
   };
 

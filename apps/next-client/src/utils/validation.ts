@@ -1,5 +1,7 @@
 import { ALERT_MESSAGES } from '@/constants/alertMessage';
+import { AUTH_ERROR_MESSAGES } from '@/constants/errors';
 
+// 닉네임 변경 시 유효성 검사 함수
 export const validateNickname = (nickname: string): string | null => {
   if (!nickname || nickname.length < 3 || nickname.length > 30) {
     return ALERT_MESSAGES.ERROR.AUTH.NICKNAME_LENGTH;
@@ -36,4 +38,17 @@ export const validatePasswordChange = ({
   }
 
   return null;
+};
+
+// 로그인 시 유효성 검사 함수
+export const validateLogin = (email: string, password: string): string | null => {
+  if (!email.includes('@')) return AUTH_ERROR_MESSAGES.INVALID_EMAIL;
+  if (password.length < 8) return AUTH_ERROR_MESSAGES.PASSWORD_MIN_LENGTH;
+  return null;
+};
+
+// 회원가입 시 유효성 검사 함수
+export const validateSignup = (username: string, email: string, password: string): string | null => {
+  if (username.length < 3) return AUTH_ERROR_MESSAGES.NAME_LENGTH;
+  return validateLogin(email, password);
 };

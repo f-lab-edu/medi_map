@@ -1,5 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@/styles/common/common.scss';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/auth/authOptions';
 import Header from '@/components/Header';
@@ -39,6 +41,14 @@ export default async function Layout({ children }: LayoutProps) {
             </ContentWrapper>
           </SessionWrapper>
         </Providers>
+        <ToastContainer
+          position="top-center"
+          autoClose={3000}
+          hideProgressBar={false}
+          closeOnClick
+          pauseOnHover
+          draggable
+        />
       </body>
     </html>
   );

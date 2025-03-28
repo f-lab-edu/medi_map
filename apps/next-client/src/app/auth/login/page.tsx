@@ -1,19 +1,27 @@
 'use client';
 
 import { useState } from 'react';
-import { useLoginForm } from '@/hooks/useLoginForm';
-import { useLoginActions } from '@/hooks/useLoginActions';
+import { useLoginForm } from '@/hooks/auth/useLoginForm';
+import { useLoginActions } from '@/hooks/auth/useLoginActions';
 import Link from 'next/link';
 import Image from 'next/image';
+import { toast } from 'react-toastify';
 import '@/styles/pages/auth/login.scss';
+import { validateLogin } from '@/utils/validation';
 
 export default function LoginPage() {
-  const { email, setEmail, password, setPassword, error, setError } = useLoginForm();
-  const { handleLogin, handleGoogleLogin } = useLoginActions({ email, password, setError });
+  const { email, setEmail, password, setPassword, error} = useLoginForm();
+  const { handleLogin, handleGoogleLogin } = useLoginActions({ email, password });
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isGoogleLoggingIn, setIsGoogleLoggingIn] = useState(false);
 
   const onLoginClick = async () => {
+    const validationError = validateLogin(email, password);
+    if (validationError) {
+      toast.error(validationError);
+      return;
+    }
+  
     setIsLoggingIn(true);
     await handleLogin();
     setIsLoggingIn(false);

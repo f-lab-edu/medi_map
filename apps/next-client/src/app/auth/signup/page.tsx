@@ -3,16 +3,15 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import '@/styles/pages/auth/signup.scss';
-import { useSignupForm } from '@/hooks/useSignupForm';
-import { useSignupActions } from '@/hooks/useSignupActions';
+import { useSignupForm } from '@/hooks/auth/useSignupForm';
+import { useSignupActions } from '@/hooks/auth/useSignupActions';
 
 export default function SignupPage() {
-  const { username, setUsername, email, setEmail, password, setPassword, error, setError } = useSignupForm();
+  const { username, setUsername, email, setEmail, password, setPassword, error } = useSignupForm();
   const { handleSignup } = useSignupActions({
     username,
     email,
-    password,
-    setError,
+    password
   });
   const [isSigningUp, setIsSigningUp] = useState(false);
 

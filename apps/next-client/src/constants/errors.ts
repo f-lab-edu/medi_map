@@ -30,3 +30,14 @@ export const FAVORITE_MESSAGES = {
   STATUS_FETCH_ERROR: '즐겨찾기 상태를 불러오지 못했습니다.',
   ID_NOT_FOUND: 'medicineId가 존재하지 않습니다.',
 } as const;
+
+export const AUTH_ERROR_MESSAGES = {
+  PASSWORD_REQUIRED: "현재 비밀번호를 입력해주세요.",
+  NEW_PASSWORD_REQUIRED: "새 비밀번호를 입력해주세요.",
+  CONFIRM_PASSWORD_REQUIRED: "새 비밀번호 확인이 필요합니다.",
+  PASSWORD_MIN_LENGTH: "비밀번호는 최소 8자 이상이어야 합니다.",
+  PASSWORD_MISMATCH: "새 비밀번호가 일치하지 않습니다.",
+  NICKNAME_LENGTH: "닉네임은 3자 이상 30자 이하로 입력해주세요.",
+  NAME_LENGTH: "이름은 3자 이상이어야 합니다.",
+  INVALID_EMAIL: "이메일 형식이 올바르지 않습니다.",
+} as const;
