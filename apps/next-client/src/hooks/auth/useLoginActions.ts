@@ -6,7 +6,6 @@ import { loginWithCredentials, loginWithGoogle } from '@/services/loginService';
 import { ERROR_MESSAGES } from '@/constants/errors';
 import { ROUTES } from '@/constants/urls';
 import { useSession } from 'next-auth/react';
-import { setSessionCookies } from '@/utils/sessionCookies';
 import { toast } from 'react-toastify';
 
 interface AuthActionsParams {
@@ -20,10 +19,10 @@ export const useLoginActions = ({ email, password }: AuthActionsParams) => {
 
   useEffect(() => {
     if (status === 'authenticated' && session?.user) {
-      setSessionCookies(session.user);
       router.push(ROUTES.HOME);
     }
   }, [status, session, router]);
+  
 
   const handleLogin = async () => {
     if (!email || !password) {

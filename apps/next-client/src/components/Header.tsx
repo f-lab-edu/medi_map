@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
 import { ROUTES, API_URLS } from '@/constants/urls';
-import Cookies from 'js-cookie';
 import { axiosInstance } from '@/services/axiosInstance';
 import Image from 'next/image';
 
@@ -18,11 +17,7 @@ export default function Header() {
         await axiosInstance.post(API_URLS.LOGOUT, {
           userId: session.user.id,
         });
-      }
-      Cookies.remove('accessToken');
-      Cookies.remove('refreshToken');
-      Cookies.remove('userId');
-      
+      }      
       signOut({ callbackUrl: ROUTES.AUTH.SIGN_IN });
     } catch (error) {
       console.error('Failed to logout:', error);
