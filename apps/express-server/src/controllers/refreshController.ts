@@ -1,16 +1,9 @@
 import { Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { User } from '@/models';
-import {
-  findRefreshToken,
-  storeRefreshToken,
-  removeRefreshTokens,
-} from '@/services/refreshTokenService';
+import { User, sequelize } from '@/models';
+import { findRefreshToken, storeRefreshToken, removeRefreshTokens } from '@/services/refreshTokenService';
 import { AUTH_MESSAGES } from '@/constants/auth_message';
-import {
-  generateAccessToken,
-  generateRefreshToken,
-} from '@/utils/generateToken';
+import { generateAccessToken, generateRefreshToken } from '@/utils/generateToken';
 
 const REFRESH_SECRET = process.env.REFRESH_SECRET;
 
@@ -19,7 +12,7 @@ interface CustomJwtPayload extends JwtPayload {
   email: string;
 }
 
-// 리프레시 토큰 재발급 컨트롤러
+// Refresh token 재발급 컨트롤러
 export const refresh = async (req: Request, res: Response): Promise<Response> => {
   const { refreshToken } = req.body;
 
@@ -28,23 +21,23 @@ export const refresh = async (req: Request, res: Response): Promise<Response> =>
   }
 
   try {
-    // 저장된 토큰인지 체크
+    // 저장된 토큰인지 확인
     const storedToken = await findRefreshToken(refreshToken);
     if (!storedToken) {
       console.error('Invalid refresh token:', refreshToken);
       return res.status(403).json({ message: AUTH_MESSAGES.AUTHENTICATION_ERROR });
     }
 
+    // JWT 디코딩 및 검증
     let decoded: CustomJwtPayload;
     try {
-      // JWT 검증
-      decoded = jwt.verify(refreshToken, REFRESH_SECRET) as CustomJwtPayload;
+      decoded = jwt.verify(refreshToken, REFRESH_SECRET!) as CustomJwtPayload;
     } catch (err) {
       console.error('Expired or invalid refresh token:', err);
       return res.status(403).json({ message: AUTH_MESSAGES.AUTHENTICATION_ERROR });
     }
 
-    // 사용자 확인
+    // 사용자 존재 여부 확인
     const user = await User.findByPk(decoded.id);
     if (!user) {
       console.error('User not found for ID:', decoded.id);
@@ -58,10 +51,13 @@ export const refresh = async (req: Request, res: Response): Promise<Response> =>
       user.email
     );
 
-    // 기존 토큰 전부 삭제 -> 새로 저장
-    await removeRefreshTokens(user.id);
-    await storeRefreshToken(user.id, newRefreshToken, refreshExpiresAt);
+    // 트랜잭션 처리 (삭제 + 저장 동시)
+    await sequelize.transaction(async t => {
+      await removeRefreshTokens(user.id, t);
+      await storeRefreshToken(user.id, newRefreshToken, refreshExpiresAt, t);
+    });
 
+    // 응답 반환
     return res.status(200).json({
       accessToken: newAccessToken,
       refreshToken: newRefreshToken,
