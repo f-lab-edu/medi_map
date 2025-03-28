@@ -13,6 +13,7 @@ export interface AuthenticatedRequest extends Request {
   user?: CustomJwtPayload & { username?: string };
 }
 
+// 구글 액세스 토큰 검증
 const verifyGoogleToken = async (token: string) => {
   try {
     const response = await axios.get(
@@ -25,6 +26,7 @@ const verifyGoogleToken = async (token: string) => {
   }
 };
 
+// 인증 미들웨어
 export const authMiddleware = async (
   req: AuthenticatedRequest,
   res: Response,
