@@ -11,7 +11,6 @@ import { ERROR_MESSAGES } from '@/constants/errors';
 export default function EditPostPage({ params }: { params: { id: string } }) {
   const { data: session } = useSession();
   const userId = session?.user?.id;
-  const accessToken = session?.user?.accessToken || '';
 
   if (!userId) {
     throw new Error(ERROR_MESSAGES.LOGIN_REQUIRED);
@@ -20,7 +19,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   return (
     <ErrorBoundary>
       <Suspense fallback={<LoadingSpinner />}>
-        <EditPostContent params={params} userId={userId} accessToken={accessToken} />
+        <EditPostContent params={params} userId={userId} />
       </Suspense>
     </ErrorBoundary>
   );

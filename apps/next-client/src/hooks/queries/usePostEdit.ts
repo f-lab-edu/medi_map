@@ -30,7 +30,7 @@ export function usePostEditData(id: string, userId: string | undefined) {
 }
 
 // 게시글 업데이트 기능
-export function useUpdatePost(id: string, accessToken: string) {
+export function useUpdatePost(id: string) {
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -44,7 +44,7 @@ export function useUpdatePost(id: string, accessToken: string) {
       return axiosInstance.put(
         `${API_URLS.POSTS}/${id}`,
         { title, content },
-        { headers: { Authorization: `Bearer ${accessToken}` } }
+        { headers: { requiresAuth: true } }
       );
     },
     onSuccess: () => {
@@ -60,7 +60,7 @@ export function useUpdatePost(id: string, accessToken: string) {
 }
 
 // 게시글 삭제 기능
-export function useDeletePost(id: string, accessToken: string) {
+export function useDeletePost(id: string) {
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -71,7 +71,7 @@ export function useDeletePost(id: string, accessToken: string) {
       }
 
       return axiosInstance.delete(`${API_URLS.POSTS}/${id}`, {
-        headers: { Authorization: `Bearer ${accessToken}` }
+        headers: { requiresAuth: true }
       });
     },
     onSuccess: () => {
@@ -86,13 +86,13 @@ export function useDeletePost(id: string, accessToken: string) {
   });
 }
 
-export const usePostEdit = (id: string, userId: string | undefined, accessToken: string) => {
+export const usePostEdit = (id: string, userId: string | undefined) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   
   const { data } = usePostEditData(id, userId);
-  const updatePostMutation = useUpdatePost(id, accessToken);
-  const deletePostMutation = useDeletePost(id, accessToken);
+  const updatePostMutation = useUpdatePost(id);
+  const deletePostMutation = useDeletePost(id);
 
   useEffect(() => {
     if (data) {

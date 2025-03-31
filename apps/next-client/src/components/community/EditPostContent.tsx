@@ -7,7 +7,6 @@ import 'react-quill/dist/quill.snow.css';
 import type Quill from 'quill';
 import { axiosInstance } from '@/services/common/axiosInstance';
 import { API_URLS } from '@/constants/urls';
-import Cookies from 'js-cookie';
 import { ALERT_MESSAGES } from '@/constants/alertMessage';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
@@ -15,12 +14,11 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 interface EditPostContentProps {
   params: { id: string };
   userId: string;
-  accessToken: string;
 }
 
-export default function EditPostContent({ params, userId, accessToken }: EditPostContentProps) {
+export default function EditPostContent({ params, userId }: EditPostContentProps) {
   const { id } = params;
-  const { title, setTitle, content, setContent, handleUpdatePost, handleDeletePost } = usePostEdit(id, userId, accessToken);
+  const { title, setTitle, content, setContent, handleUpdatePost, handleDeletePost } = usePostEdit(id, userId);
 
   function handleImageUpload(this: { quill: Quill }) {
     const editor = this.quill;
@@ -40,7 +38,7 @@ export default function EditPostContent({ params, userId, accessToken }: EditPos
           const response = await axiosInstance.post(API_URLS.UPLOADS, formData, {
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${Cookies.get("accessToken")}`,
+              requiresAuth: true
             },
           });
 
