@@ -6,14 +6,11 @@ import { API_URLS } from '@/constants/urls';
 import { ALERT_MESSAGES } from '@/constants/alertMessage';
 import { ERROR_MESSAGES } from '@/constants/errors';
 
-export const usePostEdit = (id: string, userId: string | undefined, accessToken: string) => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+// 게시글 데이터 가져오기
+export function usePostEditData(id: string, userId: string | undefined) {
   const router = useRouter();
-  const queryClient = useQueryClient();
-
-  // 게시글 데이터 가져오기
-  const { data } = useSuspenseQuery({
+  
+  return useSuspenseQuery({
     queryKey: ['post-edit', id],
     queryFn: async () => {
       const response = await axiosInstance.get(`${API_URLS.POSTS}/${id}`);
@@ -30,18 +27,15 @@ export const usePostEdit = (id: string, userId: string | undefined, accessToken:
     staleTime: 5 * 60 * 1000, 
     gcTime: 10 * 60 * 1000,
   });
+}
 
-  // 데이터로부터 상태 설정
-  useEffect(() => {
-    if (data) {
-      setTitle(data.title);
-      setContent(data.content);
-    }
-  }, [data]);
+// 게시글 업데이트 기능
+export function useUpdatePost(id: string, accessToken: string) {
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
-  // 게시글 업데이트
-  const updatePostMutation = useMutation({
-    mutationFn: async () => {
+  return useMutation({
+    mutationFn: async ({ title, content }: { title: string; content: string }) => {
       if (!title.trim() || !content.trim()) {
         alert(ALERT_MESSAGES.ERROR.POST.POST_EMPTY_FIELDS);
         throw new Error(ERROR_MESSAGES.EMPTY_FIELDS);
@@ -63,9 +57,14 @@ export const usePostEdit = (id: string, userId: string | undefined, accessToken:
       alert(ALERT_MESSAGES.ERROR.POST.POST_UPDATE_ERROR);
     }
   });
+}
 
-  // 게시글 삭제
-  const deletePostMutation = useMutation({
+// 게시글 삭제 기능
+export function useDeletePost(id: string, accessToken: string) {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  return useMutation({
     mutationFn: async () => {
       if (!window.confirm(ALERT_MESSAGES.CONFIRM.CHECK_DELETE)) {
         throw new Error(ERROR_MESSAGES.DELETE_CANCELLED);
@@ -85,9 +84,25 @@ export const usePostEdit = (id: string, userId: string | undefined, accessToken:
       alert(ALERT_MESSAGES.ERROR.POST.POST_DELETE_ERROR);
     }
   });
+}
+
+export const usePostEdit = (id: string, userId: string | undefined, accessToken: string) => {
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  
+  const { data } = usePostEditData(id, userId);
+  const updatePostMutation = useUpdatePost(id, accessToken);
+  const deletePostMutation = useDeletePost(id, accessToken);
+
+  useEffect(() => {
+    if (data) {
+      setTitle(data.title);
+      setContent(data.content);
+    }
+  }, [data]);
 
   const handleUpdatePost = () => {
-    updatePostMutation.mutate();
+    updatePostMutation.mutate({ title, content });
   };
 
   const handleDeletePost = () => {
