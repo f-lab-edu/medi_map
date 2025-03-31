@@ -1,84 +1,104 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { axiosInstance } from '@/services/common/axiosInstance';
 import { API_URLS } from '@/constants/urls';
 import { ALERT_MESSAGES } from '@/constants/alertMessage';
 
-export const usePost = (id: string, userId: string | undefined, accessToken: string) => {
+export const usePostEdit = (id: string, userId: string | undefined, accessToken: string) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  useEffect(() => {
-    // 게시글 가져오기 함수
-    const fetchPost = async () => {
-      try {
-        const response = await axiosInstance.get(`${API_URLS.POSTS}/${id}`);
-        const post = response.data;
+  // 게시글 조회
+  const { isLoading: loading, error, data } = useQuery({
+    queryKey: ['post-edit', id],
+    queryFn: async () => {
+      const response = await axiosInstance.get(`${API_URLS.POSTS}/${id}`);
+      const post = response.data;
 
-        if (post.userId !== userId) {
-          alert(ALERT_MESSAGES.ERROR.POST.POST_PERMISSION_DENIED);
-          router.push('/community');
-          return;
-        }
-
-        setTitle(post.title);
-        setContent(post.content);
-      } catch (error) {
-        console.error('Error fetching post:', error);
-        alert(ALERT_MESSAGES.ERROR.POST.POST_FETCH_ERROR);
+      if (post.userId !== userId) {
+        alert(ALERT_MESSAGES.ERROR.POST.POST_PERMISSION_DENIED);
         router.push('/community');
-      } finally {
-        setLoading(false);
+        throw new Error('Permission denied');
       }
-    };
+      
+      return post;
+    },
+    enabled: !!id && !!userId,
+    staleTime: 5 * 60 * 1000, 
+    gcTime: 10 * 60 * 1000,
+  });
 
-    fetchPost();
-  }, [id, userId, router]);
+  useEffect(() => {
+    if (data) {
+      setTitle(data.title);
+      setContent(data.content);
+    }
+  }, [data]);
 
-  // 게시글 업데이트 함수
-  const handleUpdatePost = async () => {
-    try {
+  useEffect(() => {
+    if (error) {
+      console.error('Error fetching post:', error);
+      alert(ALERT_MESSAGES.ERROR.POST.POST_FETCH_ERROR);
+      router.push('/community');
+    }
+  }, [error, router]);
+
+  // 게시글 업데이트
+  const updatePostMutation = useMutation({
+    mutationFn: async () => {
       if (!title.trim() || !content.trim()) {
         alert(ALERT_MESSAGES.ERROR.POST.POST_EMPTY_FIELDS);
-        return;
+        throw new Error('Empty fields');
       }
 
-      await axiosInstance.put(
+      return axiosInstance.put(
         `${API_URLS.POSTS}/${id}`,
         { title, content },
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
-
+    },
+    onSuccess: () => {
       alert(ALERT_MESSAGES.SUCCESS.POST.POST_UPDATE);
-
       queryClient.invalidateQueries({ queryKey: ['post', id] });
-
       router.push(`/community/${id}`);
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error('Error updating post:', error);
       alert(ALERT_MESSAGES.ERROR.POST.POST_UPDATE_ERROR);
     }
-  };
+  });
 
-  // 게시글 삭제 함수
-  const handleDeletePost = async () => {
-    try {
-      if (!window.confirm(ALERT_MESSAGES.CONFIRM.CHECK_DELETE)) return;
+  // 게시글 삭제
+  const deletePostMutation = useMutation({
+    mutationFn: async () => {
+      if (!window.confirm(ALERT_MESSAGES.CONFIRM.CHECK_DELETE)) {
+        throw new Error('Delete cancelled');
+      }
 
-      await axiosInstance.delete(`${API_URLS.POSTS}/${id}`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
+      return axiosInstance.delete(`${API_URLS.POSTS}/${id}`, {
+        headers: { Authorization: `Bearer ${accessToken}` }
       });
-
+    },
+    onSuccess: () => {
       alert(ALERT_MESSAGES.SUCCESS.POST.POST_DELETE);
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
       router.push('/community');
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error('Error deleting post:', error);
       alert(ALERT_MESSAGES.ERROR.POST.POST_DELETE_ERROR);
     }
+  });
+
+  const handleUpdatePost = () => {
+    updatePostMutation.mutate();
+  };
+
+  const handleDeletePost = () => {
+    deletePostMutation.mutate();
   };
 
   return { title, setTitle, content, setContent, loading, handleUpdatePost, handleDeletePost };

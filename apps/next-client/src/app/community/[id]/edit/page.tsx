@@ -3,7 +3,7 @@
 import React, { useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
-import { usePost } from '@/hooks/queries/usePostEdit';
+import { usePostEdit } from '@/hooks/queries/usePostEdit';
 import '@/styles/pages/community/community.scss';
 import 'react-quill/dist/quill.snow.css';
 import type Quill from 'quill';
@@ -21,7 +21,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   const userId = session?.user?.id;
   const accessToken = session?.user?.accessToken || '';
 
-  const { title, setTitle, content, setContent, loading, handleUpdatePost, handleDeletePost } = usePost(id, userId, accessToken);
+  const { title, setTitle, content, setContent, loading, handleUpdatePost, handleDeletePost } = usePostEdit(id, userId, accessToken);
 
   function handleImageUpload(this: { quill: Quill }) {
     const editor = this.quill;
