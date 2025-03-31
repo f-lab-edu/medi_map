@@ -21,7 +21,10 @@ export const ERROR_MESSAGES = {
   INVALID_RESPONSE_FORMAT: "API 응답 형식이 올바르지 않습니다. 배열이 아닙니다.",
   NO_SEARCH_RESULTS: "검색 결과가 없습니다.",
   API_REQUEST_ERROR: "API 요청 중 오류가 발생했습니다.",
-  CLIENT_ERROR: '잘못된 요청입니다. 다시 시도해주세요.'
+  CLIENT_ERROR: '잘못된 요청입니다. 다시 시도해주세요.',
+  PERMISSION_DENIED: "권한이 없습니다.",
+  EMPTY_FIELDS: "필수 입력 항목이 비어있습니다.",
+  DELETE_CANCELLED: "삭제가 취소되었습니다."
 } as const;
 
 export const FAVORITE_MESSAGES = {

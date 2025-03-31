@@ -4,6 +4,7 @@ import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-q
 import { axiosInstance } from '@/services/common/axiosInstance';
 import { API_URLS } from '@/constants/urls';
 import { ALERT_MESSAGES } from '@/constants/alertMessage';
+import { ERROR_MESSAGES } from '@/constants/errors';
 
 export const usePostEdit = (id: string, userId: string | undefined, accessToken: string) => {
   const [title, setTitle] = useState('');
@@ -11,7 +12,7 @@ export const usePostEdit = (id: string, userId: string | undefined, accessToken:
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  // 게시글 조회 - useSuspenseQuery 사용 (enabled 옵션 제거)
+  // 게시글 데이터 가져오기
   const { data } = useSuspenseQuery({
     queryKey: ['post-edit', id],
     queryFn: async () => {
@@ -21,7 +22,7 @@ export const usePostEdit = (id: string, userId: string | undefined, accessToken:
       if (post.userId !== userId) {
         alert(ALERT_MESSAGES.ERROR.POST.POST_PERMISSION_DENIED);
         router.push('/community');
-        throw new Error('Permission denied');
+        throw new Error(ERROR_MESSAGES.PERMISSION_DENIED);
       }
       
       return post;
@@ -43,7 +44,7 @@ export const usePostEdit = (id: string, userId: string | undefined, accessToken:
     mutationFn: async () => {
       if (!title.trim() || !content.trim()) {
         alert(ALERT_MESSAGES.ERROR.POST.POST_EMPTY_FIELDS);
-        throw new Error('Empty fields');
+        throw new Error(ERROR_MESSAGES.EMPTY_FIELDS);
       }
 
       return axiosInstance.put(
@@ -67,7 +68,7 @@ export const usePostEdit = (id: string, userId: string | undefined, accessToken:
   const deletePostMutation = useMutation({
     mutationFn: async () => {
       if (!window.confirm(ALERT_MESSAGES.CONFIRM.CHECK_DELETE)) {
-        throw new Error('Delete cancelled');
+        throw new Error(ERROR_MESSAGES.DELETE_CANCELLED);
       }
 
       return axiosInstance.delete(`${API_URLS.POSTS}/${id}`, {
