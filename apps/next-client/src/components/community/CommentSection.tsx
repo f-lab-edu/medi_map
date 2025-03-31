@@ -10,7 +10,7 @@ interface Props {
   userId: string;
 }
 
-const Comments = ({ urlPostId, userId }: Props) => {
+const CommentsContent = ({ urlPostId, userId }: Props) => {
   const { data: comments = [] } = useFetchComments(urlPostId);
 
   return (
@@ -21,11 +21,11 @@ const Comments = ({ urlPostId, userId }: Props) => {
   );
 };
 
-export default function CommentsWithSuspense({ urlPostId, userId }: Props) {
+export default function CommentSection({ urlPostId, userId }: Props) {
   return (
     <ErrorBoundary>
       <Suspense fallback={<LoadingSpinner />}>
-        <Comments urlPostId={urlPostId} userId={userId} />
+        <CommentsContent urlPostId={urlPostId} userId={userId} />
       </Suspense>
     </ErrorBoundary>
   );
