@@ -3,6 +3,7 @@ import CommentList from '@/components/community/CommentList';
 import CommentForm from '@/components/community/CommentForm';
 import { useFetchComments } from '@/hooks/queries/useComments';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
 
 interface Props {
   urlPostId: string;
@@ -22,8 +23,10 @@ const Comments = ({ urlPostId, userId }: Props) => {
 
 export default function CommentsWithSuspense({ urlPostId, userId }: Props) {
   return (
-    <Suspense fallback={<LoadingSpinner />}>
-      <Comments urlPostId={urlPostId} userId={userId} />
-    </Suspense>
+    <ErrorBoundary>
+      <Suspense fallback={<LoadingSpinner />}>
+        <Comments urlPostId={urlPostId} userId={userId} />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
