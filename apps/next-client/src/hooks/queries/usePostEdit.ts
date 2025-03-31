@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { axiosInstance } from '@/services/common/axiosInstance';
 import { API_URLS } from '@/constants/urls';
 import { ALERT_MESSAGES } from '@/constants/alertMessage';
@@ -11,8 +11,8 @@ export const usePostEdit = (id: string, userId: string | undefined, accessToken:
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  // 게시글 조회
-  const { isLoading: loading, error, data } = useQuery({
+  // 게시글 조회 - useSuspenseQuery 사용 (enabled 옵션 제거)
+  const { data } = useSuspenseQuery({
     queryKey: ['post-edit', id],
     queryFn: async () => {
       const response = await axiosInstance.get(`${API_URLS.POSTS}/${id}`);
@@ -26,25 +26,17 @@ export const usePostEdit = (id: string, userId: string | undefined, accessToken:
       
       return post;
     },
-    enabled: !!id && !!userId,
     staleTime: 5 * 60 * 1000, 
     gcTime: 10 * 60 * 1000,
   });
 
+  // 데이터로부터 상태 설정
   useEffect(() => {
     if (data) {
       setTitle(data.title);
       setContent(data.content);
     }
   }, [data]);
-
-  useEffect(() => {
-    if (error) {
-      console.error('Error fetching post:', error);
-      alert(ALERT_MESSAGES.ERROR.POST.POST_FETCH_ERROR);
-      router.push('/community');
-    }
-  }, [error, router]);
 
   // 게시글 업데이트
   const updatePostMutation = useMutation({
@@ -101,5 +93,5 @@ export const usePostEdit = (id: string, userId: string | undefined, accessToken:
     deletePostMutation.mutate();
   };
 
-  return { title, setTitle, content, setContent, loading, handleUpdatePost, handleDeletePost };
+  return { title, setTitle, content, setContent, handleUpdatePost, handleDeletePost };
 };
