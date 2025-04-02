@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import dynamic from 'next/dynamic';
 import { usePostEdit } from '@/hooks/queries/usePostEdit';
 import 'react-quill/dist/quill.snow.css';
@@ -54,47 +54,42 @@ export default function EditPostContent({ params, userId }: EditPostContentProps
     };
   }
 
-  const modules = useMemo(() => {
-    return {
-      toolbar: {
-        container: [
-          [{ header: '1' }, { header: '2' }, { font: [] }],
-          [{ size: [] }],
-          ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-          [
-            { list: 'ordered' },
-            { list: 'bullet' },
-            { indent: '-1' },
-            { indent: '+1' },
-          ],
-          ['link', 'image'],
-          ['clean'],
+  const modules = {
+    toolbar: {
+      container: [
+        [{ header: '1' }, { header: '2' }, { font: [] }],
+        [{ size: [] }],
+        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+        [
+          { list: 'ordered' },
+          { list: 'bullet' },
+          { indent: '-1' },
+          { indent: '+1' },
         ],
-        handlers: {
-          image: handleImageUpload,
-        },
+        ['link', 'image'],
+        ['clean'],
+      ],
+      handlers: {
+        image: handleImageUpload,
       },
-    };
-  }, []);
+    },
+  };
 
-  const formats = useMemo(
-    () => [
-      'header',
-      'font',
-      'size',
-      'bold',
-      'italic',
-      'underline',
-      'strike',
-      'blockquote',
-      'list',
-      'bullet',
-      'indent',
-      'link',
-      'image',
-    ],
-    []
-  );
+  const formats = [
+    'header',
+    'font',
+    'size',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'blockquote',
+    'list',
+    'bullet',
+    'indent',
+    'link',
+    'image',
+  ];
 
   return (
     <div className="community edit_post">
