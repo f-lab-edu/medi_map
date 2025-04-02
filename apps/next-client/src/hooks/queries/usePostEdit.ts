@@ -7,11 +7,11 @@ import { ALERT_MESSAGES } from '@/constants/alertMessage';
 import { ERROR_MESSAGES } from '@/constants/errors';
 
 // 게시글 데이터 가져오기
-export function usePostEditData(id: string, userId: string | undefined) {
+export function usePostEditData(id: string, userId: string) {
   const router = useRouter();
   
   return useSuspenseQuery({
-    queryKey: ['post-edit', id],
+    queryKey: ['post-edit', id, userId],
     queryFn: async () => {
       const response = await axiosInstance.get(`${API_URLS.POSTS}/${id}`);
       const post = response.data;
@@ -86,7 +86,7 @@ export function useDeletePost(id: string) {
   });
 }
 
-export const usePostEdit = (id: string, userId: string | undefined) => {
+export const usePostEdit = (id: string, userId: string) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   
