@@ -1,41 +1,37 @@
 'use client';
 
 import { useState } from 'react';
-import { API_URLS } from '@/constants/urls';
+import { useAddComment } from '@/hooks/queries/useComments';
 import { ALERT_MESSAGES } from '@/constants/alertMessage';
-import { axiosInstance } from '@/services/common/axiosInstance';
 
 interface CommentFormProps {
   urlPostId: string;
-  fetchComments: () => void;
 }
 
-const CommentForm = ({ urlPostId, fetchComments }: CommentFormProps) => {
+const CommentForm = ({ urlPostId }: CommentFormProps) => {
   const [newComment, setNewComment] = useState('');
+  const addCommentMutation = useAddComment(urlPostId);
 
-  const handleAddComment = async () => {
+  const handleAddComment = () => {
     if (!newComment.trim()) {
       alert(ALERT_MESSAGES.ERROR.COMMENT.COMMENT_EMPTY_FIELDS);
       return;
     }
-
-    try {
-      await axiosInstance.post(`${API_URLS.POSTS}/${urlPostId}/comments`, { content: newComment }, 
-        { headers: { requiresAuth: true } }
-      );
-      setNewComment('');
-      fetchComments();
-      alert(ALERT_MESSAGES.SUCCESS.COMMENT.COMMENT_ADD);
-    } catch (error) {
-      console.error('Error adding comment:', error);
-      alert(ALERT_MESSAGES.ERROR.COMMENT.COMMENT_ADD_ERROR);
-    }
+    addCommentMutation.mutate(newComment, {
+      onSuccess: () => {
+        setNewComment('');
+        alert(ALERT_MESSAGES.SUCCESS.COMMENT.COMMENT_ADD);
+      },
+    });
   };
 
   return (
-    <div className='comment_section'>
+    <div className="comment_section">
       <div className="add_comment">
-        <textarea value={newComment} onChange={(e) => setNewComment(e.target.value)} />
+        <textarea
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+        />
         <button onClick={handleAddComment}>댓글 추가</button>
       </div>
     </div>

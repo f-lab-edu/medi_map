@@ -1,5 +1,6 @@
 export const ERROR_MESSAGES = {
   LOGIN_FAILED: "이메일이나 비밀번호를 다시 확인해주세요.",
+  LOGIN_REQUIRED: "로그인이 필요한 서비스입니다.",
   UNKNOWN_ERROR: "알 수 없는 오류가 발생했습니다.",
   INVALID_CREDENTIAL: "유효하지 않은 자격 증명입니다.",
   LOGIN_ERROR: "로그인 중 문제가 발생했습니다.",
@@ -20,7 +21,10 @@ export const ERROR_MESSAGES = {
   INVALID_RESPONSE_FORMAT: "API 응답 형식이 올바르지 않습니다. 배열이 아닙니다.",
   NO_SEARCH_RESULTS: "검색 결과가 없습니다.",
   API_REQUEST_ERROR: "API 요청 중 오류가 발생했습니다.",
-  CLIENT_ERROR: '잘못된 요청입니다. 다시 시도해주세요.'
+  CLIENT_ERROR: '잘못된 요청입니다. 다시 시도해주세요.',
+  PERMISSION_DENIED: "권한이 없습니다.",
+  EMPTY_FIELDS: "필수 입력 항목이 비어있습니다.",
+  DELETE_CANCELLED: "삭제가 취소되었습니다."
 } as const;
 
 export const FAVORITE_MESSAGES = {
